@@ -4,13 +4,13 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D rigidBody2D;
 
-    public float speed = 10;
+    public float speed = 8;
 
 	void Start () {
         rigidBody2D = GetComponent<Rigidbody2D>();
 	}
 
-    void Update()
+    void FixedUpdate()
     {
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
