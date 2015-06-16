@@ -7,9 +7,9 @@ public class StackPool : MonoBehaviour {
     public static StackPool current;
     public GameObject pooledObject;
     public int pooledAmount = 20;
-    public bool allowGrowth = false;
+    public bool allowGrowth = true;
 
-    Stack<GameObject> pooledObjects;
+    private Stack<GameObject> pooledObjects;
 
     void Awake()
     {
@@ -33,6 +33,7 @@ public class StackPool : MonoBehaviour {
 
         if (allowGrowth)
         {
+            print("Growing to " + pooledObjects.Count + 1);
             GameObject obj = Instantiate(pooledObject) as GameObject;
             return obj;
         }
