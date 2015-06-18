@@ -7,8 +7,9 @@ public class BulletDestroy : MonoBehaviour {
         Invoke("Destroy", 2f);
 	}
 
-    void Destroy()
+    public void Destroy()
     {
+        CancelInvoke("Destroy");
         gameObject.SetActive(false);
         StackPool.current.Push(gameObject);
     }
