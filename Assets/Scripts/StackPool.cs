@@ -4,17 +4,11 @@ using System.Collections.Generic;
 
 public class StackPool : MonoBehaviour {
 
-    public static StackPool current;
     public GameObject pooledObject;
     public int pooledAmount = 20;
     public bool allowGrowth = true;
 
     private Stack<GameObject> pooledObjects;
-
-    void Awake()
-    {
-        current = this;
-    }
 
 	void Start () {
         pooledObjects = new Stack<GameObject>();

@@ -7,9 +7,11 @@ public class BasicGun : MonoBehaviour {
     public float bulletSpeed = 50;
 
     private float nextFiringTime;
+    private StackPool bulletPool;
 
 	void Awake () {
         nextFiringTime = 0;
+        bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
 	}
 	
 	// Update is called once per frame
@@ -18,7 +20,7 @@ public class BasicGun : MonoBehaviour {
         if (Input.GetMouseButton(0) && Time.time > nextFiringTime)
         {
             nextFiringTime = Time.time + firingDelay;
-            GameObject bullet = StackPool.current.Pop();
+            GameObject bullet = bulletPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
             

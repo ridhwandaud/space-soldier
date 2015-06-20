@@ -10,7 +10,7 @@ public class EnemyHealth : MonoBehaviour {
         if (other.tag == "Player Bullet")
         {
             health--;
-            other.GetComponent<BulletDestroy>().Destroy();
+            other.GetComponent<ProjectileDestroy>().Destroy();
 
             if (health <= 0)
             {
