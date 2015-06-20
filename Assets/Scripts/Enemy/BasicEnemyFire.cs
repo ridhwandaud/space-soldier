@@ -17,7 +17,7 @@ public class BasicEnemyFire : MonoBehaviour {
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
 	}
 	
-	void Fire () {
+	public void Fire () {
         if (Time.time > nextFireTime)
         {
             nextFireTime = Time.time + fireInterval;
@@ -33,8 +33,4 @@ public class BasicEnemyFire : MonoBehaviour {
             projectile.GetComponent<Rigidbody2D>().velocity = projectileSpeed * offset.normalized;
         }
 	}
-
-    void Update () {
-        Fire();
-    }
 }

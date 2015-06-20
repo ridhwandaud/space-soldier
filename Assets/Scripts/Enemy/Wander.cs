@@ -22,17 +22,13 @@ public class Wander : MonoBehaviour {
             vector.x * Mathf.Sin(radians) + vector.y * Mathf.Cos(radians));
     }
 
-    void DoWander()
+    public void DoWander()
     {
-        float angle = Random.Range(0f, 2 * Mathf.PI);
-        rigidBody2D.velocity = RotateVector(DEFAULT_ANGLE, angle).normalized * speed;
-    }
-	
-	void Update () {
         if (Time.time > nextWanderTime)
         {
             nextWanderTime = Time.time + Random.Range(timeBetweenWanders.x, timeBetweenWanders.y);
-            DoWander();
+            float angle = Random.Range(0f, 2 * Mathf.PI);
+            rigidBody2D.velocity = RotateVector(DEFAULT_ANGLE, angle).normalized * speed;
         }
-	}
+    }
 }
