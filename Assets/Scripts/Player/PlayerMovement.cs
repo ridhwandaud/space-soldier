@@ -15,6 +15,6 @@ public class PlayerMovement : MonoBehaviour {
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
 
-        rigidBody2D.velocity = new Vector2(inputX * speed, inputY * speed);
+        rigidBody2D.velocity = new Vector2(inputX, inputY).normalized * speed;
     }
 }
