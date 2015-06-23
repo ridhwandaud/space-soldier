@@ -6,13 +6,13 @@ public class Wander : MonoBehaviour {
     public Vector2 timeBetweenWanders = new Vector2(1.5f, 1.8f);
     public float speed = 2f;
 
-    private Rigidbody2D rigidBody2D;
+    private Rigidbody2D rb;
     private float nextWanderTime;
 
     private static Vector2 DEFAULT_ANGLE = new Vector2(1, 0);
 
 	void Start () {
-        rigidBody2D = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         nextWanderTime = Time.time + Random.Range(0f, .3f);
 	}
 
@@ -28,7 +28,7 @@ public class Wander : MonoBehaviour {
         {
             nextWanderTime = Time.time + Random.Range(timeBetweenWanders.x, timeBetweenWanders.y);
             float angle = Random.Range(0f, 2 * Mathf.PI);
-            rigidBody2D.velocity = RotateVector(DEFAULT_ANGLE, angle).normalized * speed;
+            rb.velocity = RotateVector(DEFAULT_ANGLE, angle).normalized * speed;
         }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using SpriteTile;
 
 public class PlayerMovement : MonoBehaviour {
-    private Rigidbody2D rigidBody2D;
+    private Rigidbody2D rb;
 
     public float speed = 8;
+    public float collisionDistance;
 
 	void Start () {
-        rigidBody2D = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
 	}
 
     void FixedUpdate()
@@ -15,6 +17,25 @@ public class PlayerMovement : MonoBehaviour {
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
 
-        rigidBody2D.velocity = new Vector2(inputX, inputY).normalized * speed;
+        Vector2 newVelocity = new Vector2(inputX, inputY).normalized * speed;
+
+        if (Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance)) && inputY > 0)
+        {
+            newVelocity.y = 0;
+        }
+        if (Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance)) && inputY < 0)
+        {
+            newVelocity.y = 0;
+        }
+        if (Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y)) && inputX > 0)
+        {
+            newVelocity.x = 0;
+        }
+        if (Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y)) && inputX < 0)
+        {
+            newVelocity.x = 0;
+        }
+
+        rb.velocity = newVelocity;
     }
 }
