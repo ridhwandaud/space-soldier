@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SpriteTile;
+using System;
 
 public class LoadLevel : MonoBehaviour {
 
@@ -9,10 +10,11 @@ public class LoadLevel : MonoBehaviour {
 	void Awake () {
         Tile.SetCamera();
         Tile.LoadLevel(level);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+        PolygonCollider2D[] polygonColliders = GameObject.Find("SpriteTileColliders").GetComponentsInChildren<PolygonCollider2D>();
+        foreach(PolygonCollider2D collider in polygonColliders) {
+            collider.isTrigger = true;
+            collider.gameObject.AddComponent(Type.GetType("WallCollision"));
+        }
 	}
 }
