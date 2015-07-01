@@ -8,12 +8,17 @@ public class LoadLevel : MonoBehaviour {
 
     public TextAsset level;
 
-    public static int NUM_TILES = 500;
+    public static int numTiles = 200;
 
     private static int WALL_INDEX = 0;
     private static int FLOOR_INDEX = 1;
+    private static float TILE_SIZE = 2f;
+
+    private Vector3 playerSpawn;
+    private GameObject player;
 
 	void Awake () {
+        player = GameObject.Find("Soldier");
         Tile.SetCamera();
 
         setTiles(GenerateLevel());
@@ -24,8 +29,8 @@ public class LoadLevel : MonoBehaviour {
         Int2 mapDimensions = new Int2(generatedLevel.GetLength(0), generatedLevel.GetLength(1));
 
         // create level
-        Tile.NewLevel(mapDimensions, 0, 1, 0, LayerLock.None);
-        Tile.AddLayer(mapDimensions, 0, 1, 0, LayerLock.None);
+        Tile.NewLevel(mapDimensions, 0, TILE_SIZE, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, TILE_SIZE, 0, LayerLock.None);
 
         // set sorting layers
         Tile.SetLayerSorting(0, 0);
@@ -50,6 +55,7 @@ public class LoadLevel : MonoBehaviour {
         }
 
         StartCoroutine("SetColliders");
+        player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 
     IEnumerator SetColliders()
@@ -67,9 +73,10 @@ public class LoadLevel : MonoBehaviour {
 
     int[,] GenerateLevel()
     {
-        int[,] level = new int[NUM_TILES * 2, NUM_TILES * 2];
+        int[,] level = new int[numTiles * 2, numTiles * 2];
+        int startingX = numTiles, startingY = numTiles;
 
-        Int2 current = new Int2(NUM_TILES, NUM_TILES);
+        Int2 current = new Int2(startingX, startingY);
         Int2 directionLastMoved = new Int2(0, 0);
         int numTilesPlaced = 0;
 
@@ -79,12 +86,12 @@ public class LoadLevel : MonoBehaviour {
         int topY = current.y;
         int bottomY = current.y;
 
-        while (numTilesPlaced < NUM_TILES)
+        while (numTilesPlaced < numTiles)
         {
             leftX = current.x < leftX ? current.x : leftX;
             rightX = current.x > rightX ? current.x : rightX;
-            topY = current.y < topY ? current.y : topY;
-            bottomY = current.y > bottomY ? current.y : bottomY;
+            topY = current.y > topY ? current.y : topY;
+            bottomY = current.y < bottomY ? current.y : bottomY;
 
             if (level[current.x, current.y] == 0)
             {
@@ -95,6 +102,8 @@ public class LoadLevel : MonoBehaviour {
             current += getRandomDirection(new int[] {25, 25, 25, 25});
         }
 
+        playerSpawn = new Vector3((startingX - leftX + 1) * TILE_SIZE, (startingY - bottomY + 1) * TILE_SIZE, 0);
+
         return cropLevel(level, leftX, rightX, topY, bottomY);
     }
 
@@ -102,7 +111,7 @@ public class LoadLevel : MonoBehaviour {
     {
         // Add an outer wall.
         int newWidth = rightX - leftX + 3;
-        int newHeight = bottomY - topY + 3;
+        int newHeight = topY - bottomY + 3;
 
         int[,] result = new int[newWidth, newHeight];
 
@@ -110,7 +119,7 @@ public class LoadLevel : MonoBehaviour {
         {
             for (int y = 1; y < newHeight - 1; y++)
             {
-                result[x, y] = levelToResize[x + leftX - 1, y + topY - 1];
+                result[x, y] = levelToResize[x + leftX - 1, y + bottomY - 1];
             }
         }
 
