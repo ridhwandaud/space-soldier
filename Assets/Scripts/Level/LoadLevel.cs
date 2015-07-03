@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using SpriteTile;
 using System;
 using System.Text;
 
 public class LoadLevel : MonoBehaviour {
-
-    public TextAsset level;
 
     public static int numTiles = 200;
 
@@ -16,12 +15,19 @@ public class LoadLevel : MonoBehaviour {
 
     private Vector3 playerSpawn;
     private GameObject player;
+    private List<Vector2> potentialEnemyPositions;
+    private EnemyPopulationCalculator enemyPopulationCalculator;
 
 	void Awake () {
         player = GameObject.Find("Soldier");
+        enemyPopulationCalculator = GetComponent<EnemyPopulationCalculator>();
+
+        // Difference between List and ArrayList?
+        potentialEnemyPositions = new List<Vector2>();
         Tile.SetCamera();
 
         setTiles(GenerateLevel());
+        EnemySpawner.spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
 	}
 
     void setTiles(int[,] generatedLevel)
@@ -120,6 +126,10 @@ public class LoadLevel : MonoBehaviour {
             for (int y = 1; y < newHeight - 1; y++)
             {
                 result[x, y] = levelToResize[x + leftX - 1, y + bottomY - 1];
+                if (result[x, y] == 1)
+                {
+                    potentialEnemyPositions.Add(new Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                }
             }
         }
 

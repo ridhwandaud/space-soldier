@@ -10,7 +10,6 @@ public class CameraFollow : MonoBehaviour {
 
     void Awake()
     {
-        
         rb = GameObject.Find("Soldier").GetComponent<Rigidbody2D>();
     }
 
