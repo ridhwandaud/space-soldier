@@ -26,7 +26,9 @@ public class LoadLevel : MonoBehaviour {
         potentialEnemyPositions = new List<Vector2>();
         Tile.SetCamera();
 
-        setTiles(GenerateLevel());
+        int[,] generatedLevel = GenerateLevel();
+        setTiles(generatedLevel);
+        AStar.world = generatedLevel;
         EnemySpawner.spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
 	}
 
@@ -41,6 +43,9 @@ public class LoadLevel : MonoBehaviour {
         // set sorting layers
         Tile.SetLayerSorting(0, 0);
         Tile.SetLayerSorting(1, 1);
+
+        // set collider layer so that walls can be detected by raycasting
+        Tile.SetColliderLayer(8);
 
         for (int x = 0; x < generatedLevel.GetLength(0); x++)
         {
@@ -71,7 +76,7 @@ public class LoadLevel : MonoBehaviour {
         PolygonCollider2D[] polygonColliders = GameObject.Find("SpriteTileColliders").GetComponentsInChildren<PolygonCollider2D>();
         foreach (PolygonCollider2D collider in polygonColliders)
         {
-            collider.isTrigger = true;
+            //collider.isTrigger = true;
             collider.gameObject.AddComponent(Type.GetType("WallCollision"));
         }
 

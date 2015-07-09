@@ -5,6 +5,8 @@ using SpriteTile;
 using Priority_Queue;
 
 public class AStar : MonoBehaviour {
+    public static int[,] world;
+
     class Node : PriorityQueueNode
     {
         public Node parent;
@@ -25,7 +27,7 @@ public class AStar : MonoBehaviour {
         //test();
     }
 
-    static List<Int2> findNeighbors(Int2 point, int[,] world)
+    static List<Int2> findNeighbors(Int2 point)
     {
         List<Int2> result = new List<Int2>();
 
@@ -34,19 +36,19 @@ public class AStar : MonoBehaviour {
             rightX = point.x + 1,
             leftX = point.x - 1;
 
-        if (aboveY >= 0 && canWalkHere(point.x, aboveY, world))
+        if (aboveY >= 0 && canWalkHere(point.x, aboveY))
         {
             result.Add(new Int2(point.x, aboveY));
         }
-        if (belowY < world.GetLength(1) && canWalkHere(point.x, belowY, world))
+        if (belowY < world.GetLength(1) && canWalkHere(point.x, belowY))
         {
             result.Add(new Int2(point.x, belowY));
         }
-        if (leftX >= 0 && canWalkHere(leftX, point.y, world))
+        if (leftX >= 0 && canWalkHere(leftX, point.y))
         {
             result.Add(new Int2(leftX, point.y));
         }
-        if (rightX < world.GetLength(0) && canWalkHere(rightX, point.y, world))
+        if (rightX < world.GetLength(0) && canWalkHere(rightX, point.y))
         {
             result.Add(new Int2(rightX, point.y));
         }
@@ -54,7 +56,7 @@ public class AStar : MonoBehaviour {
         return result;
     }
 
-    static bool canWalkHere(int x, int y, int[,] world)
+    static bool canWalkHere(int x, int y)
     {
         return world[x, y] == 0;
     }
@@ -64,14 +66,14 @@ public class AStar : MonoBehaviour {
         return Mathf.Abs(goal.x - point.x) + Mathf.Abs(goal.y - point.y);
     }
 
-    static int calculatePointIndex(Int2 point, int[,] world) {
+    static int calculatePointIndex(Int2 point) {
         return point.x + (point.y * world.GetLength(0));
     }
 
-    static List<Node> calculatePath(Int2 start, Int2 end, int[,] world)
+    static List<Node> calculatePath(Int2 start, Int2 end)
     {
-        Node startNode = new Node(null, start, calculatePointIndex(start, world));
-        Node targetNode = new Node(null, end, calculatePointIndex(end, world));
+        Node startNode = new Node(null, start, calculatePointIndex(start));
+        Node targetNode = new Node(null, end, calculatePointIndex(end));
 
         bool[] visited = new bool[world.GetLength(0) * world.GetLength(1)];
 
@@ -102,9 +104,9 @@ public class AStar : MonoBehaviour {
             }
             else
             {
-                List<Int2> neighbors = findNeighbors(current.point, world);
+                List<Int2> neighbors = findNeighbors(current.point);
                 foreach (Int2 neighbor in neighbors) {
-                    Node neighborNode = new Node(current, neighbor, calculatePointIndex(neighbor, world));
+                    Node neighborNode = new Node(current, neighbor, calculatePointIndex(neighbor));
                     int newNeighborCost = current.g + current.g + manhattanDistance(neighbor, current.point);
                     if (!visited[neighborNode.index] || neighborNode.g > newNeighborCost)
                     {
@@ -123,7 +125,7 @@ public class AStar : MonoBehaviour {
 
     static void test()
     {
-        int[,] testWorld = new int[5, 10] {
+        world = new int[5, 10] {
             {1, 1, 0, 1, 1, 0, 0, 0, 0, 1},
             {0, 0, 0, 1, 1, 0, 0, 1, 1 ,1},
             {1, 0, 0, 0, 0, 0, 0, 1, 1, 0},
@@ -131,7 +133,7 @@ public class AStar : MonoBehaviour {
             {1, 1, 1, 0, 1, 0, 0, 1, 1, 1}
         };
 
-        List<Node> path = calculatePath(new Int2(1, 0), new Int2(4, 6), testWorld);
+        List<Node> path = calculatePath(new Int2(1, 0), new Int2(4, 6));
 
         if (path == null)
         {

@@ -4,7 +4,6 @@ using System.Collections;
 public class Wander : MonoBehaviour {
 
     public Vector2 timeBetweenWanders = new Vector2(1.5f, 1.8f);
-    public float speed = 2f;
 
     private Rigidbody2D rb;
     private float nextWanderTime;
@@ -22,7 +21,7 @@ public class Wander : MonoBehaviour {
             vector.x * Mathf.Sin(radians) + vector.y * Mathf.Cos(radians));
     }
 
-    public void DoWander()
+    public void DoWander(float speed)
     {
         if (Time.time > nextWanderTime)
         {
