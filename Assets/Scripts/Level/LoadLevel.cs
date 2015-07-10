@@ -7,7 +7,7 @@ using System.Text;
 
 public class LoadLevel : MonoBehaviour {
 
-    public static int numTiles = 200;
+    public static int numTiles = 10;
 
     private static int WALL_INDEX = 0;
     private static int FLOOR_INDEX = 1;
@@ -29,12 +29,21 @@ public class LoadLevel : MonoBehaviour {
         int[,] generatedLevel = GenerateLevel();
         setTiles(generatedLevel);
         AStar.world = generatedLevel;
+        print("world dimensions: " + AStar.world.GetLength(0) + ", " + AStar.world.GetLength(1));
+        String str = "";
+        for (int x = 0; x < AStar.world.GetLength(0); x++)
+        {
+            for (int y = 0; y < AStar.world.GetLength(1); y++)
+                str += AStar.world[x, y] + ", ";
+            str += "\n";
+        }
+        print(str);
         EnemySpawner.spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
 	}
 
     void setTiles(int[,] generatedLevel)
     {
-        Int2 mapDimensions = new Int2(generatedLevel.GetLength(0), generatedLevel.GetLength(1));
+        Int2 mapDimensions = new Int2(generatedLevel.GetLength(1), generatedLevel.GetLength(0));
 
         // create level
         Tile.NewLevel(mapDimensions, 0, TILE_SIZE, 0, LayerLock.None);
@@ -47,23 +56,37 @@ public class LoadLevel : MonoBehaviour {
         // set collider layer so that walls can be detected by raycasting
         Tile.SetColliderLayer(8);
 
-        for (int x = 0; x < generatedLevel.GetLength(0); x++)
+        String str = "";
+
+        for (int row = 0; row < generatedLevel.GetLength(0); row++)
         {
-            for (int y = 0; y < generatedLevel.GetLength(1); y++)
+            for (int col = 0; col < generatedLevel.GetLength(1); col++)
             {
-                Int2 tileLocation = new Int2(x, y);
-                bool isWall = generatedLevel[x, y] == WALL_INDEX;
+                Int2 tileLocation = new Int2(col, row);
+                bool isWall = generatedLevel[row, col] == WALL_INDEX;
                 int tileIndex = isWall ? 2 : 0;
                 int layerIndex = isWall ? 1 : 0;
 
                 Tile.SetTile(tileLocation, layerIndex, 0, tileIndex, false);
 
-                if (isWall && hasAdjacentFloor(generatedLevel, x, y))
+                if (isWall)
+                {
+                    str += "w, ";
+                }
+                else
+                {
+                    str += "f, ";
+                }
+
+                if (isWall && hasAdjacentFloor(generatedLevel, row, col))
                 {
                     Tile.SetCollider(tileLocation, 1, true);
                 }
             }
+            str += "\n";
         }
+
+        print(str);
 
         StartCoroutine("SetColliders");
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
@@ -113,7 +136,7 @@ public class LoadLevel : MonoBehaviour {
             current += getRandomDirection(new int[] {25, 25, 25, 25});
         }
 
-        playerSpawn = new Vector3((startingX - leftX + 1) * TILE_SIZE, (startingY - bottomY + 1) * TILE_SIZE, 0);
+        playerSpawn = new Vector3((startingY - bottomY + 1) * TILE_SIZE, (startingX - leftX + 1) * TILE_SIZE, 0);
 
         return cropLevel(level, leftX, rightX, topY, bottomY);
     }
@@ -133,7 +156,7 @@ public class LoadLevel : MonoBehaviour {
                 result[x, y] = levelToResize[x + leftX - 1, y + bottomY - 1];
                 if (result[x, y] == 1)
                 {
-                    potentialEnemyPositions.Add(new Vector2(x * TILE_SIZE, y * TILE_SIZE));
+                    potentialEnemyPositions.Add(new Vector2(y * TILE_SIZE, x * TILE_SIZE));
                 }
             }
         }

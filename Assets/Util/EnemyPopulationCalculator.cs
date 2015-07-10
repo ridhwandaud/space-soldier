@@ -8,7 +8,7 @@ public class EnemyPopulationCalculator : MonoBehaviour {
     public List<EnemySpawnData> getEnemyData(int level)
     {
         List<EnemySpawnData> result = new List<EnemySpawnData>();
-        EnemySpawnData basicEnemySpawn = new EnemySpawnData(16, 20, basicEnemyPrefab);
+        EnemySpawnData basicEnemySpawn = new EnemySpawnData(1, 1, basicEnemyPrefab);
         result.Add(basicEnemySpawn);
 
         return result;

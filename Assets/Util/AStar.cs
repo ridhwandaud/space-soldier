@@ -7,7 +7,7 @@ using Priority_Queue;
 public class AStar : MonoBehaviour {
     public static int[,] world;
 
-    class Node : PriorityQueueNode
+    public class Node : PriorityQueueNode
     {
         public Node parent;
         public int index;
@@ -40,7 +40,7 @@ public class AStar : MonoBehaviour {
         {
             result.Add(new Int2(point.x, aboveY));
         }
-        if (belowY < world.GetLength(1) && canWalkHere(point.x, belowY))
+        if (belowY < world.GetLength(0) && canWalkHere(point.x, belowY))
         {
             result.Add(new Int2(point.x, belowY));
         }
@@ -48,7 +48,7 @@ public class AStar : MonoBehaviour {
         {
             result.Add(new Int2(leftX, point.y));
         }
-        if (rightX < world.GetLength(0) && canWalkHere(rightX, point.y))
+        if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y))
         {
             result.Add(new Int2(rightX, point.y));
         }
@@ -58,7 +58,9 @@ public class AStar : MonoBehaviour {
 
     static bool canWalkHere(int x, int y)
     {
-        return world[x, y] == 0;
+        // y is row, x is column. think about it.
+        // and of course, array is world[row, col]
+        return world[y, x] == 1;
     }
 
     static int manhattanDistance(Int2 point, Int2 goal)
@@ -67,11 +69,14 @@ public class AStar : MonoBehaviour {
     }
 
     static int calculatePointIndex(Int2 point) {
-        return point.x + (point.y * world.GetLength(0));
+        return point.y + (point.x * world.GetLength(1));
     }
 
-    static List<Node> calculatePath(Int2 start, Int2 end)
+    public static List<Node> calculatePath(Int2 start, Int2 end)
     {
+        print("start is " + start);
+        print("end is " + end);
+
         Node startNode = new Node(null, start, calculatePointIndex(start));
         Node targetNode = new Node(null, end, calculatePointIndex(end));
 
@@ -84,7 +89,6 @@ public class AStar : MonoBehaviour {
         while (frontier.Count > 0)
         {
             Node current = frontier.Dequeue();
-
             // If the popped node is the target node, then you are done.
             if (current.index == targetNode.index)
             {
@@ -105,9 +109,10 @@ public class AStar : MonoBehaviour {
             else
             {
                 List<Int2> neighbors = findNeighbors(current.point);
+
                 foreach (Int2 neighbor in neighbors) {
                     Node neighborNode = new Node(current, neighbor, calculatePointIndex(neighbor));
-                    int newNeighborCost = current.g + current.g + manhattanDistance(neighbor, current.point);
+                    int newNeighborCost = current.g + manhattanDistance(neighbor, current.point);
                     if (!visited[neighborNode.index] || neighborNode.g > newNeighborCost)
                     {
                         neighborNode.g = newNeighborCost;
@@ -119,21 +124,26 @@ public class AStar : MonoBehaviour {
             }
         }
 
+        print("failed, nigga.");
         // If frontier is emptied out and the target hasn't been reached, then the path is blocked and no shortest path exists.
         return null;
     }
 
     static void test()
     {
-        world = new int[5, 10] {
-            {1, 1, 0, 1, 1, 0, 0, 0, 0, 1},
-            {0, 0, 0, 1, 1, 0, 0, 1, 1 ,1},
-            {1, 0, 0, 0, 0, 0, 0, 1, 1, 0},
-            {1, 1, 0, 0, 1, 1, 0, 0, 1, 1},
-            {1, 1, 1, 0, 1, 0, 0, 1, 1, 1}
+        world = new int[9, 5] {
+        {0, 0, 0, 0, 0} ,
+        {0, 0, 1, 1, 0}, 
+        {0, 1, 1, 0, 0}, 
+        {0, 1, 1, 0, 0}, 
+        {0, 0, 1, 0, 0}, 
+        {0, 0, 1, 0, 0}, 
+        {0, 0, 1, 0, 0}, 
+        {0, 0, 1, 0, 0}, 
+        {0, 0, 0, 0, 0}
         };
 
-        List<Node> path = calculatePath(new Int2(1, 0), new Int2(4, 6));
+        List<Node> path = calculatePath(new Int2(2, 1), new Int2(2, 5));
 
         if (path == null)
         {

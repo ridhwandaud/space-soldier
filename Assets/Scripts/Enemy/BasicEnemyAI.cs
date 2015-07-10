@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using SpriteTile;
 
 public class BasicEnemyAI : MonoBehaviour {
 
@@ -8,6 +10,7 @@ public class BasicEnemyAI : MonoBehaviour {
     public float speed = 2f;
     public float nearbyEnemyRadius = .01f;
     public float chaseTimeSeconds = 3f;
+    public float pathFindingRate = 1f;
 
     private GameObject player;
     private Wander wanderScript;
@@ -16,6 +19,7 @@ public class BasicEnemyAI : MonoBehaviour {
 
     private int wallLayerMask = 1 << 8; // Layer 8 is the wall layer.
     private int enemyLayerMask = 1 << 9;
+    private float lastPathfindTime = 0;
 
     void Awake()
     {
@@ -26,34 +30,54 @@ public class BasicEnemyAI : MonoBehaviour {
     }
 	
 	void Update () {
-        float distanceFromPlayer = Vector3.Distance(player.transform.position, gameObject.transform.position);
+        Vector2 enemyPosition = gameObject.transform.position;
+        Vector2 playerPosition = player.transform.position;
 
-        if (CanSeePlayer())
-        {
+        float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
+
+        //if (CanSeePlayer())
+        //{
             if (distanceFromPlayer <= attackDistance)
             {
-                //rb2d.velocity = Vector2.zero;
-                rb2d.velocity = CalculateVelocity(gameObject.transform.position);
+                rb2d.velocity = CalculateVelocity(enemyPosition);
                 fireScript.Fire();
             }
             else if (distanceFromPlayer <= chargeDistance)
             {
-                rb2d.velocity = CalculateVelocity(player.transform.position);
-                //rb2d.velocity = (player.transform.position - gameObject.transform.position).normalized * speed;
+                // Do A*
+
+                if (Time.time > lastPathfindTime + pathFindingRate)
+                {
+                    lastPathfindTime = Time.time;
+                    List<AStar.Node> list = AStar.calculatePath(new Int2((int)enemyPosition.x / 2, (int)enemyPosition.y / 2),
+                        new Int2((int)playerPosition.x / 2, (int)playerPosition.y / 2));
+                    print(list.Count);
+                    if (hasReachedNode(list[0]))
+                    {
+                        rb2d.velocity = CalculateVelocity(new Vector2(list[1].point.x * 2f - 1f, list[1].point.y * 2f - 1f));
+                    }
+                    else
+                    {
+                        rb2d.velocity = CalculateVelocity(new Vector2(list[0].point.x * 2f - 1f, list[0].point.y * 2f - 1f));
+                    }
+                }
+                //rb2d.velocity = CalculateVelocity(player.transform.position);
             }
             else
             {
-                rb2d.velocity = CalculateVelocity(gameObject.transform.position);
-                //rb2d.velocity = Vector2.zero;
-                //rb2d.velocity = (player.transform.position - gameObject.transform.position).normalized * speed;
+                rb2d.velocity = CalculateVelocity(enemyPosition);
             }
-        }
-        else
-        {
-            rb2d.velocity = CalculateVelocity(gameObject.transform.position);
-            //rb2d.velocity = Vector2.zero;
-        }
+        //}
+        //else
+        //{
+            //rb2d.velocity = CalculateVelocity(enemyPosition);
+        //}
 	}
+
+    bool hasReachedNode(AStar.Node node)
+    {
+        return (gameObject.transform.position - new Vector3(node.point.x * 2f - 1f, node.point.y * 2f - 1f, 0)).sqrMagnitude < .8;
+    }
 
     Vector2 CalculateVelocity(Vector2 target)
     {
