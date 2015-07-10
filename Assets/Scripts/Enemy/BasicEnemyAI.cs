@@ -49,16 +49,22 @@ public class BasicEnemyAI : MonoBehaviour {
                 if (Time.time > lastPathfindTime + pathFindingRate)
                 {
                     lastPathfindTime = Time.time;
-                    List<AStar.Node> list = AStar.calculatePath(new Int2((int)enemyPosition.x / 2, (int)enemyPosition.y / 2),
-                        new Int2((int)playerPosition.x / 2, (int)playerPosition.y / 2));
+                    List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition), 
+                        AStar.positionToArrayIndices(playerPosition));
                     print(list.Count);
-                    if (hasReachedNode(list[0]))
+
+                    float mapHeight = AStar.world.GetLength(0) * 2f;
+                    if (hasReachedNode(list[1]))
                     {
-                        rb2d.velocity = CalculateVelocity(new Vector2(list[1].point.x * 2f - 1f, list[1].point.y * 2f - 1f));
+                        rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[2].point));
+                        print("list[1].point is " + list[2].point);
+                        print("setting velocity towards " + AStar.arrayIndicesToPosition(list[2].point));
                     }
                     else
                     {
-                        rb2d.velocity = CalculateVelocity(new Vector2(list[0].point.x * 2f - 1f, list[0].point.y * 2f - 1f));
+                        rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
+                        print("list[0].point is " + list[1].point);
+                        print("setting velocity towards " + AStar.arrayIndicesToPosition(list[1].point));
                     }
                 }
                 //rb2d.velocity = CalculateVelocity(player.transform.position);
@@ -76,7 +82,8 @@ public class BasicEnemyAI : MonoBehaviour {
 
     bool hasReachedNode(AStar.Node node)
     {
-        return (gameObject.transform.position - new Vector3(node.point.x * 2f - 1f, node.point.y * 2f - 1f, 0)).sqrMagnitude < .8;
+        return (new Vector2(gameObject.transform.position.x, gameObject.transform.position.y) - 
+            AStar.arrayIndicesToPosition(node.point)).sqrMagnitude < .8;
     }
 
     Vector2 CalculateVelocity(Vector2 target)
@@ -102,7 +109,7 @@ public class BasicEnemyAI : MonoBehaviour {
             contenders++;
         }
 
-        pullVector *= Mathf.Max(1, contenders);
+        pullVector *= Mathf.Max(1, 4 * contenders);
         pullVector += pushVector;
 
         return pullVector.normalized * speed;

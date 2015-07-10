@@ -69,7 +69,7 @@ public class AStar : MonoBehaviour {
     }
 
     static int calculatePointIndex(Int2 point) {
-        return point.y + (point.x * world.GetLength(1));
+        return point.x + (point.y * world.GetLength(1));
     }
 
     public static List<Node> calculatePath(Int2 start, Int2 end)
@@ -156,5 +156,15 @@ public class AStar : MonoBehaviour {
                 Debug.Log(node.point.ToString());
             }
         }
+    }
+
+    public static Int2 positionToArrayIndices(Vector2 position)
+    {
+        return new Int2((int)(position.x + 1) / 2, (int)(position.y + 1) / 2);
+    }
+
+    public static Vector2 arrayIndicesToPosition(Int2 point)
+    {
+        return new Vector2(point.x * 2f, point.y * 2f);
     }
 }

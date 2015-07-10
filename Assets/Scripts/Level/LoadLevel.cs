@@ -7,7 +7,7 @@ using System.Text;
 
 public class LoadLevel : MonoBehaviour {
 
-    public static int numTiles = 10;
+    public static int numTiles = 40;
 
     private static int WALL_INDEX = 0;
     private static int FLOOR_INDEX = 1;
