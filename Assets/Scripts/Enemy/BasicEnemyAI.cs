@@ -9,8 +9,10 @@ public class BasicEnemyAI : MonoBehaviour {
     public int chargeDistance = 12;
     public float speed = 2f;
     public float nearbyEnemyRadius = .01f;
-    public float chaseTimeSeconds = 3f;
-    public float pathFindingRate = 1f;
+    public float pathFindingRate = 2f;
+    public bool debug = false;
+    public float chaseTime = 3f;
+    public float attackDelay = .5f;
 
     private GameObject player;
     private Wander wanderScript;
@@ -20,6 +22,9 @@ public class BasicEnemyAI : MonoBehaviour {
     private int wallLayerMask = 1 << 8; // Layer 8 is the wall layer.
     private int enemyLayerMask = 1 << 9;
     private float lastPathfindTime = 0;
+    private bool chasing = false;
+    private bool readyToAttack = false;
+    private bool attackInvoked = false;
 
     void Awake()
     {
@@ -35,50 +40,87 @@ public class BasicEnemyAI : MonoBehaviour {
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
 
-        //if (CanSeePlayer())
-        //{
+        if (CanSeePlayer())
+        {
+            chasing = true;
+            CancelInvoke("DeactivateChase");
             if (distanceFromPlayer <= attackDistance)
             {
-                rb2d.velocity = CalculateVelocity(enemyPosition);
-                fireScript.Fire();
+                if (readyToAttack)
+                {
+                    rb2d.velocity = CalculateVelocity(enemyPosition);
+                    fireScript.Fire();
+                }
+                else if (!attackInvoked)
+                {
+                    attackInvoked = true;
+                    Invoke("ActivateAttack", attackDelay);
+                }
             }
             else if (distanceFromPlayer <= chargeDistance)
             {
-                // Do A*
-
-                if (Time.time > lastPathfindTime + pathFindingRate)
-                {
-                    lastPathfindTime = Time.time;
-                    List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition), 
-                        AStar.positionToArrayIndices(playerPosition));
-                    print(list.Count);
-
-                    float mapHeight = AStar.world.GetLength(0) * 2f;
-                    if (hasReachedNode(list[1]))
-                    {
-                        rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[2].point));
-                        print("list[1].point is " + list[2].point);
-                        print("setting velocity towards " + AStar.arrayIndicesToPosition(list[2].point));
-                    }
-                    else
-                    {
-                        rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
-                        print("list[0].point is " + list[1].point);
-                        print("setting velocity towards " + AStar.arrayIndicesToPosition(list[1].point));
-                    }
-                }
-                //rb2d.velocity = CalculateVelocity(player.transform.position);
+                readyToAttack = false;
+                rb2d.velocity = CalculateVelocity(player.transform.position);
+            }
+            else
+            {
+                readyToAttack = false;
+                rb2d.velocity = CalculateVelocity(enemyPosition);
+            }
+        }
+        else {
+            readyToAttack = false;
+            if (chasing)
+            {
+                Invoke("DeactivateChase", chaseTime);
+            }
+            if (distanceFromPlayer <= chargeDistance && chasing)
+            {
+                ExecuteAStar(enemyPosition, playerPosition);
+                //rb2d.velocity = CalculateVelocity(enemyPosition);
             }
             else
             {
                 rb2d.velocity = CalculateVelocity(enemyPosition);
             }
-        //}
-        //else
-        //{
-            //rb2d.velocity = CalculateVelocity(enemyPosition);
-        //}
+        } 
 	}
+
+    void ActivateAttack()
+    {
+        readyToAttack = true;
+        attackInvoked = false;
+    }
+
+    void DeactivateChase()
+    {
+        chasing = false;
+    }
+
+    void StartFiring()
+    {
+        rb2d.velocity = CalculateVelocity(gameObject.transform.position);
+        fireScript.Fire();
+    }
+
+    void ExecuteAStar(Vector2 enemyPosition, Vector2 playerPosition)
+    {
+        // Do A*
+        if (Time.time > lastPathfindTime + pathFindingRate)
+        {
+            lastPathfindTime = Time.time;
+            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
+                AStar.positionToArrayIndices(playerPosition));
+
+            float mapHeight = AStar.world.GetLength(0) * 2f;
+
+            rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
+            if (debug)
+            {
+                print("list[0].point is " + list[0].point + ". list[1].point is " + list[1].point);
+            }
+        }
+    }
 
     bool hasReachedNode(AStar.Node node)
     {
@@ -108,6 +150,7 @@ public class BasicEnemyAI : MonoBehaviour {
 
             contenders++;
         }
+
 
         pullVector *= Mathf.Max(1, 4 * contenders);
         pullVector += pushVector;

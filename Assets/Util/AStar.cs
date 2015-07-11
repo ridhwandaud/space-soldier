@@ -7,6 +7,7 @@ using Priority_Queue;
 public class AStar : MonoBehaviour {
     public static int[,] world;
 
+    // Struct would be better. Structs are treated like primitives and are created on the stack.
     public class Node : PriorityQueueNode
     {
         public Node parent;
@@ -72,11 +73,9 @@ public class AStar : MonoBehaviour {
         return point.x + (point.y * world.GetLength(1));
     }
 
+    // Get rid of all of the news, since they are creating garbage. Reuse the objects.
     public static List<Node> calculatePath(Int2 start, Int2 end)
     {
-        print("start is " + start);
-        print("end is " + end);
-
         Node startNode = new Node(null, start, calculatePointIndex(start));
         Node targetNode = new Node(null, end, calculatePointIndex(end));
 
@@ -110,7 +109,7 @@ public class AStar : MonoBehaviour {
             {
                 List<Int2> neighbors = findNeighbors(current.point);
 
-                foreach (Int2 neighbor in neighbors) {
+                foreach (Int2 neighbor in neighbors) { // foreach has a bug that creates garbage via wrappers
                     Node neighborNode = new Node(current, neighbor, calculatePointIndex(neighbor));
                     int newNeighborCost = current.g + manhattanDistance(neighbor, current.point);
                     if (!visited[neighborNode.index] || neighborNode.g > newNeighborCost)
@@ -124,7 +123,7 @@ public class AStar : MonoBehaviour {
             }
         }
 
-        print("failed, nigga.");
+        print("no path found.");
         // If frontier is emptied out and the target hasn't been reached, then the path is blocked and no shortest path exists.
         return null;
     }
