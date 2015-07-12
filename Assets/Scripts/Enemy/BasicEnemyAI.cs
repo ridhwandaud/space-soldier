@@ -26,6 +26,8 @@ public class BasicEnemyAI : MonoBehaviour {
     private bool readyToAttack = false;
     private bool attackInvoked = false;
 
+    private bool isFirstFrame = true;
+
     void Awake()
     {
         player = GameObject.Find("Soldier");
@@ -35,6 +37,12 @@ public class BasicEnemyAI : MonoBehaviour {
     }
 	
 	void Update () {
+        if (isFirstFrame)
+        {
+            isFirstFrame = false;
+            return;
+        }
+
         Vector2 enemyPosition = gameObject.transform.position;
         Vector2 playerPosition = player.transform.position;
 
@@ -60,7 +68,14 @@ public class BasicEnemyAI : MonoBehaviour {
             else if (distanceFromPlayer <= chargeDistance)
             {
                 readyToAttack = false;
-                rb2d.velocity = CalculateVelocity(player.transform.position);
+                if (DirectPathExistsToPlayer())
+                {
+                    rb2d.velocity = CalculateVelocity(player.transform.position);
+                }
+                else
+                {
+                    ExecuteAStar(enemyPosition, playerPosition);
+                }
             }
             else
             {
@@ -77,10 +92,10 @@ public class BasicEnemyAI : MonoBehaviour {
             if (distanceFromPlayer <= chargeDistance && chasing)
             {
                 ExecuteAStar(enemyPosition, playerPosition);
-                //rb2d.velocity = CalculateVelocity(enemyPosition);
             }
             else
             {
+                chasing = false;
                 rb2d.velocity = CalculateVelocity(enemyPosition);
             }
         } 
@@ -118,6 +133,7 @@ public class BasicEnemyAI : MonoBehaviour {
             if (debug)
             {
                 print("list[0].point is " + list[0].point + ". list[1].point is " + list[1].point);
+                print("target position is " + AStar.arrayIndicesToPosition(list[1].point));
             }
         }
     }
@@ -158,10 +174,20 @@ public class BasicEnemyAI : MonoBehaviour {
         return pullVector.normalized * speed;
     }
 
+    // This is a bit messed up. Because the enemies collide with walls, they can end up getting stuck because they charge the player the moment they see him.
     bool CanSeePlayer()
     {
-        RaycastHit2D hit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
+        RaycastHit2D linecastHit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
         
-        return hit.transform == null;
+
+        return linecastHit.transform == null;
+    }
+
+    bool DirectPathExistsToPlayer()
+    {
+        RaycastHit2D boxHit = Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0f, player.transform.position - transform.position,
+            1, wallLayerMask);
+
+        return boxHit.transform == null;
     }
 }

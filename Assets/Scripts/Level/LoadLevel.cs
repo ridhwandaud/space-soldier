@@ -29,15 +29,6 @@ public class LoadLevel : MonoBehaviour {
         int[,] generatedLevel = GenerateLevel();
         setTiles(generatedLevel);
         AStar.world = generatedLevel;
-        print("world dimensions: " + AStar.world.GetLength(0) + ", " + AStar.world.GetLength(1));
-        String str = "";
-        for (int x = 0; x < AStar.world.GetLength(0); x++)
-        {
-            for (int y = 0; y < AStar.world.GetLength(1); y++)
-                str += AStar.world[x, y] + ", ";
-            str += "\n";
-        }
-        print(str);
         EnemySpawner.spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
 	}
 
@@ -56,7 +47,6 @@ public class LoadLevel : MonoBehaviour {
         // set collider layer so that walls can be detected by raycasting
         Tile.SetColliderLayer(8);
 
-        String str = "";
 
         for (int row = 0; row < generatedLevel.GetLength(0); row++)
         {
@@ -69,24 +59,13 @@ public class LoadLevel : MonoBehaviour {
 
                 Tile.SetTile(tileLocation, layerIndex, 0, tileIndex, false);
 
-                if (isWall)
-                {
-                    str += "w, ";
-                }
-                else
-                {
-                    str += "f, ";
-                }
-
                 if (isWall && hasAdjacentFloor(generatedLevel, row, col))
                 {
                     Tile.SetCollider(tileLocation, 1, true);
                 }
             }
-            str += "\n";
         }
 
-        print(str);
 
         StartCoroutine("SetColliders");
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
