@@ -96,19 +96,21 @@ public class AStar : MonoBehaviour {
         Node startNode = new Node(null, start, calculatePointIndex(start));
         Node targetNode = new Node(null, end, calculatePointIndex(end));
 
-        bool[] visited = new bool[world.GetLength(0) * world.GetLength(1)];
+        Node[] visited = new Node[world.GetLength(0) * world.GetLength(1)];
 
         HeapPriorityQueue<Node> frontier = new HeapPriorityQueue<Node>(100);
+        List<Node> result = new List<Node>();
         frontier.Enqueue(startNode, 0); // dummy value for priority since it will be popped immediately.
 
         // Continue algorithm until there are no more open nodes.
         while (frontier.Count > 0)
         {
             Node current = frontier.Dequeue();
+
             // If the popped node is the target node, then you are done.
             if (current.index == targetNode.index)
             {
-                List<Node> result = new List<Node>();
+                result.Clear();
                 result.Add(current);
 
                 Node nodeInShortestPath = current.parent;
@@ -120,29 +122,41 @@ public class AStar : MonoBehaviour {
                 }
 
                 result.Reverse();
-                return result;
             }
             else
             {
                 List<Int2> neighbors = findNeighbors(current.point);
 
                 foreach (Int2 neighbor in neighbors) { // foreach has a bug that creates garbage via wrappers
-                    Node neighborNode = new Node(current, neighbor, calculatePointIndex(neighbor));
+                    int pointIndex = calculatePointIndex(neighbor);
+
+                    Node neighborNode = visited[pointIndex] != null ?
+                        visited[pointIndex] : new Node(current, neighbor, pointIndex);
                     int newNeighborCost = current.g + manhattanDistance(neighbor, current.point);
-                    if (!visited[neighborNode.index] || neighborNode.g > newNeighborCost)
+
+                    if (visited[neighborNode.index] == null || neighborNode.g > newNeighborCost)
                     {
                         neighborNode.g = newNeighborCost;
                         neighborNode.f = neighborNode.g + manhattanDistance(neighbor, targetNode.point);
-                        frontier.Enqueue(neighborNode, neighborNode.f);
-                        visited[neighborNode.index] = true;
+                        neighborNode.parent = current;
+
+                        if (!frontier.Contains(neighborNode))
+                        {
+                            frontier.Enqueue(neighborNode, neighborNode.f);
+                        }
+                        else
+                        {
+                            frontier.UpdatePriority(neighborNode, neighborNode.f);
+                        }
+                        
+                        visited[neighborNode.index] = neighborNode;
                     }
                 }
             }
         }
 
-        print("no path found.");
         // If frontier is emptied out and the target hasn't been reached, then the path is blocked and no shortest path exists.
-        return null;
+        return result;
     }
 
     static void test()

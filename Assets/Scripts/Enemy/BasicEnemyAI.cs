@@ -128,14 +128,7 @@ public class BasicEnemyAI : MonoBehaviour {
             List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
                 AStar.positionToArrayIndices(playerPosition));
 
-            float mapHeight = AStar.world.GetLength(0) * 2f;
-
             rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
-            if (debug)
-            {
-                print("list[0].point is " + list[0].point + ". list[1].point is " + list[1].point);
-                print("target position is " + AStar.arrayIndicesToPosition(list[1].point));
-            }
         }
     }
 
@@ -170,7 +163,6 @@ public class BasicEnemyAI : MonoBehaviour {
         return pullVector.normalized * speed;
     }
 
-    // This is a bit messed up. Because the enemies collide with walls, they can end up getting stuck because they charge the player the moment they see him.
     bool CanSeePlayer()
     {
         RaycastHit2D linecastHit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
@@ -181,7 +173,9 @@ public class BasicEnemyAI : MonoBehaviour {
 
     bool PathToPlayerIsNotBlocked()
     {
-        RaycastHit2D boxHit = Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0f, player.transform.position - transform.position,
+        Vector2 colliderSize = GetComponent<BoxCollider2D>().size;
+        Vector2 boxCastSize = new Vector2(colliderSize.x * 1.25f, colliderSize.y * 1.25f);
+        RaycastHit2D boxHit = Physics2D.BoxCast(transform.position, boxCastSize, 0f, player.transform.position - transform.position,
             1, wallLayerMask);
 
         return boxHit.transform == null;
