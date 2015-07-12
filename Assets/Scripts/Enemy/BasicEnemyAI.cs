@@ -68,7 +68,7 @@ public class BasicEnemyAI : MonoBehaviour {
             else if (distanceFromPlayer <= chargeDistance)
             {
                 readyToAttack = false;
-                if (DirectPathExistsToPlayer())
+                if (PathToPlayerIsNotBlocked())
                 {
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
@@ -89,6 +89,7 @@ public class BasicEnemyAI : MonoBehaviour {
             {
                 Invoke("DeactivateChase", chaseTime);
             }
+
             if (distanceFromPlayer <= chargeDistance && chasing)
             {
                 ExecuteAStar(enemyPosition, playerPosition);
@@ -138,11 +139,6 @@ public class BasicEnemyAI : MonoBehaviour {
         }
     }
 
-    bool hasReachedNode(AStar.Node node)
-    {
-        return (new Vector2(gameObject.transform.position.x, gameObject.transform.position.y) - 
-            AStar.arrayIndicesToPosition(node.point)).sqrMagnitude < .8;
-    }
 
     Vector2 CalculateVelocity(Vector2 target)
     {
@@ -183,7 +179,7 @@ public class BasicEnemyAI : MonoBehaviour {
         return linecastHit.transform == null;
     }
 
-    bool DirectPathExistsToPlayer()
+    bool PathToPlayerIsNotBlocked()
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(transform.position, GetComponent<BoxCollider2D>().size, 0f, player.transform.position - transform.position,
             1, wallLayerMask);

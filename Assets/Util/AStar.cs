@@ -18,6 +18,7 @@ public class AStar : MonoBehaviour {
 
         public Node(Node parent, Int2 point, int index)
         {
+            g = 0;
             this.parent = parent;
             this.point = point;
             this.index = index;
@@ -40,10 +41,26 @@ public class AStar : MonoBehaviour {
         if (aboveY >= 0 && canWalkHere(point.x, aboveY))
         {
             result.Add(new Int2(point.x, aboveY));
+            if (leftX >= 0 && canWalkHere(leftX, point.y) && canWalkHere(leftX, aboveY))
+            {
+                result.Add(new Int2(leftX, aboveY));
+            }
+            if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, aboveY))
+            {
+                result.Add(new Int2(rightX, aboveY));
+            }
         }
         if (belowY < world.GetLength(0) && canWalkHere(point.x, belowY))
         {
             result.Add(new Int2(point.x, belowY));
+            if (leftX >= 0 && canWalkHere(leftX, point.y) && canWalkHere(leftX, belowY))
+            {
+                result.Add(new Int2(leftX, belowY));
+            }
+            if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, belowY))
+            {
+                result.Add(new Int2(rightX, belowY));
+            }
         }
         if (leftX >= 0 && canWalkHere(leftX, point.y))
         {
