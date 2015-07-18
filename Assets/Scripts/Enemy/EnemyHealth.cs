@@ -7,15 +7,22 @@ public class EnemyHealth : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player Bullet")
+        if (other.tag == "Player Projectile")
         {
-            health--;
-            other.GetComponent<ProjectileDestroy>().Destroy();
+            ProjectileProperties projectileProperties = other.GetComponent<ProjectileProperties>();
 
-            if (health <= 0)
-            {
-                Destroy(gameObject);
-            }
+            other.GetComponent<ProjectileDestroy>().Destroy();
+            InflictDamage(projectileProperties.Damage);
+        }
+    }
+
+    public void InflictDamage(int damagePoints)
+    {
+        health -= damagePoints;
+
+        if (health <= 0)
+        {
+            Destroy(gameObject);
         }
     }
 }

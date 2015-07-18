@@ -1,29 +1,30 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class BasicGun : MonoBehaviour {
+public class MachineGun : Weapon
+{
 
-    public float firingDelay = .1f;
-    public float bulletSpeed = 50;
+    private float firingDelay = .1f;
+    private float bulletSpeed = 50;
+    private int energyCost = 0;
 
     private float nextFiringTime;
     private StackPool bulletPool;
 
-	void Awake () {
+    public MachineGun()
+    {
         nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        // 0 = left, 1 = right, 2 = middle
-        if (Input.GetMouseButton(0) && Time.time > nextFiringTime)
+    }
+
+    public override bool Fire(Transform transform)
+    {
+        if (Time.time > nextFiringTime)
         {
             nextFiringTime = Time.time + firingDelay;
             GameObject bullet = bulletPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
-            
+
             // Fire bullet towards mouse pointer.
             Vector3 mouse = Input.mousePosition;
             Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
@@ -33,6 +34,15 @@ public class BasicGun : MonoBehaviour {
             bullet.SetActive(true);
 
             bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
+
+            return true;
         }
-	}
+
+        return false;
+    }
+
+    public override int GetEnergyCost()
+    {
+        return energyCost;
+    }
 }

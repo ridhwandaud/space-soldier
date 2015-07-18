@@ -128,7 +128,10 @@ public class BasicEnemyAI : MonoBehaviour {
             List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
                 AStar.positionToArrayIndices(playerPosition));
 
-            rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
+            if (list.Count > 1)
+            {
+                rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
+            }
         }
     }
 

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// TODO: Add logic to start these off as inactive unless explicitly activated, e.g. if a level introduces a new enemy type
+// or if a player acquires a new weapon.
 public class StackPool : MonoBehaviour {
 
     public GameObject pooledObject;

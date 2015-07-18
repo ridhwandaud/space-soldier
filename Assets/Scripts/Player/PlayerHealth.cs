@@ -4,7 +4,7 @@ using System.Collections;
 
 public class PlayerHealth : MonoBehaviour {
 
-    public int healthPoints = 30;
+    public int healthPoints = 15;
     public Slider healthSlider;
 
 	void OnTriggerEnter2D (Collider2D other) {
