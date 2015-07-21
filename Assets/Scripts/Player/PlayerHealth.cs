@@ -7,19 +7,14 @@ public class PlayerHealth : MonoBehaviour {
     public int healthPoints = 15;
     public Slider healthSlider;
 
-	void OnTriggerEnter2D (Collider2D other) {
-        if (other.tag.Equals("Fireball"))
-        {
-            healthPoints--;
-            other.GetComponent<ProjectileDestroy>().Destroy();
-        }
-
-        // Only do this if the player takes damage?
+    public void InflictDamage(int damage)
+    {
+        healthPoints -= damage;
         healthSlider.value = healthPoints;
 
         if (healthPoints == 0)
         {
             gameObject.SetActive(false);
         }
-	}
+    }
 }

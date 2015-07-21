@@ -29,7 +29,7 @@ public class StackPool : MonoBehaviour {
 
         if (allowGrowth)
         {
-            print("Growing to " + pooledObjects.Count + 1);
+            print("Growing to " + ++pooledAmount);
             GameObject obj = Instantiate(pooledObject) as GameObject;
             return obj;
         }

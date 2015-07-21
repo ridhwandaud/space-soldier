@@ -13,7 +13,7 @@ public class ProjectileDestroy : MonoBehaviour {
     }
 
 	void OnEnable () {
-        Invoke("Destroy", 2f);
+        //Invoke("Destroy", 2f);
 	}
 
     public void Destroy()

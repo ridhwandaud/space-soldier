@@ -67,21 +67,19 @@ public class LoadLevel : MonoBehaviour {
         }
 
 
-        StartCoroutine("SetColliders");
+        StartCoroutine("ConfigureColliders");
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 
-    IEnumerator SetColliders()
+    IEnumerator ConfigureColliders()
     {
         yield return new WaitForEndOfFrame();
 
         PolygonCollider2D[] polygonColliders = GameObject.Find("SpriteTileColliders").GetComponentsInChildren<PolygonCollider2D>();
         foreach (PolygonCollider2D collider in polygonColliders)
         {
-            //collider.isTrigger = true;
-            collider.gameObject.AddComponent(Type.GetType("WallCollision"));
+            collider.tag = "Wall";
         }
-
     }
 
     int[,] GenerateLevel()
