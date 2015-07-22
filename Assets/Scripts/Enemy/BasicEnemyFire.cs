@@ -6,6 +6,7 @@ public class BasicEnemyFire : MonoBehaviour {
     public float fireInterval = 2f;
     public float projectileSpeed = 10f;
     public string projectilePoolName;
+    public int accuracyVariation = 30;
 
     private StackPool projectilePool;
     private GameObject player;
@@ -18,6 +19,8 @@ public class BasicEnemyFire : MonoBehaviour {
 	}
 	
 	public void Fire () {
+        int missAmountDegrees = Random.Range(-accuracyVariation, accuracyVariation);
+
         if (Time.time > nextFireTime)
         {
             nextFireTime = Time.time + fireInterval;
@@ -25,12 +28,12 @@ public class BasicEnemyFire : MonoBehaviour {
             projectile.transform.position = gameObject.transform.position;
 
             Vector3 offset = player.transform.position - gameObject.transform.position;
-            float rotation = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg + 90;
+            float rotation = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg + 90 + missAmountDegrees;
             projectile.transform.rotation = Quaternion.Euler(new Vector3(0, 0, rotation));
 
             projectile.SetActive(true);
 
-            projectile.GetComponent<Rigidbody2D>().velocity = projectileSpeed * offset.normalized;
+            projectile.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(projectileSpeed * offset.normalized, Mathf.Deg2Rad * missAmountDegrees);
         }
 	}
 }
