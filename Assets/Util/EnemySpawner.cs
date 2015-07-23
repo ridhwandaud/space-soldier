@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour {
+    public Transform enemyHolder;
 
-    public static void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions)
+    public void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions)
     {
         foreach (EnemySpawnData spawnDatum in spawnData)
         {
@@ -18,8 +19,9 @@ public class EnemySpawner : MonoBehaviour {
                 Vector2 spawnPosition = potentialEnemyPositions[index];
                 potentialEnemyPositions.RemoveAt(index);
 
-                Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0),
-                    Quaternion.identity);
+                GameObject obj = Instantiate(enemyPrefab, new Vector3(spawnPosition.x, spawnPosition.y, 0),
+                    Quaternion.identity) as GameObject;
+                obj.transform.SetParent(enemyHolder);
 
                 numEnemiesPlaced++;
             }

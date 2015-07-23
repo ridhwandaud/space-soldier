@@ -8,28 +8,26 @@ using System.Text;
 public class LoadLevel : MonoBehaviour {
 
     public static int numTiles = 200;
+    public GameObject player;
 
     private static int WALL_INDEX = 0;
     private static int FLOOR_INDEX = 1;
     private static float TILE_SIZE = 2f;
 
     private Vector3 playerSpawn;
-    private GameObject player;
     private List<Vector2> potentialEnemyPositions;
     private EnemyPopulationCalculator enemyPopulationCalculator;
 
 	void Awake () {
-        player = GameObject.Find("Soldier");
         enemyPopulationCalculator = GetComponent<EnemyPopulationCalculator>();
 
-        // Difference between List and ArrayList?
         potentialEnemyPositions = new List<Vector2>();
         Tile.SetCamera();
 
         int[,] generatedLevel = GenerateLevel();
         setTiles(generatedLevel);
         AStar.world = generatedLevel;
-        EnemySpawner.spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
+        GetComponent<EnemySpawner>().spawnEnemies(enemyPopulationCalculator.getEnemyData(0), potentialEnemyPositions);
 	}
 
     void setTiles(int[,] generatedLevel)

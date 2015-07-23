@@ -121,7 +121,6 @@ public class BasicEnemyAI : MonoBehaviour {
 
     void ExecuteAStar(Vector2 enemyPosition, Vector2 playerPosition)
     {
-        // Do A*
         if (Time.time > lastPathfindTime + pathFindingRate)
         {
             lastPathfindTime = Time.time;
@@ -134,7 +133,6 @@ public class BasicEnemyAI : MonoBehaviour {
             }
         }
     }
-
 
     Vector2 CalculateVelocity(Vector2 target)
     {
@@ -169,7 +167,6 @@ public class BasicEnemyAI : MonoBehaviour {
     bool CanSeePlayer()
     {
         RaycastHit2D linecastHit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
-        
 
         return linecastHit.transform == null;
     }

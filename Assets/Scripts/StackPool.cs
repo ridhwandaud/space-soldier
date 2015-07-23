@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class StackPool : MonoBehaviour {
 
     public GameObject pooledObject;
+    public Transform pooledObjectHolder;
     public int pooledAmount = 20;
     public bool allowGrowth = true;
 
@@ -17,6 +18,7 @@ public class StackPool : MonoBehaviour {
         for (int i = 0; i < pooledAmount; i++)
         {
             GameObject obj = Instantiate(pooledObject) as GameObject;
+            obj.transform.SetParent(pooledObjectHolder);
             obj.SetActive(false);
             pooledObjects.Push(obj);
         }
@@ -31,6 +33,7 @@ public class StackPool : MonoBehaviour {
         {
             print("Growing to " + ++pooledAmount);
             GameObject obj = Instantiate(pooledObject) as GameObject;
+            obj.transform.SetParent(pooledObjectHolder);
             return obj;
         }
 
