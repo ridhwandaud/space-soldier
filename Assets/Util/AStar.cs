@@ -4,6 +4,7 @@ using System;
 using SpriteTile;
 using Priority_Queue;
 
+// TODO: This class needs heavy optimization - creates way too much garbage.
 public class AStar : MonoBehaviour {
     public static int[,] world;
 
