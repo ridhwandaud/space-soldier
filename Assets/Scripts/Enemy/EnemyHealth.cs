@@ -12,6 +12,7 @@ public class EnemyHealth : MonoBehaviour {
         if (health <= 0)
         {
             Destroy(gameObject);
+            Application.LoadLevel(Application.loadedLevel);
         }
     }
 }

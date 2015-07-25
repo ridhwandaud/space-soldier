@@ -6,33 +6,55 @@ using System;
 using System.Text;
 
 public class LoadLevel : MonoBehaviour {
-
-    public GameObject player;
-
     HashSet<int> WALL_INDICES = new HashSet<int>() {0};
     HashSet<int> FLOOR_INDICES = new HashSet<int>() {1};
 
     public static float TILE_SIZE = 2f;
+    public static LoadLevel instance = null;
 
-    private Vector3 playerSpawn;
-    private List<Vector2> potentialEnemyPositions;
     private List<LevelType> levelTypes;
+    private int level = 0;
 
 	void Awake () {
+        if (instance == null) {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+        InitLevel();
+	}
+
+    void OnLevelWasLoaded(int index)
+    {
+        level++;
+        InitLevel();
+    }
+
+    void InitLevel()
+    {
+        Vector3 playerSpawn;
+        List<Vector2> potentialEnemyPositions;
+        GameObject player = GameObject.Find("Soldier");
+
+        // Eventually there will be multiple level types and the level type will be randomly selected.
         levelTypes = new List<LevelType>();
         levelTypes.Add(new LevelType(new BasicLevelGenerator(), new BasicLevelPopulator()));
-     
+
         Tile.SetCamera();
 
-        int[,] generatedLevel = levelTypes[0].getLevelGenerator().GenerateLevel(0, 
+        int[,] generatedLevel = levelTypes[0].getLevelGenerator().GenerateLevel(0,
             out potentialEnemyPositions, out playerSpawn);
-        setTiles(generatedLevel);
+        setTiles(generatedLevel, playerSpawn, player);
         AStar.world = generatedLevel;
 
         levelTypes[0].getLevelPopulator().populateLevel(0, potentialEnemyPositions);
-	}
+    }
 
-    void setTiles(int[,] generatedLevel)
+    void setTiles(int[,] generatedLevel, Vector3 playerSpawn, GameObject player)
     {
         Int2 mapDimensions = new Int2(generatedLevel.GetLength(1), generatedLevel.GetLength(0));
 
