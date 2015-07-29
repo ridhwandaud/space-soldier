@@ -22,9 +22,10 @@ public class PlayerFiring : MonoBehaviour {
 	void Awake () {
         nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
+        SkillTree skillTree = GetComponent<SkillTree>();
 
-        leftGun = new MachineGun();
-        rightGun = new EnergyGun();
+        leftGun = new MachineGun(skillTree);
+        rightGun = new EnergyGun(skillTree);
         weapons = new List<Weapon>();
 	}
 	

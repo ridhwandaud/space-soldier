@@ -10,7 +10,7 @@ public class EnergyGun : Weapon
     private float nextFiringTime;
     private StackPool orbPool;
 
-    public EnergyGun()
+    public EnergyGun(SkillTree skillTree) : base(skillTree)
     {
         nextFiringTime = 0;
         orbPool = GameObject.Find("EnergyOrbPool").GetComponent<StackPool>();
@@ -44,5 +44,10 @@ public class EnergyGun : Weapon
     public override int GetEnergyCost()
     {
         return energyCost;
+    }
+
+    public override string GetName()
+    {
+        return "machineGun";
     }
 }

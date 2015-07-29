@@ -10,7 +10,7 @@ public class MachineGun : Weapon
     private float nextFiringTime;
     private StackPool bulletPool;
 
-    public MachineGun()
+    public MachineGun(SkillTree skillTree) : base(skillTree)
     {
         nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
@@ -32,7 +32,6 @@ public class MachineGun : Weapon
 
             // this has to be done before setting velocity or it won't work.
             bullet.SetActive(true);
-
             bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
 
             return true;
@@ -44,5 +43,10 @@ public class MachineGun : Weapon
     public override int GetEnergyCost()
     {
         return energyCost;
+    }
+
+    public override string GetName()
+    {
+        return "machineGun";
     }
 }
