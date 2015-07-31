@@ -1,32 +1,45 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerExperience : MonoBehaviour {
 
-    private int experiencePoints = 0;
-    private int experienceToLevelUp = 30;
-
     public int Level { get; set; }
     public int AvailableSkillPoints { get; set; }
+    public Slider expSlider;
+    public Text levelIndicator;
+
+    private int experiencePoints = 0;
+    private int experienceToLevelUp = 10;
+
+    void Awake()
+    {
+        Level = 1;
+        expSlider.maxValue = experienceToLevelUp;
+    }
 
     public void IncrementExperience(int experiencePointsGained)
     {
         experiencePoints += experiencePointsGained;
-        print("Gained " + experiencePointsGained + " experience. Now at " + experiencePoints);
-        // TODO: Slider stuff.
 
         if (experiencePoints >= experienceToLevelUp)
         {
             experiencePoints = experiencePoints - experienceToLevelUp;
             LevelUp();
-            experienceToLevelUp = calculateExperienceToLevelUp();
         }
+
+        expSlider.value = experiencePoints;
     }
 
     private void LevelUp()
     {
         Level++;
         AvailableSkillPoints++;
+        experienceToLevelUp = calculateExperienceToLevelUp();
+        expSlider.maxValue = experienceToLevelUp;
+
+        levelIndicator.text = Level.ToString();
+
         // TODO: Trigger some other behaviors, such as indicating on the GUI that a new level was achieved.
     }
 
