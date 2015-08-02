@@ -16,7 +16,7 @@ public abstract class Weapon
 
     public abstract string GetName();
 
-    protected int getPoints()
+    protected int GetPoints()
     {
         return skillTree.GetNumPointsForSkill(GetName());
     }

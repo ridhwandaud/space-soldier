@@ -25,7 +25,7 @@ public class PlayerFiring : MonoBehaviour {
         SkillTree skillTree = GetComponent<SkillTree>();
 
         leftGun = new MachineGun(skillTree);
-        rightGun = new EnergyGun(skillTree);
+        rightGun = new MultiShot(skillTree);
         weapons = new List<Weapon>();
 	}
 	

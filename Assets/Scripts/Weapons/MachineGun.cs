@@ -2,7 +2,6 @@
 
 public class MachineGun : Weapon
 {
-
     private float firingDelay = .1f;
     private float bulletSpeed = 50;
     private int energyCost = 0;
