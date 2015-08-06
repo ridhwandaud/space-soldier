@@ -8,19 +8,17 @@ public class MultiShot : Weapon
     private int energyCost = 0;
     private float angleBetweenShots = 10 * Mathf.Deg2Rad;
 
-    private float nextFiringTime;
     private StackPool bulletPool;
 
     public MultiShot(SkillTree skillTree)
         : base(skillTree)
     {
-        nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
     }
 
     public override bool Fire(Transform transform)
     {
-        if (Time.time > nextFiringTime)
+        if (CanFire())
         {
             nextFiringTime = Time.time + firingDelay;
             int numberOfShots = GetPoints() + 3;

@@ -6,18 +6,16 @@ public class MachineGun : Weapon
     private float bulletSpeed = 50;
     private int energyCost = 0;
 
-    private float nextFiringTime;
     private StackPool bulletPool;
 
     public MachineGun(SkillTree skillTree) : base(skillTree)
     {
-        nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
     }
 
     public override bool Fire(Transform transform)
     {
-        if (Time.time > nextFiringTime)
+        if (CanFire())
         {
             nextFiringTime = Time.time + firingDelay;
             GameObject bullet = bulletPool.Pop();
