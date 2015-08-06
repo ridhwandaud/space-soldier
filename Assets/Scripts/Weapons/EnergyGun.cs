@@ -2,23 +2,20 @@
 
 public class EnergyGun : Weapon
 {
-
     private float firingDelay = .3f;
     private float bulletSpeed = 20;
     private int energyCost = 1;
 
-    private float nextFiringTime;
     private StackPool orbPool;
 
     public EnergyGun(SkillTree skillTree) : base(skillTree)
     {
-        nextFiringTime = 0;
         orbPool = GameObject.Find("EnergyOrbPool").GetComponent<StackPool>();
     }
 
-    public override bool Fire(Transform transform)
+    public override int Click(Transform transform)
     {
-        if (Time.time > nextFiringTime)
+        if (CanFire())
         {
             nextFiringTime = Time.time + firingDelay;
             GameObject orb = orbPool.Pop();
@@ -35,13 +32,13 @@ public class EnergyGun : Weapon
 
             orb.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
 
-            return true;
+            return energyCost;
         }
 
-        return false;
+        return 0;
     }
 
-    public override int GetEnergyCost()
+    public override int GetEnergyRequirement()
     {
         return energyCost;
     }

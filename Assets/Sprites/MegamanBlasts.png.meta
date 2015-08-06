@@ -1,0 +1,341 @@
+fileFormatVersion: 2
+guid: b7770956df53d9a4992df231ab21f29f
+timeCreated: 1438836175
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: MegamanBlasts_0
+    21300002: MegamanBlasts_1
+    21300004: MegamanBlasts_2
+    21300006: MegamanBlasts_3
+    21300008: MegamanBlasts_4
+    21300010: MegamanBlasts_5
+    21300012: MegamanBlasts_6
+    21300014: MegamanBlasts_7
+    21300016: MegamanBlasts_8
+    21300018: MegamanBlasts_9
+    21300020: MegamanBlasts_10
+    21300022: MegamanBlasts_11
+    21300024: MegamanBlasts_12
+    21300026: MegamanBlasts_13
+    21300028: MegamanBlasts_14
+    21300030: MegamanBlasts_15
+    21300032: MegamanBlasts_16
+    21300034: MegamanBlasts_17
+    21300036: MegamanBlasts_18
+    21300038: MegamanBlasts_19
+    21300040: MegamanBlasts_20
+    21300042: MegamanBlasts_21
+    21300044: MegamanBlasts_31
+    21300046: MegamanBlasts_32
+    21300048: MegamanBlasts_33
+    21300050: MegamanBlasts_34
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 25
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: MegamanBlasts_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 250
+        width: 23
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_1
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 250
+        width: 24
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_2
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 251
+        width: 24
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_3
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 250
+        width: 21
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_4
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 253
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_5
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 219
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_6
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 218
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_7
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 216
+        width: 28
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_8
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 218
+        width: 32
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_9
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 215
+        width: 32
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_10
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 178
+        width: 7
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_11
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 181
+        width: 5
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_12
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 182
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_13
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 182
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_14
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 177
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_15
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 135
+        width: 31
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_16
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 133
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_17
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 132
+        width: 38
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_18
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 65
+        width: 58
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_19
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 60
+        width: 52
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_20
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 63
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_21
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 59
+        width: 64
+        height: 65
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_31
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 17
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_32
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 16
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_33
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 15
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: MegamanBlasts_34
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 15
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

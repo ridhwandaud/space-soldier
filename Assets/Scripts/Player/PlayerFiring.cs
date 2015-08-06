@@ -24,8 +24,8 @@ public class PlayerFiring : MonoBehaviour {
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
         SkillTree skillTree = GetComponent<SkillTree>();
 
-        leftGun = new MachineGun(skillTree);
-        rightGun = new MultiShot(skillTree);
+        leftGun = new MultiShot(skillTree);
+        rightGun = new ChargeGun(skillTree);
         weapons = new List<Weapon>();
 	}
 	
@@ -34,15 +34,20 @@ public class PlayerFiring : MonoBehaviour {
         // 0 = left, 1 = right, 2 = middle
         if (Input.GetMouseButton(0))
         {
-            leftGun.Fire(transform);
+            leftGun.Click(transform);
         }
 
         if (Input.GetMouseButton(1))
         {
-            if (energyPoints >= rightGun.GetEnergyCost() && rightGun.Fire(transform))
+            if (energyPoints >= rightGun.GetEnergyRequirement())
             {
-                energyPoints -= rightGun.GetEnergyCost();
+                energyPoints -= rightGun.Click(transform);
             }
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            energyPoints -= rightGun.Release(transform);
         }
 
         energySlider.value = energyPoints;

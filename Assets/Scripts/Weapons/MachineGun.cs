@@ -6,25 +6,23 @@ public class MachineGun : Weapon
     private float bulletSpeed = 50;
     private int energyCost = 0;
 
-    private float nextFiringTime;
     private StackPool bulletPool;
 
     public MachineGun(SkillTree skillTree) : base(skillTree)
     {
-        nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
     }
 
-    public override bool Fire(Transform transform)
+    public override int Click(Transform transform)
     {
-        if (Time.time > nextFiringTime)
+        if (CanFire())
         {
             nextFiringTime = Time.time + firingDelay;
             GameObject bullet = bulletPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
 
-            // Fire bullet towards mouse pointer.
+            // Fire bullet towards mouse pointer - TODO: move this into a utility.
             Vector3 mouse = Input.mousePosition;
             Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
             Vector2 direction = new Vector2(mouse.x - screenPoint.x, mouse.y - screenPoint.y).normalized;
@@ -33,13 +31,13 @@ public class MachineGun : Weapon
             bullet.SetActive(true);
             bullet.GetComponent<Rigidbody2D>().velocity = direction * bulletSpeed;
 
-            return true;
+            return energyCost;
         }
 
-        return false;
+        return 0;
     }
 
-    public override int GetEnergyCost()
+    public override int GetEnergyRequirement()
     {
         return energyCost;
     }
