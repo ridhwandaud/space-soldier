@@ -17,19 +17,18 @@ public class PlayerFiring : MonoBehaviour {
     private Weapon rightGun;
     private List<Weapon> weapons;
 
-    private int currentRightWeaponIndex = 0;
+    private int currentRightWeaponIndex = 1;
 
 	void Awake () {
         nextFiringTime = 0;
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
         SkillTree skillTree = GetComponent<SkillTree>();
 
-        leftGun = new ChargeGun(skillTree);
-        rightGun = new MachineGun(skillTree);
-        weapons = new List<Weapon>();
+        weapons = new List<Weapon> { new ChargeGun(skillTree), new MachineGun(skillTree), new MultiShot(skillTree), new EnergyGun(skillTree) };
+        leftGun = weapons[0];
+        rightGun = weapons[1];
 	}
 	
-	// Update is called once per frame
 	void Update () {
         // 0 = left, 1 = right, 2 = middle
         if (Input.GetMouseButton(0))
@@ -50,6 +49,11 @@ public class PlayerFiring : MonoBehaviour {
             }
         }
 
+        if (Input.GetButtonDown("ToggleRightWeapon"))
+        {
+            ToggleRightWeapon();
+        }
+
         if (Input.GetMouseButtonUp(1))
         {
             energyPoints -= rightGun.Release(transform);
@@ -65,7 +69,10 @@ public class PlayerFiring : MonoBehaviour {
 
     public void ToggleRightWeapon()
     {
-        currentRightWeaponIndex = currentRightWeaponIndex == weapons.Count - 1 ? 0 : currentRightWeaponIndex;
+        do
+        {
+            currentRightWeaponIndex = currentRightWeaponIndex == weapons.Count - 1 ? 0 : ++currentRightWeaponIndex;
+        } while (weapons[currentRightWeaponIndex] == leftGun);
 
         rightGun = weapons[currentRightWeaponIndex];
     }
