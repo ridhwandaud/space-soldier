@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
 
-// TODO: Make this inherit from MonoBehaviour and put firingDelay and energyCost on here
-// as public properties.
-public abstract class Weapon
+public abstract class Weapon : MonoBehaviour
 {
-    private SkillTree skillTree;
-    protected float nextFiringTime = 0;
+    public SkillTree skillTree;
+    public StackPool stackPool;
+    public float firingDelay;
+    public float projectileSpeed;
 
-    protected Weapon(SkillTree skillTree)
-    {
-        this.skillTree = skillTree;
-    }
+    protected float nextFiringTime = 0;
 
     public abstract int GetEnergyRequirement();
 

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerFiring : MonoBehaviour {
+public class PlayerWeaponControl : MonoBehaviour {
 
     public int energyPoints;
     public float firingDelay = .1f;
@@ -11,7 +11,6 @@ public class PlayerFiring : MonoBehaviour {
     public Slider energySlider;
 
     private float nextFiringTime;
-    private StackPool bulletPool;
 
     private Weapon leftGun;
     private Weapon rightGun;
@@ -21,10 +20,14 @@ public class PlayerFiring : MonoBehaviour {
 
 	void Awake () {
         nextFiringTime = 0;
-        bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
-        SkillTree skillTree = GetComponent<SkillTree>();
 
-        weapons = new List<Weapon> { new ChargeGun(skillTree), new MachineGun(skillTree), new MultiShot(skillTree), new EnergyGun(skillTree) };
+        weapons = new List<Weapon> {
+            GetComponentInChildren<ChargeGun>(),
+            GetComponentInChildren<MachineGun>(),
+            GetComponentInChildren<MultiShot>(),
+            GetComponentInChildren<EnergyGun>()
+        };
+
         leftGun = weapons[0];
         rightGun = weapons[1];
 	}
