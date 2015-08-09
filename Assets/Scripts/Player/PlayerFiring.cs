@@ -24,8 +24,8 @@ public class PlayerFiring : MonoBehaviour {
         bulletPool = GameObject.Find("BulletPool").GetComponent<StackPool>();
         SkillTree skillTree = GetComponent<SkillTree>();
 
-        leftGun = new MultiShot(skillTree);
-        rightGun = new ChargeGun(skillTree);
+        leftGun = new ChargeGun(skillTree);
+        rightGun = new MachineGun(skillTree);
         weapons = new List<Weapon>();
 	}
 	
@@ -35,6 +35,11 @@ public class PlayerFiring : MonoBehaviour {
         if (Input.GetMouseButton(0))
         {
             leftGun.Click(transform);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            leftGun.Release(transform);
         }
 
         if (Input.GetMouseButton(1))

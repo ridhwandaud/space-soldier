@@ -38,6 +38,11 @@ public class ChargeBlastProperties : MonoBehaviour {
             return;
         }
 
+        if (other.tag == "Enemy")
+        {
+            other.GetComponent<EnemyHealth>().InflictDamage(damageLevels[ChargeLevel]);
+        }
+
         if (other.tag == "Enemy" || other.tag == "Wall")
         {
             if (ChargeLevel == 0)
