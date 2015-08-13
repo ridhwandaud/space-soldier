@@ -6,9 +6,13 @@ public class BasicLevelPopulator : ILevelPopulator
     public void populateLevel(int levelIndex, List<Vector2> openPositions)
     {
         GameObject enemyPrefab = Resources.Load("Enemy") as GameObject;
+        GameObject footSoldierPrefab = Resources.Load("FootSoldier") as GameObject;
+
         List<EnemySpawnData> result = new List<EnemySpawnData>();
         EnemySpawnData basicEnemySpawn = new EnemySpawnData(12, 15, enemyPrefab);
+        EnemySpawnData footSoldierSpawn = new EnemySpawnData(5, 6, footSoldierPrefab);
         result.Add(basicEnemySpawn);
+        result.Add(footSoldierSpawn);
 
         Transform enemyContainer = GameObject.Find("Enemies").transform;
 

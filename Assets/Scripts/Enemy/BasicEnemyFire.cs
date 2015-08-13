@@ -18,7 +18,7 @@ public class BasicEnemyFire : MonoBehaviour {
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
 	}
 	
-	public void Fire () {
+	public int Fire () {
         int missAmountDegrees = Random.Range(-accuracyVariation, accuracyVariation);
 
         if (Time.time > nextFireTime)
@@ -34,6 +34,9 @@ public class BasicEnemyFire : MonoBehaviour {
             projectile.SetActive(true);
 
             projectile.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(projectileSpeed * offset.normalized, Mathf.Deg2Rad * missAmountDegrees);
+            return 1;
         }
+
+        return 0;
 	}
 }

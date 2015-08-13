@@ -5,7 +5,7 @@ using SpriteTile;
 
 public class BasicEnemyAI : MonoBehaviour {
 
-    public int attackDistance = 7;
+    public int firingDistance = 7;
     public int chargeDistance = 12;
     public float speed = 2f;
     public float nearbyEnemyRadius = .01f;
@@ -52,7 +52,7 @@ public class BasicEnemyAI : MonoBehaviour {
         {
             chasing = true;
             CancelInvoke("DeactivateChase");
-            if (distanceFromPlayer <= attackDistance)
+            if (distanceFromPlayer <= firingDistance)
             {
                 if (readyToAttack)
                 {
