@@ -99,6 +99,7 @@ public class LoadLevel : MonoBehaviour {
         foreach (PolygonCollider2D collider in polygonColliders)
         {
             collider.tag = "Wall";
+            //A: collider.sharedMaterial = (PhysicsMaterial2D) Resources.Load("FrictionlessMaterial");
         }
     }
 

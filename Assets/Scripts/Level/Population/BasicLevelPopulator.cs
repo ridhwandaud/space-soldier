@@ -10,7 +10,7 @@ public class BasicLevelPopulator : ILevelPopulator
 
         List<EnemySpawnData> result = new List<EnemySpawnData>();
         EnemySpawnData basicEnemySpawn = new EnemySpawnData(12, 15, enemyPrefab);
-        EnemySpawnData footSoldierSpawn = new EnemySpawnData(5, 6, footSoldierPrefab);
+        EnemySpawnData footSoldierSpawn = new EnemySpawnData(7, 9, footSoldierPrefab);
         result.Add(basicEnemySpawn);
         result.Add(footSoldierSpawn);
 
