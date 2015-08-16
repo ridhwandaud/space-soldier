@@ -21,12 +21,14 @@ public class FootSoldierAI : MonoBehaviour {
     private int numMovementAttempts;
     private int wallLayerMask = 1 << 8;
     private Vector2 previousVelocity = Vector2.zero;
+    private Vector2 colliderSize;
 
     void Awake()
     {
         player = GameObject.Find("Soldier");
         rb2d = GetComponent<Rigidbody2D>();
         enemyFireScript = GetComponent<BasicEnemyFire>();
+        colliderSize = GetComponent<BoxCollider2D>().size;
     }
 
     void FixedUpdate()
@@ -45,11 +47,11 @@ public class FootSoldierAI : MonoBehaviour {
                 int rotation = Random.Range(-movementVariationDegrees, movementVariationDegrees);
 
                 Vector2 possibleVelocity = Vector2.zero;
-                for (int addend = 0; addend < 360; addend += 90)
+                for (int addend = 0; addend < 360; addend += 45)
                 {
                     possibleVelocity = VectorUtil.RotateVector(player.transform.position - gameObject.transform.position,
                         (rotation + addend) * Mathf.Deg2Rad).normalized * speed;
-                    if (Physics2D.Raycast(gameObject.transform.position, possibleVelocity, 
+                    if (Physics2D.BoxCast(gameObject.transform.position, colliderSize, 0f, possibleVelocity, 
                         4.5f, wallLayerMask).transform == null)
                     {
                         break;
