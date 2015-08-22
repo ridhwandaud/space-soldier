@@ -80,6 +80,9 @@ public class BasicEnemyAI : MonoBehaviour {
             }
             else
             {
+                // Weird "bug" caused by this logic - if the enemy can see the player and the player goes out of range, the enemy immediately
+                // stops moving. But if the enemy CAN'T see the player, then it will continue chasing until the chaseTime timer
+                // runs out. This behavior makes little sense logically but probably isn't even noticeable by players.
                 readyToAttack = false;
                 rb2d.velocity = CalculateVelocity(enemyPosition);
             }

@@ -22,6 +22,7 @@ public class MeleeEnemyAI : MonoBehaviour {
         // Can't set this in inspector because these are generated via prefabs.
         player = GameObject.Find("Soldier");
         rb2d = GetComponent<Rigidbody2D>();
+        boxCollider2d = GetComponent<BoxCollider2D>();
 	}
 	
 	void Update () {
@@ -31,7 +32,7 @@ public class MeleeEnemyAI : MonoBehaviour {
             return;
         }
 
-        Vector2 enemyPosition = gameObject.transform.position;
+        Vector2 enemyPosition = transform.position;
         Vector2 playerPosition = player.transform.position;
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
@@ -44,29 +45,57 @@ public class MeleeEnemyAI : MonoBehaviour {
             CancelInvoke("DeactivateChase");
             if (distanceFromPlayer <= chargeDistance)
             {
-                
+                if(EnemyUtil.PathToPlayerIsNotBlocked(boxCollider2d, transform, player.transform)) {
+                    rb2d.velocity = CalculateVelocity(player.transform.position);
+                }
+                else
+                {
+                    ExecuteAStar();
+                }
+            }
+            else
+            {
+                rb2d.velocity = CalculateVelocity(enemyPosition);
             }
         }
         else
         {
-            Invoke("DeactivateChase", chaseTime);
+            if (chasing)
+            {
+                // Should probably also deactivate this if the player isn't close enough... maybe CanSeePlayer can include
+                // a vision distance.
+                Invoke("DeactivateChase", chaseTime);
+            }
+            if (distanceFromPlayer <= chargeDistance && chasing)
+            {
+                ExecuteAStar();
+            }
+            else
+            {
+                chasing = false; // is this necessary?
+                rb2d.velocity = CalculateVelocity(enemyPosition);
+            }
         }
 	}
 
-    void ExecuteAStar(Vector2 enemyPosition, Vector2 playerPosition)
+    void ExecuteAStar()
     {
         if (Time.time > lastPathfindTime + pathFindingRate)
         {
             lastPathfindTime = Time.time;
-            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
-                AStar.positionToArrayIndices(playerPosition));
+            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(transform.position),
+                AStar.positionToArrayIndices(player.transform.position));
 
             if (list.Count > 1)
             {
-                Vector2 target = AStar.arrayIndicesToPosition(list[1].point);
-                rb2d.velocity = new Vector2(target.x - transform.position.x, target.y - transform.position.y);
+                rb2d.velocity = CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
             }
         }
+    }
+
+    Vector2 CalculateVelocity(Vector2 target)
+    {
+        return new Vector2(target.x - transform.position.x, target.y - transform.position.y).normalized * speed;
     }
 
     void DeactivateChase()
