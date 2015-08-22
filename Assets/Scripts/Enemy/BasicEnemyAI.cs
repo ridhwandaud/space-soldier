@@ -10,7 +10,6 @@ public class BasicEnemyAI : MonoBehaviour {
     public float speed = 2f;
     public float nearbyEnemyRadius = .01f;
     public float pathFindingRate = 2f;
-    public bool debug = false;
     public float chaseTime = 3f;
     public float attackDelay = .5f;
 
@@ -18,6 +17,7 @@ public class BasicEnemyAI : MonoBehaviour {
     private Wander wanderScript;
     private BasicEnemyFire fireScript;
     private Rigidbody2D rb2d;
+    private BoxCollider2D boxCollider2d;
 
     private int wallLayerMask = 1 << 8; // Layer 8 is the wall layer.
     private int enemyLayerMask = 1 << 9;
@@ -34,6 +34,7 @@ public class BasicEnemyAI : MonoBehaviour {
         wanderScript = GetComponent<Wander>();
         fireScript = GetComponent<BasicEnemyFire>();
         rb2d = GetComponent<Rigidbody2D>();
+        boxCollider2d = GetComponent<BoxCollider2D>();
     }
 	
 	void Update () {
@@ -43,12 +44,12 @@ public class BasicEnemyAI : MonoBehaviour {
             return;
         }
 
-        Vector2 enemyPosition = gameObject.transform.position;
+        Vector2 enemyPosition = transform.position;
         Vector2 playerPosition = player.transform.position;
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
 
-        if (CanSeePlayer())
+        if (EnemyUtil.CanSeePlayer(transform, player.transform))
         {
             chasing = true;
             CancelInvoke("DeactivateChase");
@@ -68,7 +69,7 @@ public class BasicEnemyAI : MonoBehaviour {
             else if (distanceFromPlayer <= chargeDistance)
             {
                 readyToAttack = false;
-                if (PathToPlayerIsNotBlocked())
+                if (EnemyUtil.PathToPlayerIsNotBlocked(boxCollider2d, transform, player.transform))
                 {
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
@@ -115,7 +116,7 @@ public class BasicEnemyAI : MonoBehaviour {
 
     void StartFiring()
     {
-        rb2d.velocity = CalculateVelocity(gameObject.transform.position);
+        rb2d.velocity = CalculateVelocity(transform.position);
         fireScript.Fire();
     }
 
@@ -136,22 +137,22 @@ public class BasicEnemyAI : MonoBehaviour {
 
     Vector2 CalculateVelocity(Vector2 target)
     {
-        Vector2 pullVector = new Vector2(target.x - gameObject.transform.position.x,
-            target.y - gameObject.transform.position.y).normalized * speed;
+        Vector2 pullVector = new Vector2(target.x - transform.position.x,
+            target.y - transform.position.y).normalized * speed;
         Vector2 pushVector = Vector2.zero;
 
         // Find all nearby enemies
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(gameObject.transform.position, nearbyEnemyRadius, enemyLayerMask);
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(transform.position, nearbyEnemyRadius, enemyLayerMask);
         int contenders = 0;
 
         for (int i = 0; i < nearbyEnemies.Length; i++)
         {
-            if (nearbyEnemies[i].transform == gameObject.transform)
+            if (nearbyEnemies[i].transform == transform)
             {
                 continue;
             }
 
-            Vector2 push = gameObject.transform.position - nearbyEnemies[i].transform.position;
+            Vector2 push = transform.position - nearbyEnemies[i].transform.position;
             pushVector += push / push.sqrMagnitude;
 
             contenders++;
@@ -162,22 +163,5 @@ public class BasicEnemyAI : MonoBehaviour {
         pullVector += pushVector;
 
         return pullVector.normalized * speed;
-    }
-
-    bool CanSeePlayer()
-    {
-        RaycastHit2D linecastHit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
-
-        return linecastHit.transform == null;
-    }
-
-    bool PathToPlayerIsNotBlocked()
-    {
-        Vector2 colliderSize = GetComponent<BoxCollider2D>().size;
-        Vector2 boxCastSize = new Vector2(colliderSize.x * 1.25f, colliderSize.y * 1.25f);
-        RaycastHit2D boxHit = Physics2D.BoxCast(transform.position, boxCastSize, 0f, player.transform.position - transform.position,
-            1, wallLayerMask);
-
-        return boxHit.transform == null;
     }
 }
