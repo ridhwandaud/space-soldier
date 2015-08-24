@@ -5,7 +5,7 @@ using SpriteTile;
 
 public class BasicLevelGenerator : ILevelGenerator
 {
-    public static int numTiles = 200;
+    public static int numTiles = 100;
 
     public int[,] GenerateLevel(int levelIndex, out List<Vector2> openPositions, out Vector3 playerSpawn)
     {

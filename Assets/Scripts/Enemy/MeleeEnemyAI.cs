@@ -3,10 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MeleeEnemyAI : MonoBehaviour {
+    public static HashSet<MeleeEnemyAI> meleeEnemies = new HashSet<MeleeEnemyAI>();
+
     public int chargeDistance = 12;
+    public float attackDistance = 5;
     public float speed = 2f;
     public float pathFindingRate = 2f;
     public float chaseTime = 3f;
+    public bool isWithinAttackingRange = false;
+    public Vector2 target;
+    public bool targetIsAssigned = false;
 
     private int wallLayerMask = 1 << 8;
 
@@ -23,7 +29,13 @@ public class MeleeEnemyAI : MonoBehaviour {
         player = GameObject.Find("Soldier");
         rb2d = GetComponent<Rigidbody2D>();
         boxCollider2d = GetComponent<BoxCollider2D>();
+        meleeEnemies.Add(this);
 	}
+
+    void OnDisable()
+    {
+        meleeEnemies.Remove(this);
+    }
 	
 	void Update () {
         if (isFirstFrame)
@@ -36,6 +48,16 @@ public class MeleeEnemyAI : MonoBehaviour {
         Vector2 playerPosition = player.transform.position;
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
+        isWithinAttackingRange = distanceFromPlayer <= attackDistance;
+
+        if (isWithinAttackingRange && targetIsAssigned)
+        {
+            print("Moving towards " + target);
+            rb2d.velocity = CalculateVelocity(target);
+            return;
+        }
+
+        targetIsAssigned = false;
 
         if (EnemyUtil.CanSeePlayer(transform, player.transform))
         {
