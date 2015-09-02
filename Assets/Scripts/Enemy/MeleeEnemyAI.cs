@@ -56,9 +56,13 @@ public class MeleeEnemyAI : MonoBehaviour {
             {
                 rb2d.velocity = Vector2.zero;
             }
-            else
+            else if (EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, target))
             {
                 rb2d.velocity = CalculateVelocity(target);
+            }
+            else
+            {
+                ExecuteAStar(target);
             }
 
             return;
@@ -66,7 +70,7 @@ public class MeleeEnemyAI : MonoBehaviour {
 
         targetIsAssigned = false;
 
-        if (EnemyUtil.CanSeePlayer(transform, player.transform))
+        if (EnemyUtil.CanSee(transform.position, player.transform.position))
         {
             // Just realized this is not quite true because the player might not be in range, but functionally the result is the
             // same.
@@ -74,12 +78,12 @@ public class MeleeEnemyAI : MonoBehaviour {
             CancelInvoke("DeactivateChase");
             if (distanceFromPlayer <= chargeDistance)
             {
-                if(EnemyUtil.PathToPlayerIsNotBlocked(boxCollider2d, transform, player.transform)) {
+                if(EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position)) {
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
                 else
                 {
-                    ExecuteAStar();
+                    ExecuteAStar(player.transform.position);
                 }
             }
             else
@@ -97,7 +101,7 @@ public class MeleeEnemyAI : MonoBehaviour {
             }
             if (distanceFromPlayer <= chargeDistance && chasing)
             {
-                ExecuteAStar();
+                ExecuteAStar(player.transform.position);
             }
             else
             {
@@ -107,13 +111,13 @@ public class MeleeEnemyAI : MonoBehaviour {
         }
 	}
 
-    void ExecuteAStar()
+    void ExecuteAStar(Vector3 target)
     {
         if (Time.time > lastPathfindTime + pathFindingRate)
         {
             lastPathfindTime = Time.time;
             List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(transform.position),
-                AStar.positionToArrayIndices(player.transform.position));
+                AStar.positionToArrayIndices(target));
 
             if (list.Count > 1)
             {

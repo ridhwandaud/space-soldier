@@ -49,7 +49,7 @@ public class BasicEnemyAI : MonoBehaviour {
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
 
-        if (EnemyUtil.CanSeePlayer(transform, player.transform))
+        if (EnemyUtil.CanSee(transform.position, player.transform.position))
         {
             chasing = true;
             CancelInvoke("DeactivateChase");
@@ -69,7 +69,7 @@ public class BasicEnemyAI : MonoBehaviour {
             else if (distanceFromPlayer <= chargeDistance)
             {
                 readyToAttack = false;
-                if (EnemyUtil.PathToPlayerIsNotBlocked(boxCollider2d, transform, player.transform))
+                if (EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position))
                 {
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
