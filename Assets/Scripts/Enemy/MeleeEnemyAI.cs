@@ -12,7 +12,11 @@ public class MeleeEnemyAI : MonoBehaviour {
     public float chaseTime = 3f;
     public bool isWithinAttackingRange = false;
     public Vector2 target;
+    public Vector2 token;
     public bool targetIsAssigned = false;
+
+    // Temporary variable for debugging.
+    public string state;
 
     private int wallLayerMask = 1 << 8;
 
@@ -20,7 +24,7 @@ public class MeleeEnemyAI : MonoBehaviour {
     private Rigidbody2D rb2d;
     private BoxCollider2D boxCollider2d;
 
-    private bool chasing = false;
+    public bool chasing = false;
     private bool isFirstFrame = true;
     private float lastPathfindTime = 0;
 
@@ -50,18 +54,29 @@ public class MeleeEnemyAI : MonoBehaviour {
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
         isWithinAttackingRange = distanceFromPlayer <= attackDistance;
 
-        if (isWithinAttackingRange && targetIsAssigned)
+        if (isWithinAttackingRange)
         {
+            if (!targetIsAssigned)
+            {
+                state = "in range no token";
+                rb2d.velocity = Vector2.zero;
+                return;
+            }
+
             if (Vector3.Distance(enemyPosition, target) <= .1)
             {
+                state = "within .1";
                 rb2d.velocity = Vector2.zero;
             }
-            else if (EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, target))
+            else if (EnemyUtil.CanSee(transform.position, player.transform.position) && 
+                EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, target, .8f, .8f))
             {
+                state = "unblocked target token";
                 rb2d.velocity = CalculateVelocity(target);
             }
             else
             {
+                state = "astar target token";
                 ExecuteAStar(target);
             }
 
@@ -79,15 +94,18 @@ public class MeleeEnemyAI : MonoBehaviour {
             if (distanceFromPlayer <= chargeDistance)
             {
                 if(EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position)) {
+                    state = "charging";
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
                 else
                 {
+                    state = "charging astar";
                     ExecuteAStar(player.transform.position);
                 }
             }
             else
             {
+                state = "far, not chasing";
                 rb2d.velocity = CalculateVelocity(enemyPosition);
             }
         }
@@ -101,10 +119,12 @@ public class MeleeEnemyAI : MonoBehaviour {
             }
             if (distanceFromPlayer <= chargeDistance && chasing)
             {
+                state = "astar out of sight";
                 ExecuteAStar(player.transform.position);
             }
             else
             {
+                state = "cant see player, not chasing";
                 chasing = false; // is this necessary?
                 rb2d.velocity = CalculateVelocity(enemyPosition);
             }
@@ -134,13 +154,5 @@ public class MeleeEnemyAI : MonoBehaviour {
     void DeactivateChase()
     {
         chasing = false;
-    }
-
-    // Refactor this into a common class. Will be using this a lot.
-    bool CanSeePlayer()
-    {
-        RaycastHit2D linecastHit = Physics2D.Linecast(transform.position, player.transform.position, wallLayerMask);
-
-        return linecastHit.transform == null;
     }
 }

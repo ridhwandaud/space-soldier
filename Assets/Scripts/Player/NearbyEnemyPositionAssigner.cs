@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using SpriteTile;
 using System.Linq; // ANKI DIS SHIET
 
 public class NearbyEnemyPositionAssigner : MonoBehaviour {
@@ -15,6 +16,13 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     private List<Vector2> claimableTokens;
     private List<Vector2> unclaimableTokens = new List<Vector2>();
     private NearbyMeleeEnemyComparer comparer;
+
+    // Temporary hack.
+    private Vector2 gordoSize = new Vector2(0.8133333f, .84f);
+
+    // TODO: Move into a utility class or constants class.
+    private static int WALL_LAYER = 1;
+    private static int WALL_LAYER_MASK = 1 << 8;
 
     private float lastAssignmentTime;
 
@@ -58,21 +66,37 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     
     void InvalidateTokens()
     {
-
+        for (int x = 0; x < claimableTokens.Count;)
+        {
+            if (Physics2D.BoxCast(tokenToWorldSpace(claimableTokens[x]), gordoSize, 0f, Vector2.zero, 0f, WALL_LAYER_MASK).transform != null)
+            {
+                unclaimableTokens.Add(claimableTokens[x]);
+                //print("Invalidating token " + claimableTokens[x]);
+                claimableTokens.RemoveAt(x);
+            }
+            else
+            {
+                x++;
+            }
+        }
     }
 
+    // TODO: Don't reassign positions if player hasn't moved and if no new enemies have entered the zone.
     void AssignTokens()
     {
+        //print("Assigning tokens.");
         for (int x = 0; x < nearbyMeleeEnemies.Count; x++)
         {
+            MeleeEnemyAI enemy = nearbyMeleeEnemies[x];
+
             if (claimableTokens.Count == 0)
             {
-                break;
+                enemy.targetIsAssigned = false;
+                continue;
             }
 
             Vector2 minToken = claimableTokens[0];
             Vector2 minTarget = tokenToWorldSpace(minToken);
-            MeleeEnemyAI enemy = nearbyMeleeEnemies[x];
             int indexOfMin = 0;
             float minSqrDistance = getSqrDistanceFromPotentialPositionToEnemy(minToken, enemy.transform.position);
             
@@ -91,7 +115,9 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
 
             enemy.targetIsAssigned = true;
             enemy.target = minTarget;
+            enemy.token = minToken;
             unclaimableTokens.Add(claimableTokens[indexOfMin]);
+            //print("Token claimed: " + claimableTokens[indexOfMin]);
             claimableTokens.RemoveAt(indexOfMin); // might be able to just use Remove instead of RemoveAt.
         }
     }
