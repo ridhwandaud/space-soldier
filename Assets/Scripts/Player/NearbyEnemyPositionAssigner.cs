@@ -16,6 +16,8 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     private List<Vector2> claimableTokens;
     private List<Vector2> unclaimableTokens = new List<Vector2>();
     private NearbyMeleeEnemyComparer comparer;
+    private Vector3 lastPosition;
+    private HashSet<MeleeEnemyAI> lastEnemies = new HashSet<MeleeEnemyAI>();
 
     // Temporary hack.
     private Vector2 gordoSize = new Vector2(0.8133333f, .84f);
@@ -28,7 +30,8 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
 
     void Awake()
     {
-        comparer = new NearbyMeleeEnemyComparer(transform.position);
+        lastPosition = transform.position;
+        comparer = new NearbyMeleeEnemyComparer();
         claimableTokens = new List<Vector2> { 
             new Vector2(0, attackOffsetHorizontalVertical), // Top
             new Vector2(0, -attackOffsetHorizontalVertical), // Bottom
@@ -45,16 +48,28 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     {
         if (Time.time > lastAssignmentTime + timeBetweenReassignments)
         {
+            
+
             nearbyMeleeEnemies.Clear();
             lastAssignmentTime = Time.time;
 
             nearbyMeleeEnemies = MeleeEnemyAI.meleeEnemies.Where(
                 enemy => enemy.isWithinAttackingRange).ToList<MeleeEnemyAI>();
+
+            if (lastPosition.Equals(transform.position) && lastEnemies.SetEquals(nearbyMeleeEnemies))
+            {
+                return;
+            }
+
+            comparer.playerPosition = transform.position;
             nearbyMeleeEnemies.Sort(comparer);
 
             InvalidateTokens();
             AssignTokens();
             ResetTokens();
+
+            lastPosition = transform.position;
+            lastEnemies = new HashSet<MeleeEnemyAI>(nearbyMeleeEnemies);
         }
     }
 
@@ -71,7 +86,6 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
             if (Physics2D.BoxCast(tokenToWorldSpace(claimableTokens[x]), gordoSize, 0f, Vector2.zero, 0f, WALL_LAYER_MASK).transform != null)
             {
                 unclaimableTokens.Add(claimableTokens[x]);
-                //print("Invalidating token " + claimableTokens[x]);
                 claimableTokens.RemoveAt(x);
             }
             else
@@ -81,10 +95,8 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
         }
     }
 
-    // TODO: Don't reassign positions if player hasn't moved and if no new enemies have entered the zone.
     void AssignTokens()
     {
-        //print("Assigning tokens.");
         for (int x = 0; x < nearbyMeleeEnemies.Count; x++)
         {
             MeleeEnemyAI enemy = nearbyMeleeEnemies[x];
@@ -92,6 +104,7 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
             if (claimableTokens.Count == 0)
             {
                 enemy.targetIsAssigned = false;
+                enemy.shouldWait = true;
                 continue;
             }
 
@@ -117,7 +130,6 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
             enemy.target = minTarget;
             enemy.token = minToken;
             unclaimableTokens.Add(claimableTokens[indexOfMin]);
-            //print("Token claimed: " + claimableTokens[indexOfMin]);
             claimableTokens.RemoveAt(indexOfMin); // might be able to just use Remove instead of RemoveAt.
         }
     }
@@ -136,12 +148,7 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
 
     private class NearbyMeleeEnemyComparer : IComparer<MeleeEnemyAI>
     {
-        private Vector3 playerPosition;
-
-        public NearbyMeleeEnemyComparer(Vector3 playerPosition)
-        {
-            this.playerPosition = playerPosition;
-        }
+        public Vector3 playerPosition;
 
         public int Compare(MeleeEnemyAI enemy1, MeleeEnemyAI enemy2)
         {

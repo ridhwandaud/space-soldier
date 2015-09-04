@@ -14,9 +14,11 @@ public class MeleeEnemyAI : MonoBehaviour {
     public Vector2 target;
     public Vector2 token;
     public bool targetIsAssigned = false;
+    public bool shouldWait = true;
 
-    // Temporary variable for debugging.
+    // Temporary variables for debugging.
     public string state;
+    public float debugDistance = 0;
 
     private int wallLayerMask = 1 << 8;
 
@@ -42,6 +44,9 @@ public class MeleeEnemyAI : MonoBehaviour {
     }
 	
 	void Update () {
+        // TODO: Remove this temporary line.
+        debugDistance = (player.transform.position - transform.position).sqrMagnitude;
+
         if (isFirstFrame)
         {
             isFirstFrame = false;
@@ -58,12 +63,27 @@ public class MeleeEnemyAI : MonoBehaviour {
         {
             if (!targetIsAssigned)
             {
-                state = "in range no token";
-                rb2d.velocity = Vector2.zero;
+                if (shouldWait)
+                {
+                    state = "in range no token";
+                    rb2d.velocity = Vector2.zero;
+                }
+                else if (EnemyUtil.CanSee(transform.position, player.transform.position) &&
+                EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position, .8f, .8f))
+                {
+                    //state = "unblocked target token";
+                    rb2d.velocity = CalculateVelocity(player.transform.position);
+                }
+                else
+                {
+                    //state = "astar target token";
+                    ExecuteAStar(player.transform.position);
+                }
                 return;
             }
 
-            if (Vector3.Distance(enemyPosition, target) <= .1)
+
+            if (Vector3.Distance(enemyPosition, target) <= .2)
             {
                 state = "within .1";
                 rb2d.velocity = Vector2.zero;
@@ -84,6 +104,7 @@ public class MeleeEnemyAI : MonoBehaviour {
         }
 
         targetIsAssigned = false;
+        shouldWait = false;
 
         if (EnemyUtil.CanSee(transform.position, player.transform.position))
         {
