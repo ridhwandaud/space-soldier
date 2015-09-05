@@ -47,7 +47,7 @@ public class FootSoldierAI : MonoBehaviour {
                 int rotation = Random.Range(-movementVariationDegrees, movementVariationDegrees);
 
                 Vector2 possibleVelocity = Vector2.zero;
-                for (int addend = 0; addend < 360; addend += 45)
+                for (int addend = 0; addend < 360; addend += 20)
                 {
                     possibleVelocity = VectorUtil.RotateVector(player.transform.position - gameObject.transform.position,
                         (rotation + addend) * Mathf.Deg2Rad).normalized * speed;
@@ -75,6 +75,7 @@ public class FootSoldierAI : MonoBehaviour {
         {
             rb2d.velocity = VectorUtil.RotateVector(new Vector2(-previousVelocity.x, -previousVelocity.y),
                 Random.Range(-bounceVariationDegrees, bounceVariationDegrees) * Mathf.Deg2Rad).normalized * speed;
+            nextMoveTime = Time.time + .3f;
         }
     }
 

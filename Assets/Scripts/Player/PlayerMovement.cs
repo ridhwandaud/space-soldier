@@ -18,25 +18,34 @@ public class PlayerMovement : MonoBehaviour {
     {
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
+        float halfCollisionDistance = collisionDistance / 2;
 
         Vector2 newVelocity = new Vector2(inputX, inputY).normalized * speed;
 
-        if (Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance), WALL_LAYER)
+        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y + collisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y + collisionDistance), WALL_LAYER))
             && inputY > 0)
         {
             newVelocity.y = 0;
         }
-        if (Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance), WALL_LAYER)
+        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y - collisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y - collisionDistance), WALL_LAYER))
             && inputY < 0)
         {
             newVelocity.y = 0;
         }
-        if (Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y), WALL_LAYER)
+        if ((Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y - halfCollisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y + halfCollisionDistance), WALL_LAYER))
             && inputX > 0)
         {
             newVelocity.x = 0;
         }
-        if (Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y), WALL_LAYER)
+        if ((Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y - halfCollisionDistance), WALL_LAYER)
+            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y + halfCollisionDistance), WALL_LAYER))
             && inputX < 0)
         {
             newVelocity.x = 0;

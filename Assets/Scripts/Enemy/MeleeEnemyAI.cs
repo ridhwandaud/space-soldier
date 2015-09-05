@@ -20,7 +20,11 @@ public class MeleeEnemyAI : MonoBehaviour {
     public string state;
     public float debugDistance = 0;
 
+    public float nearbyEnemyRadius = .01f;
+
+    // Refactor
     private int wallLayerMask = 1 << 8;
+    private int enemyLayerMask = 1 << 9;
 
     private GameObject player;
     private Rigidbody2D rb2d;
@@ -67,9 +71,10 @@ public class MeleeEnemyAI : MonoBehaviour {
                 {
                     state = "in range no token";
                     rb2d.velocity = Vector2.zero;
+                    //CalculateVelocity(transform.position);
                 }
                 else if (EnemyUtil.CanSee(transform.position, player.transform.position) &&
-                EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position, .8f, .8f))
+                EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position, .8f, .8f, .5f))
                 {
                     //state = "unblocked target token";
                     rb2d.velocity = CalculateVelocity(player.transform.position);
@@ -114,7 +119,7 @@ public class MeleeEnemyAI : MonoBehaviour {
             CancelInvoke("DeactivateChase");
             if (distanceFromPlayer <= chargeDistance)
             {
-                if(EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position)) {
+                if(EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position, 1, 1)) {
                     state = "charging";
                     rb2d.velocity = CalculateVelocity(player.transform.position);
                 }
@@ -169,7 +174,32 @@ public class MeleeEnemyAI : MonoBehaviour {
 
     Vector2 CalculateVelocity(Vector2 target)
     {
-        return new Vector2(target.x - transform.position.x, target.y - transform.position.y).normalized * speed;
+        Vector2 pullVector = new Vector2(target.x - transform.position.x,
+            target.y - transform.position.y).normalized * speed;
+        Vector2 pushVector = Vector2.zero;
+
+        // Find all nearby enemies
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(transform.position, nearbyEnemyRadius, enemyLayerMask);
+        int contenders = 0;
+
+        for (int i = 0; i < nearbyEnemies.Length; i++)
+        {
+            if (nearbyEnemies[i].transform == transform)
+            {
+                continue;
+            }
+
+            Vector2 push = transform.position - nearbyEnemies[i].transform.position;
+            pushVector += push / push.sqrMagnitude;
+
+            contenders++;
+        }
+
+
+        pullVector *= Mathf.Max(1, 4 * contenders);
+        pullVector += pushVector;
+
+        return pullVector.normalized * speed;
     }
 
     void DeactivateChase()
