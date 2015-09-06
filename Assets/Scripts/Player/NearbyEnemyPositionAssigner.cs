@@ -48,13 +48,11 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     {
         if (Time.time > lastAssignmentTime + timeBetweenReassignments)
         {
-            
-
             nearbyMeleeEnemies.Clear();
             lastAssignmentTime = Time.time;
 
             nearbyMeleeEnemies = MeleeEnemyAI.meleeEnemies.Where(
-                enemy => enemy.isWithinAttackingRange).ToList<MeleeEnemyAI>();
+                enemy => Vector3.SqrMagnitude(transform.position - enemy.transform.position) < enemy.squaredAttackDistance).ToList<MeleeEnemyAI>();
 
             if (lastPosition.Equals(transform.position) && lastEnemies.SetEquals(nearbyMeleeEnemies))
             {
