@@ -8,7 +8,7 @@ public class MeleeEnemyAI : MonoBehaviour {
     public int chargeDistance;
     public float attackDistance;
     public float speed;
-    public float pathFindingRate;
+    public float pathFindingRate = 1f;
     public float chaseTime;
     public float nearbyEnemyRadius;
     public Vector2 target;
@@ -67,47 +67,12 @@ public class MeleeEnemyAI : MonoBehaviour {
 
     public void ExecuteAStar(Vector3 target)
     {
-        if (Time.time > lastPathfindTime + pathFindingRate)
-        {
-            lastPathfindTime = Time.time;
-            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(transform.position),
-                AStar.positionToArrayIndices(target));
-
-            if (list.Count > 1)
-            {
-                CalculateVelocity(AStar.arrayIndicesToPosition(list[1].point));
-            }
-        }
+        EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, speed, nearbyEnemyRadius);
     }
 
     public void CalculateVelocity(Vector2 target)
     {
-        Vector2 pullVector = new Vector2(target.x - transform.position.x,
-            target.y - transform.position.y).normalized * speed;
-        Vector2 pushVector = Vector2.zero;
-
-        // Find all nearby enemies
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(transform.position, nearbyEnemyRadius, LayerMasks.ENEMY_LAYER_MASK);
-        int contenders = 0;
-
-        for (int i = 0; i < nearbyEnemies.Length; i++)
-        {
-            if (nearbyEnemies[i].transform == transform)
-            {
-                continue;
-            }
-
-            Vector2 push = transform.position - nearbyEnemies[i].transform.position;
-            pushVector += push / push.sqrMagnitude;
-
-            contenders++;
-        }
-
-
-        pullVector *= Mathf.Max(1, 4 * contenders);
-        pullVector += pushVector;
-
-        rb2d.velocity = pullVector.normalized * speed;
+        rb2d.velocity = EnemyUtil.CalculateVelocity(transform, target, speed, nearbyEnemyRadius);
     }
 
     public void StopMovement()

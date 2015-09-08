@@ -13,9 +13,9 @@ public class BasicLevelPopulator : ILevelPopulator
         EnemySpawnData basicEnemySpawn = new EnemySpawnData(6, 7, enemyPrefab);
         EnemySpawnData footSoldierSpawn = new EnemySpawnData(7, 9, footSoldierPrefab);
         EnemySpawnData gordoSpawn = new EnemySpawnData(6, 6, gordoPrefab);
-        //result.Add(basicEnemySpawn);
+        result.Add(basicEnemySpawn);
         //result.Add(footSoldierSpawn);
-        result.Add(gordoSpawn);
+        //result.Add(gordoSpawn);
 
         Transform enemyContainer = GameObject.Find("Enemies").transform;
 
