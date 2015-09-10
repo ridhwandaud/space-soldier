@@ -11,6 +11,7 @@ public class LoadLevel : MonoBehaviour {
 
     public static float TILE_SIZE = 2f;
     public static LoadLevel instance = null;
+    public static bool WALL_COLLIDERS_INITIALIZED = false;
 
     private List<LevelType> levelTypes;
     private int level = 0;
@@ -101,6 +102,8 @@ public class LoadLevel : MonoBehaviour {
             collider.tag = "Wall";
             //A: collider.sharedMaterial = (PhysicsMaterial2D) Resources.Load("FrictionlessMaterial");
         }
+
+        WALL_COLLIDERS_INITIALIZED = true;
     }
 
     private bool hasAdjacentFloor(int[,] level, int x, int y)

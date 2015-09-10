@@ -44,9 +44,8 @@ public class MeleeEnemyAI : MonoBehaviour {
     }
 	
 	void Update () {
-        if (isFirstFrame)
+        if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
         {
-            isFirstFrame = false;
             return;
         }
 

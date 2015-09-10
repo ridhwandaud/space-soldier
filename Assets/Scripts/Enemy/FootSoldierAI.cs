@@ -12,6 +12,7 @@ public class FootSoldierAI : MonoBehaviour {
     public int bounceVariationDegrees;
     public int movementVariationTime;
     public int shotsFiredPerMovement;
+    public float attackDuration;
 
     private GameObject player;
     private Rigidbody2D rb2d;
@@ -19,9 +20,9 @@ public class FootSoldierAI : MonoBehaviour {
     private int shotsFiredThisMovement = 0;
     private BasicEnemyFire enemyFireScript;
     private int numMovementAttempts;
-    private int wallLayerMask = 1 << 8;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
+    public bool attacking = false;
 
     void Awake()
     {
@@ -33,7 +34,22 @@ public class FootSoldierAI : MonoBehaviour {
 
     void FixedUpdate()
     {
-        if (WithinAttackRange() && Time.time >= nextMoveTime)
+        if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
+        {
+            return;
+        }
+
+        if (EnemyUtil.CanSee(transform.position, player.transform.position))
+        {
+            CancelInvoke("DeactivateAttack");
+            attacking = true;
+        }
+        else
+        {
+            Invoke("DeactivateAttack", attackDuration);
+        }
+
+        if (Time.time >= nextMoveTime && attacking)
         {
             if (shotsFiredThisMovement < shotsFiredPerMovement)
             {
@@ -52,7 +68,7 @@ public class FootSoldierAI : MonoBehaviour {
                     possibleVelocity = VectorUtil.RotateVector(player.transform.position - gameObject.transform.position,
                         (rotation + addend) * Mathf.Deg2Rad).normalized * speed;
                     if (Physics2D.BoxCast(gameObject.transform.position, colliderSize, 0f, possibleVelocity, 
-                        4.5f, wallLayerMask).transform == null)
+                        2f, LayerMasks.WALL_LAYER_MASK).collider == null)
                     {
                         break;
                     }
@@ -82,5 +98,11 @@ public class FootSoldierAI : MonoBehaviour {
     bool WithinAttackRange()
     {
         return Vector3.Distance(player.transform.position, gameObject.transform.position) <= attackingDistance;
+    }
+
+    void DeactivateAttack()
+    {
+        rb2d.velocity = Vector2.zero;
+        attacking = false;
     }
 }

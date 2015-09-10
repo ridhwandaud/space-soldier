@@ -24,7 +24,6 @@ public class BasicEnemyAI : MonoBehaviour {
     private BoxCollider2D boxCollider2d;
 
     private float lastPathfindTime = 0;
-    private bool isFirstFrame = true;
 
     void Awake()
     {
@@ -36,9 +35,8 @@ public class BasicEnemyAI : MonoBehaviour {
     }
 	
 	void Update () {
-        if (isFirstFrame)
+        if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
         {
-            isFirstFrame = false;
             return;
         }
 
