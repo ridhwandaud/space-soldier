@@ -75,7 +75,7 @@ public class FootSoldierAI : MonoBehaviour {
         {
             rb2d.velocity = VectorUtil.RotateVector(new Vector2(-previousVelocity.x, -previousVelocity.y),
                 Random.Range(-bounceVariationDegrees, bounceVariationDegrees) * Mathf.Deg2Rad).normalized * speed;
-            nextMoveTime = Time.time + .3f;
+            nextMoveTime = Time.time + .1f;
         }
     }
 

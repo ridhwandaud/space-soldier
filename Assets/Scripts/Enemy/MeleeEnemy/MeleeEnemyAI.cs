@@ -20,6 +20,7 @@ public class MeleeEnemyAI : MonoBehaviour {
     public float squaredAttackDistance;
     public BoxCollider2D boxCollider2d;
     public FiniteStateMachine<MeleeEnemyAI> fsm;
+    public Animator animator;
     public bool chasing = false;
 
     private Rigidbody2D rb2d;
@@ -31,6 +32,7 @@ public class MeleeEnemyAI : MonoBehaviour {
 
         rb2d = GetComponent<Rigidbody2D>();
         boxCollider2d = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
         fsm = new FiniteStateMachine<MeleeEnemyAI>(this, MeleeEnemyIdleState.Instance);
 
         meleeEnemies.Add(this);

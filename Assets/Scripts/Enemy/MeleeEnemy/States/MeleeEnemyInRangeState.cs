@@ -16,13 +16,17 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
 
     public override void Execute(MeleeEnemyAI enemy)
     {
-        if (Vector3.Distance(player.transform.position, enemy.transform.position) > enemy.attackDistance)
+        stopAttackIfNecessary(enemy);
+
+        if (enemy.animator.GetCurrentAnimatorStateInfo(0).IsName("gordo_attack"))
+        {
+            enemy.StopMovement();
+        }
+        else if (Vector3.Distance(player.transform.position, enemy.transform.position) > enemy.attackDistance)
         {
             outOfRangeHandler(enemy);
-            return;
         }
-
-        if (!enemy.targetIsAssigned)
+        else if (!enemy.targetIsAssigned)
         {
             noTokenHandler(enemy);
         }
@@ -63,11 +67,21 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
     {
         if (Vector3.Distance(enemy.transform.position, enemy.target) <= .2)
         {
-            enemy.StopMovement(); // Instead, go to attacking state.
+            //enemy.attackInProgress = true;
+            enemy.animator.SetBool("Attacking", true);
+            enemy.StopMovement();
         }
         else
         {
             enemy.Charge(enemy.target, .8f, .8f, 1f);
+        }
+    }
+
+    private void stopAttackIfNecessary(MeleeEnemyAI enemy)
+    {
+        if (Vector3.Distance(player.transform.position, enemy.transform.position) > enemy.attackDistance || !enemy.targetIsAssigned)
+        {
+            enemy.animator.SetBool("Attacking", false);
         }
     }
 }

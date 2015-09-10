@@ -4,8 +4,14 @@ using System.Collections;
 
 public class PlayerHealth : MonoBehaviour {
 
-    public int healthPoints = 15;
+    public int healthPoints;
     public Slider healthSlider;
+
+    void Awake()
+    {
+        healthSlider.value = healthPoints;
+        healthSlider.maxValue = healthPoints;
+    }
 
     public void InflictDamage(int damage)
     {
