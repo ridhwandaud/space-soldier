@@ -15,13 +15,13 @@ public class MeleeEnemyIdleState : State<MeleeEnemyAI> {
 
     public override void Execute(MeleeEnemyAI enemy)
     {
-        float distanceFromPlayer = Vector3.Distance(player.transform.position, enemy.transform.position);
+        float distanceFromPlayer = Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position);
 
-        if (EnemyUtil.CanSee(enemy.transform.position, player.transform.position) && distanceFromPlayer <= enemy.attackDistance)
+        if (EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position) && distanceFromPlayer <= enemy.attackDistance)
         {
             enemy.fsm.ChangeState(MeleeEnemyInRangeState.Instance);
         }
-        else if (EnemyUtil.CanSee(enemy.transform.position, player.transform.position) && distanceFromPlayer <= enemy.chargeDistance)
+        else if (EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position) && distanceFromPlayer <= enemy.chargeDistance)
         {
             enemy.fsm.ChangeState(MeleeEnemyChasingState.Instance);
         }

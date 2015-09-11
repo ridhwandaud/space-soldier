@@ -14,7 +14,6 @@ public class FootSoldierAI : MonoBehaviour {
     public int shotsFiredPerMovement;
     public float attackDuration;
 
-    private GameObject player;
     private Rigidbody2D rb2d;
     private float nextMoveTime = 0;
     private int shotsFiredThisMovement = 0;
@@ -26,7 +25,6 @@ public class FootSoldierAI : MonoBehaviour {
 
     void Awake()
     {
-        player = GameObject.Find("Soldier");
         rb2d = GetComponent<Rigidbody2D>();
         enemyFireScript = GetComponent<BasicEnemyFire>();
         colliderSize = GetComponent<BoxCollider2D>().size;
@@ -39,7 +37,7 @@ public class FootSoldierAI : MonoBehaviour {
             return;
         }
 
-        if (EnemyUtil.CanSee(transform.position, player.transform.position))
+        if (EnemyUtil.CanSee(transform.position, Player.PlayerTransform.position))
         {
             CancelInvoke("DeactivateAttack");
             attacking = true;
@@ -65,10 +63,10 @@ public class FootSoldierAI : MonoBehaviour {
                 Vector2 possibleVelocity = Vector2.zero;
                 for (int addend = 0; addend < 360; addend += 20)
                 {
-                    possibleVelocity = VectorUtil.RotateVector(player.transform.position - gameObject.transform.position,
+                    possibleVelocity = VectorUtil.RotateVector(Player.PlayerTransform.position - gameObject.transform.position,
                         (rotation + addend) * Mathf.Deg2Rad).normalized * speed;
                     if (Physics2D.BoxCast(gameObject.transform.position, colliderSize, 0f, possibleVelocity, 
-                        2f, LayerMasks.WALL_LAYER_MASK).collider == null)
+                        2f, LayerMasks.WallLayerMask).collider == null)
                     {
                         break;
                     }
@@ -97,7 +95,7 @@ public class FootSoldierAI : MonoBehaviour {
 
     bool WithinAttackRange()
     {
-        return Vector3.Distance(player.transform.position, gameObject.transform.position) <= attackingDistance;
+        return Vector3.Distance(Player.PlayerTransform.position, gameObject.transform.position) <= attackingDistance;
     }
 
     void DeactivateAttack()

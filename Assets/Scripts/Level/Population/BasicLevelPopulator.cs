@@ -24,13 +24,15 @@ public class BasicLevelPopulator : ILevelPopulator
 
     void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions, Transform enemyContainer)
     {
+        int totalNumEnemiesPlaced = 0;
         foreach (EnemySpawnData spawnDatum in spawnData)
         {
-            int numEnemiesPlaced = 0;
+            int numEnemiesOfTypePlaced = 0;
             int count = Random.Range(spawnDatum.min, spawnDatum.max);
+            totalNumEnemiesPlaced += count;
             GameObject enemyPrefab = spawnDatum.enemyType;
 
-            while (numEnemiesPlaced < count)
+            while (numEnemiesOfTypePlaced < count)
             {
                 int index = Random.Range(0, potentialEnemyPositions.Count);
                 Vector2 spawnPosition = potentialEnemyPositions[index];
@@ -40,8 +42,10 @@ public class BasicLevelPopulator : ILevelPopulator
                     Quaternion.identity) as GameObject;
                 obj.transform.SetParent(enemyContainer);
 
-                numEnemiesPlaced++;
+                numEnemiesOfTypePlaced++;
             }
         }
+
+        GameState.NumEnemiesRemaining = totalNumEnemiesPlaced;
     }
 }

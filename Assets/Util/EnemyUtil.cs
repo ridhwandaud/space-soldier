@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class EnemyUtil {
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
-        return Physics2D.Linecast(pos1, pos2, LayerMasks.WALL_LAYER_MASK).transform == null;
+        return Physics2D.Linecast(pos1, pos2, LayerMasks.WallLayerMask).transform == null;
     }
 
     public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 pos1, Vector2 pos2, float colliderSizeMultiplierX = 1.25f,
@@ -14,7 +14,7 @@ public class EnemyUtil {
         Vector2 colliderSize = enemyCollider.size;
         Vector2 boxCastSize = new Vector2(colliderSize.x * colliderSizeMultiplierX, colliderSize.y * colliderSizeMultiplierY);
         RaycastHit2D boxHit = Physics2D.BoxCast(pos1, boxCastSize, 0f, pos2 - pos1,
-            boxCastDistance, LayerMasks.WALL_LAYER_MASK);
+            boxCastDistance, LayerMasks.WallLayerMask);
 
         return boxHit.transform == null;
     }
@@ -45,7 +45,7 @@ public class EnemyUtil {
         Vector2 pushVector = Vector2.zero;
 
         // Find all nearby enemies
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemyPosition, nearbyEnemyRadius, LayerMasks.ENEMY_LAYER_MASK);
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemyPosition, nearbyEnemyRadius, LayerMasks.EnemyLayerMask);
         int contenders = 0;
 
         for (int i = 0; i < nearbyEnemies.Length; i++)

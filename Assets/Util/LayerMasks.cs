@@ -2,7 +2,6 @@
 using System.Collections;
 
 public class LayerMasks {
-
-	public static int WALL_LAYER_MASK = 1 << 8;
-    public static int ENEMY_LAYER_MASK = 1 << 9;
+	public static int WallLayerMask = 1 << 8;
+    public static int EnemyLayerMask = 1 << 9;
 }

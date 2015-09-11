@@ -4,13 +4,7 @@ using System.Collections;
 public class EnemyDeath : MonoBehaviour {
     public int experiencePoints;
 
-    private PlayerExperience playerExperience;
     private bool destroyed = false;
-
-    void Awake()
-    {
-        playerExperience = GameObject.Find("Soldier").GetComponent<PlayerExperience>();
-    }
 
     public void KillEnemy()
     {
@@ -18,9 +12,22 @@ public class EnemyDeath : MonoBehaviour {
         // of secondary damage) from doubling the experience points earned.
         if (!destroyed)
         {
-            playerExperience.IncrementExperience(experiencePoints);
+            Player.PlayerExperience.IncrementExperience(experiencePoints);
             Destroy(gameObject);
             destroyed = true;
+            GameState.NumEnemiesRemaining--;
+            if (GameState.NumEnemiesRemaining == 0)
+            {
+                createPortal();
+            }
         }
+    }
+
+    void createPortal()
+    {
+        GameObject portal = GameObject.Find("Portal");
+        portal.transform.position = transform.position;
+        portal.GetComponent<SpriteRenderer>().enabled = true;
+        portal.GetComponent<BoxCollider2D>().enabled = true;
     }
 }

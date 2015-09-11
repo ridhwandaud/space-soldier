@@ -22,7 +22,7 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
         {
             enemy.StopMovement();
         }
-        else if (Vector3.Distance(player.transform.position, enemy.transform.position) > enemy.attackDistance)
+        else if (Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position) > enemy.attackDistance)
         {
             outOfRangeHandler(enemy);
         }
@@ -59,7 +59,7 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
         }
         else
         {
-            enemy.Charge(player.transform.position, .8f, .8f, .5f);
+            enemy.Charge(Player.PlayerTransform.position, .8f, .8f, .5f);
         }   
     }
 
@@ -79,7 +79,7 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
 
     private void stopAttackIfNecessary(MeleeEnemyAI enemy)
     {
-        if (Vector3.Distance(player.transform.position, enemy.transform.position) > enemy.attackDistance || !enemy.targetIsAssigned)
+        if (Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position) > enemy.attackDistance || !enemy.targetIsAssigned)
         {
             enemy.animator.SetBool("Attacking", false);
         }

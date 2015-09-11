@@ -9,11 +9,9 @@ public class BasicEnemyFire : MonoBehaviour {
     public int accuracyVariation = 30;
 
     private StackPool projectilePool;
-    private GameObject player;
     private float nextFireTime;
 
 	void Start () {
-        player = GameObject.Find("Soldier");
         nextFireTime = Time.time + .5f;
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
 	}
@@ -27,7 +25,7 @@ public class BasicEnemyFire : MonoBehaviour {
             GameObject projectile = projectilePool.Pop();
             projectile.transform.position = gameObject.transform.position;
 
-            Vector3 offset = player.transform.position - gameObject.transform.position;
+            Vector3 offset = Player.PlayerTransform.position - gameObject.transform.position;
             float rotation = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg + 90 + missAmountDegrees;
             projectile.transform.rotation = Quaternion.Euler(new Vector3(0, 0, rotation));
 

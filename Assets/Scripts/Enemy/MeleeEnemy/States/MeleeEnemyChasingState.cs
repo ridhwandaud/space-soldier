@@ -16,7 +16,7 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
 
     public override void Execute(MeleeEnemyAI enemy)
     {
-        float distanceFromPlayer = Vector3.Distance(player.transform.position, enemy.transform.position);
+        float distanceFromPlayer = Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position);
 
         if (distanceFromPlayer < enemy.attackDistance)
         {
@@ -24,12 +24,12 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
             return;
         }
 
-        if (EnemyUtil.CanSee(enemy.transform.position, player.transform.position) && distanceFromPlayer <= enemy.chargeDistance)
+        if (EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position) && distanceFromPlayer <= enemy.chargeDistance)
         {
             enemy.chasing = true;
             enemy.CancelInvoke("DeactivateChase");
 
-            enemy.Charge(player.transform.position, 1, 1, 1);
+            enemy.Charge(Player.PlayerTransform.position, 1, 1, 1);
         }
 
         else
@@ -37,7 +37,7 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
             enemy.Invoke("DeactivateChase", enemy.chaseTime);
             if (distanceFromPlayer <= enemy.chargeDistance && enemy.chasing)
             {
-                enemy.ExecuteAStar(player.transform.position);
+                enemy.ExecuteAStar(Player.PlayerTransform.position);
             }
             else
             {

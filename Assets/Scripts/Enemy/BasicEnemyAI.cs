@@ -17,7 +17,6 @@ public class BasicEnemyAI : MonoBehaviour {
     public bool readyToAttack = false;
     public bool attackInvoked = false;
 
-    private GameObject player;
     private Wander wanderScript;
     private BasicEnemyFire fireScript;
     private Rigidbody2D rb2d;
@@ -27,7 +26,6 @@ public class BasicEnemyAI : MonoBehaviour {
 
     void Awake()
     {
-        player = GameObject.Find("Soldier");
         wanderScript = GetComponent<Wander>();
         fireScript = GetComponent<BasicEnemyFire>();
         rb2d = GetComponent<Rigidbody2D>();
@@ -41,11 +39,11 @@ public class BasicEnemyAI : MonoBehaviour {
         }
 
         Vector2 enemyPosition = transform.position;
-        Vector2 playerPosition = player.transform.position;
+        Vector2 playerPosition = Player.PlayerTransform.position;
 
         float distanceFromPlayer = Vector3.Distance(playerPosition, enemyPosition);
 
-        if (EnemyUtil.CanSee(transform.position, player.transform.position) && distanceFromPlayer <= chargeDistance)
+        if (EnemyUtil.CanSee(transform.position, playerPosition) && distanceFromPlayer <= chargeDistance)
         {
             chasing = true;
             CancelInvoke("DeactivateChase");
@@ -84,14 +82,14 @@ public class BasicEnemyAI : MonoBehaviour {
 
     public void Charge()
     {
-        if (EnemyUtil.CanSee(transform.position, player.transform.position) && 
-            EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, player.transform.position))
+        if (EnemyUtil.CanSee(transform.position, Player.PlayerTransform.position) &&
+            EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, Player.PlayerTransform.position))
         {
-            rb2d.velocity = CalculateVelocity(player.transform.position);
+            rb2d.velocity = CalculateVelocity(Player.PlayerTransform.position);
         }
         else
         {
-            ExecuteAStar(transform.position, player.transform.position);
+            ExecuteAStar(transform.position, Player.PlayerTransform.position);
         }
     }
 
