@@ -22,10 +22,6 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     // Temporary hack.
     private Vector2 gordoSize = new Vector2(0.8133333f, .84f);
 
-    // TODO: Move into a utility class or constants class.
-    private static int WALL_LAYER = 1;
-    private static int WALL_LAYER_MASK = 1 << 8;
-
     private float lastAssignmentTime;
 
     void Awake()
@@ -81,7 +77,7 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     {
         for (int x = 0; x < claimableTokens.Count;)
         {
-            if (Physics2D.BoxCast(tokenToWorldSpace(claimableTokens[x]), gordoSize, 0f, Vector2.zero, 0f, WALL_LAYER_MASK).transform != null)
+            if (Physics2D.BoxCast(tokenToWorldSpace(claimableTokens[x]), gordoSize, 0f, Vector2.zero, 0f, LayerMasks.WallLayerMask).transform != null)
             {
                 unclaimableTokens.Add(claimableTokens[x]);
                 claimableTokens.RemoveAt(x);

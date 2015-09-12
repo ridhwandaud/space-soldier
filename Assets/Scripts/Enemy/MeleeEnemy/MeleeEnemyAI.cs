@@ -24,7 +24,6 @@ public class MeleeEnemyAI : MonoBehaviour {
     public bool chasing = false;
 
     private Rigidbody2D rb2d;
-    private bool isFirstFrame = true;
     private float lastPathfindTime = 0;
 
 	void Awake () {

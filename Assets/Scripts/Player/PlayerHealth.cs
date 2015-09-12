@@ -9,8 +9,8 @@ public class PlayerHealth : MonoBehaviour {
 
     void Awake()
     {
-        healthSlider.value = healthPoints;
         healthSlider.maxValue = healthPoints;
+        healthSlider.value = healthPoints;
     }
 
     public void InflictDamage(int damage)

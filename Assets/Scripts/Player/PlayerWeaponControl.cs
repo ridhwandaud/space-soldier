@@ -10,8 +10,6 @@ public class PlayerWeaponControl : MonoBehaviour {
     public float bulletSpeed = 50;
     public Slider energySlider;
 
-    private float nextFiringTime;
-
     private Weapon leftGun;
     private Weapon rightGun;
     private List<Weapon> weapons;
@@ -19,8 +17,6 @@ public class PlayerWeaponControl : MonoBehaviour {
     private int currentRightWeaponIndex = 1;
 
 	void Awake () {
-        nextFiringTime = 0;
-
         weapons = new List<Weapon> {
             GetComponentInChildren<ChargeGun>(),
             GetComponentInChildren<MachineGun>(),
