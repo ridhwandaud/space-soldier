@@ -37,6 +37,8 @@ public class LoadLevel : MonoBehaviour {
 
     void InitLevel()
     {
+        WALL_COLLIDERS_INITIALIZED = false;
+
         Vector3 playerSpawn;
         List<Vector2> potentialEnemyPositions;
         GameObject player = GameObject.Find("Soldier");
@@ -52,7 +54,7 @@ public class LoadLevel : MonoBehaviour {
         setTiles(generatedLevel, playerSpawn, player);
         AStar.world = generatedLevel;
 
-        levelTypes[0].getLevelPopulator().populateLevel(0, potentialEnemyPositions);
+        levelTypes[0].getLevelPopulator().populateLevel(0, potentialEnemyPositions, playerSpawn);
     }
 
     void setTiles(int[,] generatedLevel, Vector3 playerSpawn, GameObject player)

@@ -87,6 +87,11 @@ public class AStar : MonoBehaviour {
         return Mathf.Abs(goal.x - point.x) + Mathf.Abs(goal.y - point.y);
     }
 
+    public static int vectorManhattanDistance(Vector2 point, Vector2 goal)
+    {
+        return (int)(Mathf.Abs(goal.x - point.x) + Mathf.Abs(goal.y - point.y));
+    }
+
     static int calculatePointIndex(Int2 point) {
         return point.x + (point.y * world.GetLength(1));
     }
@@ -192,6 +197,11 @@ public class AStar : MonoBehaviour {
     public static Int2 positionToArrayIndices(Vector2 position)
     {
         return new Int2((int)(position.x + 1) / 2, (int)(position.y + 1) / 2);
+    }
+
+    public static Vector2 positionToArrayIndicesVector(Vector2 position)
+    {
+        return new Vector2((int)(position.x + 1) / 2, (int)(position.y + 1) / 2);
     }
 
     public static Vector2 arrayIndicesToPosition(Int2 point)

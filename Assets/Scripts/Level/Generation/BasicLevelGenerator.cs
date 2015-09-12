@@ -60,7 +60,7 @@ public class BasicLevelGenerator : ILevelGenerator
                 result[x, y] = levelToResize[x + leftX - 1, y + bottomY - 1];
                 if (result[x, y] == 1)
                 {
-                    openPositions.Add(new Vector2(y * LoadLevel.TILE_SIZE, x * LoadLevel.TILE_SIZE));
+                    openPositions.Add(new Vector2(y, x));
                 }
             }
         }
