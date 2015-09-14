@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MeleeEnemyAI : MonoBehaviour {
+public class MeleeEnemyAI : EnemyAI {
     public static HashSet<MeleeEnemyAI> meleeEnemies = new HashSet<MeleeEnemyAI>();
 
     public int chargeDistance;
@@ -21,7 +21,6 @@ public class MeleeEnemyAI : MonoBehaviour {
     public BoxCollider2D boxCollider2d;
     public FiniteStateMachine<MeleeEnemyAI> fsm;
     public Animator animator;
-    public bool chasing = false;
 
     private Rigidbody2D rb2d;
     private float lastPathfindTime = 0;
@@ -48,10 +47,12 @@ public class MeleeEnemyAI : MonoBehaviour {
             return;
         }
 
+        base.Update();
         fsm.Update();
 	}
 
-    public void Charge(Vector2 target, float colliderSizeMultiplierX, float colliderSizeMultiplierY, float boxCastDistance)
+    public void Charge(Vector2 target, float colliderSizeMultiplierX, float colliderSizeMultiplierY,
+        float boxCastDistance)
     {
         if (EnemyUtil.CanSee(transform.position, target) &&
                     EnemyUtil.PathIsNotBlocked(boxCollider2d, transform.position, target, colliderSizeMultiplierX,

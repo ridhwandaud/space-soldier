@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FootSoldierAI : MonoBehaviour {
+public class FootSoldierAI : EnemyAI {
 
     public int firingDistance;
     public int attackingDistance;
@@ -21,7 +21,6 @@ public class FootSoldierAI : MonoBehaviour {
     private int numMovementAttempts;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
-    public bool attacking = false;
 
     void Awake()
     {
@@ -37,17 +36,18 @@ public class FootSoldierAI : MonoBehaviour {
             return;
         }
 
+        base.Update();
         if (EnemyUtil.CanSee(transform.position, Player.PlayerTransform.position))
         {
             CancelInvoke("DeactivateAttack");
-            attacking = true;
+            chasing = true;
         }
         else
         {
             Invoke("DeactivateAttack", attackDuration);
         }
 
-        if (Time.time >= nextMoveTime && attacking)
+        if (Time.time >= nextMoveTime && chasing)
         {
             if (shotsFiredThisMovement < shotsFiredPerMovement)
             {
@@ -101,6 +101,6 @@ public class FootSoldierAI : MonoBehaviour {
     void DeactivateAttack()
     {
         rb2d.velocity = Vector2.zero;
-        attacking = false;
+        chasing = false;
     }
 }

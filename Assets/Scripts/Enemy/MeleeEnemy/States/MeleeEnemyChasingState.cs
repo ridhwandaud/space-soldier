@@ -39,7 +39,7 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
             {
                 enemy.ExecuteAStar(Player.PlayerTransform.position);
             }
-            else
+            else if (!enemy.chasing)
             {
                 enemy.fsm.ChangeState(MeleeEnemyIdleState.Instance);
             }

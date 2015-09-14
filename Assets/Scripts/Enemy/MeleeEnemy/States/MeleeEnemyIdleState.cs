@@ -21,7 +21,8 @@ public class MeleeEnemyIdleState : State<MeleeEnemyAI> {
         {
             enemy.fsm.ChangeState(MeleeEnemyInRangeState.Instance);
         }
-        else if (EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position) && distanceFromPlayer <= enemy.chargeDistance)
+        else if (enemy.chasing || EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position)
+            && distanceFromPlayer <= enemy.chargeDistance)
         {
             enemy.fsm.ChangeState(MeleeEnemyChasingState.Instance);
         }

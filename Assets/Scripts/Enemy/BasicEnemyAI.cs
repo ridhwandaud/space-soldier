@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SpriteTile;
 
-public class BasicEnemyAI : MonoBehaviour {
+public class BasicEnemyAI : EnemyAI {
 
     public int firingDistance;
     public int chargeDistance;
@@ -13,7 +13,6 @@ public class BasicEnemyAI : MonoBehaviour {
     public float chaseTime;
     public float attackDelay;
 
-    public bool chasing = false;
     public bool readyToAttack = false;
     public bool attackInvoked = false;
 
@@ -37,6 +36,7 @@ public class BasicEnemyAI : MonoBehaviour {
         {
             return;
         }
+        base.Update();
 
         Vector2 enemyPosition = transform.position;
         Vector2 playerPosition = Player.PlayerTransform.position;
@@ -97,11 +97,6 @@ public class BasicEnemyAI : MonoBehaviour {
     {
         readyToAttack = true;
         attackInvoked = false;
-    }
-
-    void DeactivateChase()
-    {
-        chasing = false;
     }
 
     void StartFiring()
