@@ -2,9 +2,9 @@
 
 public class EnergyGun : Weapon
 {
-    public int energyCost;
+    public float energyCost;
 
-    public override int Click(Transform transform)
+    public override float Click(Transform transform)
     {
         if (CanFire())
         {
@@ -24,7 +24,7 @@ public class EnergyGun : Weapon
         return 0;
     }
 
-    public override int GetEnergyRequirement()
+    public override float GetEnergyRequirement()
     {
         return energyCost;
     }

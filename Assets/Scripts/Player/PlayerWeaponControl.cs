@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 public class PlayerWeaponControl : MonoBehaviour {
 
-    public int energyPoints;
-    public float firingDelay = .1f;
-    public float bulletSpeed = 50;
+    public float firingDelay;
+    public float bulletSpeed;
     public Slider energySlider;
 
     private Weapon leftGun;
@@ -24,8 +23,8 @@ public class PlayerWeaponControl : MonoBehaviour {
             GetComponentInChildren<EnergyGun>()
         };
 
-        leftGun = weapons[0];
-        rightGun = weapons[1];
+        leftGun = weapons[1];
+        rightGun = weapons[0];
 	}
 	
 	void Update () {
@@ -42,9 +41,9 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (Input.GetMouseButton(1))
         {
-            if (energyPoints >= rightGun.GetEnergyRequirement())
+            if (Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
             {
-                energyPoints -= rightGun.Click(transform);
+                Player.PlayerEnergy.energy -= rightGun.Click(transform);
             }
         }
 
@@ -55,10 +54,8 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (Input.GetMouseButtonUp(1))
         {
-            energyPoints -= rightGun.Release(transform);
+            Player.PlayerEnergy.energy -= rightGun.Release(transform);
         }
-
-        energySlider.value = energyPoints;
 	}
 
     public void AddWeapon(Weapon newWeapon)

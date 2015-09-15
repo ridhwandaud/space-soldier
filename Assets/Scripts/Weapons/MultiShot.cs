@@ -6,7 +6,7 @@ public class MultiShot : Weapon
     public int energyCost = 0;
     public float degreesBetweenShots;
 
-    public override int Click(Transform transform)
+    public override float Click(Transform transform)
     {
         if (CanFire())
         {
@@ -38,7 +38,7 @@ public class MultiShot : Weapon
         return 0;
     }
 
-    public override int GetEnergyRequirement()
+    public override float GetEnergyRequirement()
     {
         return energyCost;
     }

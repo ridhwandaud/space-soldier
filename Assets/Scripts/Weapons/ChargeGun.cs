@@ -5,20 +5,27 @@ using System.Collections.Generic;
 public class ChargeGun : Weapon
 {
     public Transform playerTransform;
+    public float energyCostPerSecond;
+    public float minEnergyCost;
 
     private GameObject currentShot;
     private bool charging = false;
     private float chargeStartTime;
+    private float playerEnergyAtChargeStart;
+    private float energyCostSoFar;
 
     private List<float> thresholds = new List<float> { .2f, .8f };
     private List<string> animationLevels = new List<string> { "SmallShotFired", "MediumShotFired", "LargeShotFired" };
 
     private Vector3 chargeShotRelativePosition = new Vector3(.18f, 1.082f, 0);
 
-    public override int Click(Transform transform)
+    public override float Click(Transform transform)
     {
+        float chargeDuration = Time.time - chargeStartTime;
         if (!charging)
         {
+            Player.PlayerEnergy.PauseRecharge();
+
             currentShot = stackPool.Pop();
             currentShot.transform.SetParent(playerTransform);
             currentShot.transform.localPosition = chargeShotRelativePosition;
@@ -26,17 +33,26 @@ public class ChargeGun : Weapon
 
             charging = true;
             chargeStartTime = Time.time;
+            playerEnergyAtChargeStart = Player.PlayerEnergy.energy;
+            energyCostSoFar = 0;
 
             currentShot.SetActive(true);
+        }
+        else if (chargeDuration >= thresholds[0] && chargeDuration < thresholds[1])
+        {
+            energyCostSoFar = (chargeDuration - thresholds[0]) * energyCostPerSecond;
+            return energyCostSoFar - (playerEnergyAtChargeStart - Player.PlayerEnergy.energy);
         }
 
         return 0;
     }
 
-    public override int Release(Transform transform)
+    public override float Release(Transform transform)
     {
         if (CanFire())
         {
+            Player.PlayerEnergy.UnpauseRecharge();
+
             nextFiringTime = Time.time + firingDelay;
             ChargeBlastProperties chargeBlastProperties = currentShot.GetComponent<ChargeBlastProperties>();
 
@@ -52,7 +68,10 @@ public class ChargeGun : Weapon
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
             currentShot.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+
+            return energyCostSoFar > minEnergyCost ? 0 : minEnergyCost - energyCostSoFar;
         }
+
         return 0;
     }
 
@@ -74,7 +93,7 @@ public class ChargeGun : Weapon
         return thresholds.Count;
     }
 
-    public override int GetEnergyRequirement()
+    public override float GetEnergyRequirement()
     {
         return 0;
     }

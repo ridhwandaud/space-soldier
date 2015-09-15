@@ -9,15 +9,12 @@ public abstract class Weapon : MonoBehaviour
 
     protected float nextFiringTime = 0;
 
-    public abstract int GetEnergyRequirement();
-
-    public abstract int Click(Transform transform);
-
+    public abstract float GetEnergyRequirement();
+    public abstract float Click(Transform transform);
     public abstract string GetName();
 
-    public virtual int Release(Transform transform)
+    public virtual float Release(Transform transform)
     {
-        // No-op.
         return 0;
     }
 

@@ -5,6 +5,7 @@ public class Player : MonoBehaviour {
     public static GameObject Instance;
     public static Transform PlayerTransform;
     public static PlayerHealth PlayerHealth;
+    public static PlayerEnergy PlayerEnergy;
     public static PlayerExperience PlayerExperience;
 
 	void Awake () {
@@ -12,5 +13,6 @@ public class Player : MonoBehaviour {
         PlayerTransform = Instance.transform;
         PlayerHealth = Instance.GetComponent<PlayerHealth>();
         PlayerExperience = Instance.GetComponent<PlayerExperience>();
+        PlayerEnergy = Instance.GetComponent<PlayerEnergy>();
 	}
 }
