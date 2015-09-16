@@ -17,14 +17,15 @@ public class PlayerWeaponControl : MonoBehaviour {
 
 	void Awake () {
         weapons = new List<Weapon> {
-            GetComponentInChildren<ChargeGun>(),
+            GetComponentInChildren<Pistol>(),
             GetComponentInChildren<MachineGun>(),
+            GetComponentInChildren<ChargeGun>(),
             GetComponentInChildren<MultiShot>(),
             GetComponentInChildren<EnergyGun>()
         };
 
-        leftGun = weapons[1];
-        rightGun = weapons[0];
+        leftGun = weapons[0];
+        rightGun = weapons[1];
 	}
 	
 	void Update () {

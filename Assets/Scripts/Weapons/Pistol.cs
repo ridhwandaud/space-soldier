@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 
-public class MachineGun : Weapon
+/* Currently, this is identical to the MachineGun (except it has a slower rate of fire and a different sprite). However,
+ * I have decided to make it a different class for now because the machine gun's behavior will change based on the number of
+ * skill points. */
+
+public class Pistol : Weapon
 {
     public float energyCost;
 
@@ -15,7 +19,6 @@ public class MachineGun : Weapon
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
-            // this has to be done before setting velocity or it won't work.
             bullet.SetActive(true);
             bullet.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
 
@@ -32,6 +35,6 @@ public class MachineGun : Weapon
 
     public override string GetName()
     {
-        return "machineGun";
+        return "pistol";
     }
 }
