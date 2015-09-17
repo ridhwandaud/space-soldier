@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour {
 
     protected void Update()
     {
-        if (!chasing && Time.time > nextChaseCheckTime)
+        if (chasing == false && Time.time > nextChaseCheckTime)
         {
             nextChaseCheckTime += chaseCheckInterval;
             Collider2D[] otherEnemies = Physics2D.OverlapCircleAll(transform.position, chaseActivationRadius, LayerMasks.EnemyLayerMask);

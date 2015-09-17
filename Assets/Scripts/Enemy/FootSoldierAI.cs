@@ -29,7 +29,7 @@ public class FootSoldierAI : EnemyAI {
         colliderSize = GetComponent<BoxCollider2D>().size;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
         {
@@ -42,7 +42,7 @@ public class FootSoldierAI : EnemyAI {
             CancelInvoke("DeactivateAttack");
             chasing = true;
         }
-        else
+        else if(chasing)
         {
             Invoke("DeactivateAttack", attackDuration);
         }
