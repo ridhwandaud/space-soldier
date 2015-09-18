@@ -2,7 +2,7 @@
 using SpriteTile;
 using System.Collections.Generic;
 
-public class BasicLevelPopulator : ILevelPopulator
+public class BasicLevelPopulator
 {
     private static int MinimumGridDistanceFromPlayer = 5;
 
@@ -21,15 +21,14 @@ public class BasicLevelPopulator : ILevelPopulator
         result.Add(basicEnemySpawn);
         result.Add(footSoldierSpawn);
         result.Add(gordoSpawn);
-
-        Transform enemyContainer = GameObject.Find("Enemies").transform;
-
-        spawnEnemies(result, openPositions, enemyContainer, playerPosition);
     }
 
-    void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions, Transform enemyContainer,
-        Vector2 playerPosition)
+    public void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions,
+        Vector2 playerSpawn)
     {
+        Transform enemyContainer = GameObject.Find("Enemies").transform;
+        Vector2 playerPosition = AStar.positionToArrayIndicesVector(playerSpawn);
+
         int totalNumEnemiesPlaced = 0;
         foreach (EnemySpawnData spawnDatum in spawnData)
         {

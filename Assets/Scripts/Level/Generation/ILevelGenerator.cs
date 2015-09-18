@@ -2,5 +2,5 @@
 using System.Collections.Generic;
 
 public interface ILevelGenerator {
-    int[,] GenerateLevel(int levelIndex, out List<Vector2> openPositions, out Vector3 playerSpawn);
+    int[,] GenerateLevel(int levelIndex, out Vector3 playerSpawn);
 }

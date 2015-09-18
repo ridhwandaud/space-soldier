@@ -13,7 +13,8 @@ public class LoadLevel : MonoBehaviour {
     public static LoadLevel instance = null;
     public static bool WALL_COLLIDERS_INITIALIZED = false;
 
-    private List<LevelType> levelTypes;
+    private static int WALL_LAYER = 8;
+
     private int level = 0;
 
 	void Awake () {
@@ -40,21 +41,14 @@ public class LoadLevel : MonoBehaviour {
         WALL_COLLIDERS_INITIALIZED = false;
 
         Vector3 playerSpawn;
-        List<Vector2> potentialEnemyPositions;
         GameObject player = GameObject.Find("Soldier");
-
-        // Eventually there will be multiple level types and the level type will be randomly selected.
-        levelTypes = new List<LevelType>();
-        levelTypes.Add(new LevelType(new BasicLevelGenerator(), new BasicLevelPopulator()));
 
         Tile.SetCamera();
 
-        int[,] generatedLevel = levelTypes[0].getLevelGenerator().GenerateLevel(0,
-            out potentialEnemyPositions, out playerSpawn);
+        BasicLevelGenerator generator = new BasicLevelGenerator();
+        int[,] generatedLevel = generator.GenerateLevel(0, out playerSpawn);
         setTiles(generatedLevel, playerSpawn, player);
         AStar.world = generatedLevel;
-
-        levelTypes[0].getLevelPopulator().populateLevel(0, potentialEnemyPositions, playerSpawn);
     }
 
     void setTiles(int[,] generatedLevel, Vector3 playerSpawn, GameObject player)
@@ -70,7 +64,7 @@ public class LoadLevel : MonoBehaviour {
         Tile.SetLayerSorting(1, 1);
 
         // set collider layer so that walls can be detected by raycasting
-        Tile.SetColliderLayer(8);
+        Tile.SetColliderLayer(WALL_LAYER);
 
         for (int row = 0; row < generatedLevel.GetLength(0); row++)
         {
@@ -79,9 +73,10 @@ public class LoadLevel : MonoBehaviour {
                 Int2 tileLocation = new Int2(col, row);
                 bool isWall = WALL_INDICES.Contains(generatedLevel[row, col]);
                 int tileIndex = isWall ? 2 : 0;
-                int layerIndex = isWall ? 1 : 0;
+                //int tileIndex = generatedLevel[row, col];
+                int spriteTileLayerIndex = isWall ? 1 : 0;
 
-                Tile.SetTile(tileLocation, layerIndex, 0, tileIndex, false);
+                Tile.SetTile(tileLocation, spriteTileLayerIndex, 0, tileIndex, false);
 
                 if (isWall && hasAdjacentFloor(generatedLevel, row, col))
                 {
@@ -102,7 +97,6 @@ public class LoadLevel : MonoBehaviour {
         foreach (PolygonCollider2D collider in polygonColliders)
         {
             collider.tag = "Wall";
-            //A: collider.sharedMaterial = (PhysicsMaterial2D) Resources.Load("FrictionlessMaterial");
         }
 
         WALL_COLLIDERS_INITIALIZED = true;
