@@ -15,7 +15,7 @@ public class LoadLevel : MonoBehaviour {
 
     private static int WALL_LAYER = 8;
 
-    private int level = 0;
+    private int levelIndex = 0;
 
 	void Awake () {
         if (instance == null) {
@@ -32,7 +32,7 @@ public class LoadLevel : MonoBehaviour {
 
     void OnLevelWasLoaded(int index)
     {
-        level++;
+        levelIndex++;
         InitLevel();
     }
 
@@ -46,7 +46,7 @@ public class LoadLevel : MonoBehaviour {
         Tile.SetCamera();
 
         BasicLevelGenerator generator = new BasicLevelGenerator();
-        int[,] generatedLevel = generator.GenerateLevel(0, out playerSpawn);
+        int[,] generatedLevel = generator.GenerateLevel(levelIndex, out playerSpawn);
         setTiles(generatedLevel, playerSpawn, player);
         AStar.world = generatedLevel;
     }

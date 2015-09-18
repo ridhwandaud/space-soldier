@@ -6,23 +6,6 @@ public class BasicLevelPopulator
 {
     private static int MinimumGridDistanceFromPlayer = 5;
 
-    public void populateLevel(int levelIndex, List<Vector2> openPositions, Vector2 playerSpawn)
-    {
-        Vector2 playerPosition = AStar.positionToArrayIndicesVector(playerSpawn);
-
-        GameObject enemyPrefab = Resources.Load("Enemy") as GameObject;
-        GameObject footSoldierPrefab = Resources.Load("FootSoldier") as GameObject;
-        GameObject gordoPrefab = Resources.Load("Gordo") as GameObject;
-
-        List<EnemySpawnData> result = new List<EnemySpawnData>();
-        EnemySpawnData basicEnemySpawn = new EnemySpawnData(6, 6, enemyPrefab);
-        EnemySpawnData footSoldierSpawn = new EnemySpawnData(4, 5, footSoldierPrefab);
-        EnemySpawnData gordoSpawn = new EnemySpawnData(7, 7, gordoPrefab);
-        result.Add(basicEnemySpawn);
-        result.Add(footSoldierSpawn);
-        result.Add(gordoSpawn);
-    }
-
     public void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions,
         Vector2 playerSpawn)
     {
