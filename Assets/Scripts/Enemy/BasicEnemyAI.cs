@@ -30,13 +30,14 @@ public class BasicEnemyAI : EnemyAI {
         rb2d = GetComponent<Rigidbody2D>();
         boxCollider2d = GetComponent<BoxCollider2D>();
     }
-	
-	void Update () {
+
+    void Update()
+    {
         if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
         {
             return;
         }
-        base.Update();
+        ChaseIfNecessary();
 
         Vector2 enemyPosition = transform.position;
         Vector2 playerPosition = Player.PlayerTransform.position;

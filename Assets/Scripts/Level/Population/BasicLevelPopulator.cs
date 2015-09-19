@@ -17,7 +17,6 @@ public class BasicLevelPopulator
         {
             int numEnemiesOfTypePlaced = 0;
             int count = Random.Range(spawnDatum.min, spawnDatum.max);
-            totalNumEnemiesPlaced += count;
             GameObject enemyPrefab = spawnDatum.enemyType;
 
             while (numEnemiesOfTypePlaced < count && potentialEnemyPositions.Count > 0)
@@ -33,6 +32,7 @@ public class BasicLevelPopulator
                         Quaternion.identity) as GameObject;
                     obj.transform.SetParent(enemyContainer);
 
+                    totalNumEnemiesPlaced++;
                     numEnemiesOfTypePlaced++;
                     continue;
                 }

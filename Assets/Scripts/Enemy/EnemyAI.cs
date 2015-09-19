@@ -10,7 +10,7 @@ public class EnemyAI : MonoBehaviour {
     //TODO: Add jitter so everyone isn't checking at the same time.
     private float nextChaseCheckTime = 0;
 
-    protected void Update()
+    protected void ChaseIfNecessary()
     {
         if (chasing == false && Time.time > nextChaseCheckTime)
         {

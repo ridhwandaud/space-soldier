@@ -36,7 +36,7 @@ public class FootSoldierAI : EnemyAI {
             return;
         }
 
-        base.Update();
+        ChaseIfNecessary();
         if (EnemyUtil.CanSee(transform.position, Player.PlayerTransform.position))
         {
             CancelInvoke("DeactivateAttack");

@@ -47,7 +47,7 @@ public class MeleeEnemyAI : EnemyAI {
             return;
         }
 
-        base.Update();
+        ChaseIfNecessary();
         fsm.Update();
 	}
 
