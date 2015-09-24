@@ -6,8 +6,8 @@ using System;
 using System.Text;
 
 public class LoadLevel : MonoBehaviour {
-    HashSet<int> WALL_INDICES = new HashSet<int>() {0};
-    HashSet<int> FLOOR_INDICES = new HashSet<int>() {1};
+    public static HashSet<int> WALL_INDICES = new HashSet<int>() {2};
+    public static HashSet<int> FLOOR_INDICES = new HashSet<int>() {0, 1};
 
     public static float TILE_SIZE = 2f;
     public static LoadLevel instance = null;
@@ -72,8 +72,7 @@ public class LoadLevel : MonoBehaviour {
             {
                 Int2 tileLocation = new Int2(col, row);
                 bool isWall = WALL_INDICES.Contains(generatedLevel[row, col]);
-                int tileIndex = isWall ? 2 : 0;
-                //int tileIndex = generatedLevel[row, col];
+                int tileIndex = generatedLevel[row, col];
                 int spriteTileLayerIndex = isWall ? 1 : 0;
 
                 Tile.SetTile(tileLocation, spriteTileLayerIndex, 0, tileIndex, false);

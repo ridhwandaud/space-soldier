@@ -29,7 +29,7 @@ public class BasicLevelGenerator : ILevelGenerator
 
         smallLevelConfig[BasicLevelDifficulty.Easy] = smallEasyLevelConfigs;
         mediumLevelConfig[BasicLevelDifficulty.Easy] = mediumEasyLevelConfigs;
-        LargeLevelConfig[BasicLevelDifficulty.Easy] = LargeEasyLevelConfigs;
+        LargeLevelConfig[BasicLevelDifficulty.Easy] = largeEasyLevelConfigs;
     }
 
     public int[,] GenerateLevel(int levelIndex, out Vector3 playerSpawn)
@@ -48,14 +48,17 @@ public class BasicLevelGenerator : ILevelGenerator
 
         if (rand == 1)
         {
+            Debug.Log("level size: small");
             return BasicLevelSize.Small;
         }
         else if (rand == 2)
         {
+            Debug.Log("level size: medium");
             return BasicLevelSize.Medium;
         }
         else
         {
+            Debug.Log("level size: large");
             return BasicLevelSize.Large;
         }
     }
@@ -66,6 +69,8 @@ public class BasicLevelGenerator : ILevelGenerator
 
         List<EnemySpawnConfig> possibleConfigs = configsBySize[size][difficulty];
         EnemySpawnConfig config = possibleConfigs[Random.Range(0, possibleConfigs.Count - 1)];
+
+        config.printConfig();
 
         return new List<EnemySpawnData> { 
             new EnemySpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
@@ -86,6 +91,13 @@ public class BasicLevelGenerator : ILevelGenerator
             this.footSoldierMinMax = footSoldierMinMax;
             this.gordoMinMax = gordoMinMax;
         }
+
+        public void printConfig()
+        {
+            Debug.Log("basic enemy min and max: " + basicEnemyMinMax.x + ", " + basicEnemyMinMax.y);
+            Debug.Log("foot soldier min and max: " + footSoldierMinMax.x + ", " + footSoldierMinMax.y);
+            Debug.Log("gordo min and max: " + gordoMinMax.x + ", " + gordoMinMax.y);
+        }
     }
 
     private Dictionary<BasicLevelSize, Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>> configsBySize = 
@@ -97,14 +109,18 @@ public class BasicLevelGenerator : ILevelGenerator
     {
         new EnemySpawnConfig(new Int2(3, 4), new Int2(3, 4), new Int2(3, 4)),
         new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(5, 6)),
-        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(2, 3)),
+        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4)),
     };
     private List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
     {
+        new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6)),
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9)),
         new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5))
     };
-    private List<EnemySpawnConfig> LargeEasyLevelConfigs = new List<EnemySpawnConfig>
+    private List<EnemySpawnConfig> largeEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(5, 7), new Int2(5, 7), new Int2(5, 7))
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7)),
+        new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9)),
+        new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4))
     };
 }

@@ -50,6 +50,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (Input.GetButtonDown("ToggleRightWeapon"))
         {
+            //Player.PlayerEnergy.energy -= rightGun.Release(transform);
             ToggleRightWeapon();
         }
 

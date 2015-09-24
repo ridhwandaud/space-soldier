@@ -79,7 +79,7 @@ public class AStar : MonoBehaviour {
     {
         // y is row, x is column. think about it.
         // and of course, array is world[row, col]
-        return world[y, x] == 1;
+        return LoadLevel.FLOOR_INDICES.Contains(world[y, x]);
     }
 
     static int manhattanDistance(Int2 point, Int2 goal)
