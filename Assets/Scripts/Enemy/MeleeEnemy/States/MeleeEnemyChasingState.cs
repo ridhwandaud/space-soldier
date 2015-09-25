@@ -31,15 +31,20 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
 
             enemy.Charge(Player.PlayerTransform.position, 1, 1, 1);
         }
-
         else
         {
             enemy.Invoke("DeactivateChase", enemy.chaseTime);
-            if (distanceFromPlayer <= enemy.chargeDistance && enemy.chasing)
-            {
-                enemy.ExecuteAStar(Player.PlayerTransform.position);
+            if (enemy.chasing) {
+                if (EnemyUtil.CanSee(enemy.transform.position, Player.PlayerTransform.position))
+                {
+                    enemy.Charge(Player.PlayerTransform.position, 1, 1, 1);
+                }
+                else
+                {
+                    enemy.ExecuteAStar(Player.PlayerTransform.position);
+                }
             }
-            else if (!enemy.chasing)
+            else
             {
                 enemy.fsm.ChangeState(MeleeEnemyIdleState.Instance);
             }

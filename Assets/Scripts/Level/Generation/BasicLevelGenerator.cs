@@ -11,6 +11,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject basicEnemyPrefab;
     GameObject footSoldierPrefab;
     GameObject gordoPrefab;
+    GameObject gordoTrapPrefab;
 
     enum BasicLevelSize { Small = 80, Medium = 100, Large = 200 };
     enum BasicLevelDifficulty { Easy, Hard};
@@ -22,6 +23,7 @@ public class BasicLevelGenerator : ILevelGenerator
         basicEnemyPrefab = Resources.Load("Enemy") as GameObject;
         footSoldierPrefab = Resources.Load("FootSoldier") as GameObject;
         gordoPrefab = Resources.Load("Gordo") as GameObject;
+        gordoTrapPrefab = Resources.Load("GordoTrap") as GameObject;
 
         configsBySize[BasicLevelSize.Small] = smallLevelConfig;
         configsBySize[BasicLevelSize.Medium] = mediumLevelConfig;
@@ -63,7 +65,7 @@ public class BasicLevelGenerator : ILevelGenerator
         }
     }
 
-    private List<EnemySpawnData> getEnemySpawnData(BasicLevelSize size, int levelIndex)
+    private List<SpawnData> getEnemySpawnData(BasicLevelSize size, int levelIndex)
     {
         BasicLevelDifficulty difficulty = levelIndex < HardLevelThreshold ? BasicLevelDifficulty.Easy : BasicLevelDifficulty.Hard;
 
@@ -72,10 +74,11 @@ public class BasicLevelGenerator : ILevelGenerator
 
         config.printConfig();
 
-        return new List<EnemySpawnData> { 
-            new EnemySpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
-            new EnemySpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
-            new EnemySpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab)
+        return new List<SpawnData> { 
+            new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
+            new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
+            new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
+            new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false)
         };
     }
 
@@ -84,12 +87,15 @@ public class BasicLevelGenerator : ILevelGenerator
         public Int2 basicEnemyMinMax;
         public Int2 footSoldierMinMax;
         public Int2 gordoMinMax;
+        public Int2 gordoTrapMinMax;
 
-        public EnemySpawnConfig(Int2 basicEnemyMinMax, Int2 footSoldierMinMax, Int2 gordoMinMax)
+        public EnemySpawnConfig(Int2 basicEnemyMinMax, Int2 footSoldierMinMax, Int2 gordoMinMax,
+            Int2 gordoTrapMinMax)
         {
             this.basicEnemyMinMax = basicEnemyMinMax;
             this.footSoldierMinMax = footSoldierMinMax;
             this.gordoMinMax = gordoMinMax;
+            this.gordoTrapMinMax = gordoTrapMinMax;
         }
 
         public void printConfig()
@@ -97,6 +103,7 @@ public class BasicLevelGenerator : ILevelGenerator
             Debug.Log("basic enemy min and max: " + basicEnemyMinMax.x + ", " + basicEnemyMinMax.y);
             Debug.Log("foot soldier min and max: " + footSoldierMinMax.x + ", " + footSoldierMinMax.y);
             Debug.Log("gordo min and max: " + gordoMinMax.x + ", " + gordoMinMax.y);
+            Debug.Log("gordoTrap min and max: " + gordoTrapMinMax.x + ", " + gordoTrapMinMax.y);
         }
     }
 
@@ -107,20 +114,20 @@ public class BasicLevelGenerator : ILevelGenerator
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> LargeLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
     private List<EnemySpawnConfig> smallEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(3, 4), new Int2(3, 4), new Int2(3, 4)),
-        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(5, 6)),
-        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4)),
+        new EnemySpawnConfig(new Int2(3, 4), new Int2(3, 4), new Int2(3, 4), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(5, 6), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2)),
     };
     private List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6)),
-        new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9)),
-        new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5))
+        new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5), new Int2(1, 2))
     };
     private List<EnemySpawnConfig> largeEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7)),
-        new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9)),
-        new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4))
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4), new Int2(1, 2))
     };
 }

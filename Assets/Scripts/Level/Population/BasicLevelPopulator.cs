@@ -6,24 +6,26 @@ public class BasicLevelPopulator
 {
     private static int MinimumGridDistanceFromPlayer = 5;
 
-    public void spawnEnemies(List<EnemySpawnData> spawnData, List<Vector2> potentialEnemyPositions,
+    public void spawnEnemies(List<SpawnData> spawnData, List<Vector2> potentialSpawnPositions,
         Vector2 playerSpawn)
     {
+        // This is no longer very semantically correct, since the populator can now lay traps in addition
+        // to enemies. Consider renaming, or creating a separate container for traps.
         Transform enemyContainer = GameObject.Find("Enemies").transform;
         Vector2 playerPosition = AStar.positionToArrayIndicesVector(playerSpawn);
 
         int totalNumEnemiesPlaced = 0;
-        foreach (EnemySpawnData spawnDatum in spawnData)
+        foreach (SpawnData spawnDatum in spawnData)
         {
-            int numEnemiesOfTypePlaced = 0;
+            int numEntitiesOfTypePlaced = 0;
             int count = Random.Range(spawnDatum.min, spawnDatum.max);
-            GameObject enemyPrefab = spawnDatum.enemyType;
+            GameObject enemyPrefab = spawnDatum.prefab;
 
-            while (numEnemiesOfTypePlaced < count && potentialEnemyPositions.Count > 0)
+            while (numEntitiesOfTypePlaced < count && potentialSpawnPositions.Count > 0)
             {
-                int index = Random.Range(0, potentialEnemyPositions.Count);
-                Vector2 spawnPosition = potentialEnemyPositions[index];
-                potentialEnemyPositions.RemoveAt(index);
+                int index = Random.Range(0, potentialSpawnPositions.Count);
+                Vector2 spawnPosition = potentialSpawnPositions[index];
+                potentialSpawnPositions.RemoveAt(index);
 
                 if (farEnoughFromPlayer(spawnPosition, playerPosition))
                 {
@@ -32,16 +34,20 @@ public class BasicLevelPopulator
                         Quaternion.identity) as GameObject;
                     obj.transform.SetParent(enemyContainer);
 
-                    totalNumEnemiesPlaced++;
-                    numEnemiesOfTypePlaced++;
+                    if (spawnDatum.isEnemy)
+                    {
+                        totalNumEnemiesPlaced++;
+                    }
+
+                    numEntitiesOfTypePlaced++;
                     continue;
                 }
             }
 
-            if (numEnemiesOfTypePlaced < count)
+            if (numEntitiesOfTypePlaced < count)
             {
-                Debug.Log("Could not place all " + count + " enemies - ran out of valid positions. Placed "
-                    + numEnemiesOfTypePlaced + " enemies");
+                Debug.Log("Could not place all " + count + " entities - ran out of valid positions. Placed "
+                    + numEntitiesOfTypePlaced + " entities");
             }
         }
 
