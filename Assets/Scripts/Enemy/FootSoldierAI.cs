@@ -5,7 +5,6 @@ public class FootSoldierAI : EnemyAI {
 
     public int firingDistance;
     public int attackingDistance;
-    public float speed;
     public float timeBetweenMoves;
     // The angle (in degrees) in each direction that the enemy can move.
     public int movementVariationDegrees;
@@ -58,21 +57,8 @@ public class FootSoldierAI : EnemyAI {
             {
                 shotsFiredThisMovement = 0;
                 nextMoveTime = Time.time + timeBetweenMoves;
-                int rotation = Random.Range(-movementVariationDegrees, movementVariationDegrees);
 
-                Vector2 possibleVelocity = Vector2.zero;
-                for (int addend = 0; addend < 360; addend += 20)
-                {
-                    possibleVelocity = VectorUtil.RotateVector(Player.PlayerTransform.position - gameObject.transform.position,
-                        (rotation + addend) * Mathf.Deg2Rad).normalized * speed;
-                    if (Physics2D.BoxCast(gameObject.transform.position, colliderSize, 0f, possibleVelocity, 
-                        2f, LayerMasks.WallLayerMask).collider == null)
-                    {
-                        break;
-                    }
-                }
-
-                rb2d.velocity = possibleVelocity;
+                rb2d.velocity = EnemyUtil.CalculateUnblockedDirection(movementVariationDegrees, transform.position, colliderSize, 2f) * speed;
             }
         }
         else

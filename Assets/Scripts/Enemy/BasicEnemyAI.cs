@@ -7,8 +7,6 @@ public class BasicEnemyAI : EnemyAI {
 
     public int firingDistance;
     public int chargeDistance;
-    public float speed;
-    public float nearbyEnemyRadius;
     public float pathFindingRate;
     public float chaseTime;
     public float attackDelay;
@@ -76,7 +74,7 @@ public class BasicEnemyAI : EnemyAI {
             }
             else
             {
-                rb2d.velocity = CalculateVelocity(enemyPosition);
+                wanderScript.DoWander();
             }
         } 
 	}

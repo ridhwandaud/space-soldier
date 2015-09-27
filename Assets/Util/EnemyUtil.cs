@@ -40,8 +40,13 @@ public class EnemyUtil {
     public static Vector2 CalculateVelocity(Transform enemyTransform, Vector2 target, float speed, float nearbyEnemyRadius)
     {
         Vector3 enemyPosition = enemyTransform.position;
-        Vector2 pullVector = new Vector2(target.x - enemyPosition.x,
-            target.y - enemyPosition.y).normalized * speed;
+        return CalculateVelocityFromPullVector(enemyTransform, new Vector2(target.x - enemyPosition.x, target.y - enemyPosition.y).normalized,
+            speed, nearbyEnemyRadius);
+    }
+
+    public static Vector2 CalculateVelocityFromPullVector(Transform enemyTransform, Vector2 pullVector, float speed, float nearbyEnemyRadius)
+    {
+        Vector3 enemyPosition = enemyTransform.position;
         Vector2 pushVector = Vector2.zero;
 
         // Find all nearby enemies
@@ -66,5 +71,39 @@ public class EnemyUtil {
         pullVector += pushVector;
 
         return pullVector.normalized * speed;
+    }
+
+    public static Vector2 CalculateUnblockedDirection(int movementVariationDegrees, Vector2 pos,
+        Vector2 colliderSize, float castDistance)
+    {
+        if ( Random.Range(0, 3) < 1)
+        {
+            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(pos),
+                AStar.positionToArrayIndices(Player.PlayerTransform.position));
+
+            if (list.Count > 1)
+            {
+                Vector2 aStarDir = (AStar.arrayIndicesToPosition(list[1].point) - pos).normalized;
+                if(Physics2D.BoxCast(pos, colliderSize, 0f, (aStarDir), 2f, LayerMasks.WallLayerMask).transform == null) {
+                    return aStarDir;
+                }
+            }
+        }
+
+        int rotation = Random.Range(0, 360);
+        Vector2 possibleDir = Vector2.zero;
+        int seekIncrement = Random.Range(0, 1) < 1 ? 20 : -20;
+        for (int addend = 0; Mathf.Abs(addend) < 360; addend += seekIncrement)
+        {
+            Vector2 vectorTowardsPlayer = (Vector2)Player.PlayerTransform.position - pos;
+            possibleDir = VectorUtil.RotateVector(vectorTowardsPlayer, (rotation + addend) * Mathf.Deg2Rad).normalized;
+            if (Physics2D.BoxCast(pos, colliderSize, 0f, possibleDir,
+                2f, LayerMasks.WallLayerMask).collider == null)
+            {
+                break;
+            }
+        }
+
+        return possibleDir;
     }
 }

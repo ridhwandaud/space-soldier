@@ -7,10 +7,8 @@ public class MeleeEnemyAI : EnemyAI {
 
     public int chargeDistance;
     public float attackDistance;
-    public float speed;
     public float pathFindingRate = 1f;
     public float chaseTime;
-    public float nearbyEnemyRadius;
     public Vector2 target;
     public Vector2 token;
 
@@ -23,6 +21,7 @@ public class MeleeEnemyAI : EnemyAI {
     public Animator animator;
 
     private Rigidbody2D rb2d;
+    private Wander wanderScript;
     private float lastPathfindTime = 0;
 
 	void Awake () {
@@ -31,6 +30,7 @@ public class MeleeEnemyAI : EnemyAI {
         rb2d = GetComponent<Rigidbody2D>();
         boxCollider2d = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
+        wanderScript = GetComponent<Wander>();
         fsm = new FiniteStateMachine<MeleeEnemyAI>(this, MeleeEnemyIdleState.Instance);
 
         meleeEnemies.Add(this);
@@ -84,5 +84,10 @@ public class MeleeEnemyAI : EnemyAI {
     void DeactivateChase()
     {
         chasing = false;
+    }
+
+    public void Wander()
+    {
+        wanderScript.DoWander();
     }
 }

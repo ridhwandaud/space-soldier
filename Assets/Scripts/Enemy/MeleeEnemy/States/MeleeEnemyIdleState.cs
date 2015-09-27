@@ -28,7 +28,7 @@ public class MeleeEnemyIdleState : State<MeleeEnemyAI> {
         }
         else
         {
-            enemy.CalculateVelocity(enemy.transform.position);
+            enemy.Wander();
         }
     }
 }
