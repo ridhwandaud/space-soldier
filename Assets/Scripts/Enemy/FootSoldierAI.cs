@@ -6,8 +6,6 @@ public class FootSoldierAI : EnemyAI {
     public int firingDistance;
     public int attackingDistance;
     public float timeBetweenMoves;
-    // The angle (in degrees) in each direction that the enemy can move.
-    public int movementVariationDegrees;
     public int bounceVariationDegrees;
     public int movementVariationTime;
     public int shotsFiredPerMovement;
@@ -17,6 +15,7 @@ public class FootSoldierAI : EnemyAI {
     private float nextMoveTime = 0;
     private int shotsFiredThisMovement = 0;
     private BasicEnemyFire enemyFireScript;
+    private Wander wanderScript;
     private int numMovementAttempts;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
@@ -25,6 +24,7 @@ public class FootSoldierAI : EnemyAI {
     {
         rb2d = GetComponent<Rigidbody2D>();
         enemyFireScript = GetComponent<BasicEnemyFire>();
+        wanderScript = GetComponent<Wander>();
         colliderSize = GetComponent<BoxCollider2D>().size;
     }
 
@@ -36,6 +36,7 @@ public class FootSoldierAI : EnemyAI {
         }
 
         ChaseIfNecessary();
+
         if (EnemyUtil.CanSee(transform.position, Player.PlayerTransform.position))
         {
             CancelInvoke("DeactivateAttack");
@@ -44,6 +45,10 @@ public class FootSoldierAI : EnemyAI {
         else if(chasing)
         {
             Invoke("DeactivateAttack", attackDuration);
+        }
+        else
+        {
+            wanderScript.DoWander();
         }
 
         if (Time.time >= nextMoveTime && chasing)
@@ -58,7 +63,8 @@ public class FootSoldierAI : EnemyAI {
                 shotsFiredThisMovement = 0;
                 nextMoveTime = Time.time + timeBetweenMoves;
 
-                rb2d.velocity = EnemyUtil.CalculateUnblockedDirection(movementVariationDegrees, transform.position, colliderSize, 2f) * speed;
+                rb2d.velocity =
+                    EnemyUtil.CalculateUnblockedDirection(transform.position, colliderSize, 2f, false) * speed;
             }
         }
         else

@@ -73,10 +73,10 @@ public class EnemyUtil {
         return pullVector.normalized * speed;
     }
 
-    public static Vector2 CalculateUnblockedDirection(int movementVariationDegrees, Vector2 pos,
-        Vector2 colliderSize, float castDistance)
+    public static Vector2 CalculateUnblockedDirection(Vector2 pos, Vector2 colliderSize, float castDistance,
+        bool wandering)
     {
-        if ( Random.Range(0, 3) < 1)
+        if (wandering && Random.Range(0, 2) < 1)
         {
             List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(pos),
                 AStar.positionToArrayIndices(Player.PlayerTransform.position));

@@ -35,6 +35,7 @@ public class BasicEnemyAI : EnemyAI {
         {
             return;
         }
+
         ChaseIfNecessary();
 
         Vector2 enemyPosition = transform.position;

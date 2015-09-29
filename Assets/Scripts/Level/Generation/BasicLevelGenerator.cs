@@ -46,7 +46,7 @@ public class BasicLevelGenerator : ILevelGenerator
 
     private BasicLevelSize getLevelSize()
     {
-        int rand = Random.Range(1, 1);
+        int rand = Random.Range(1, 4);
 
         if (rand == 1)
         {
@@ -73,6 +73,10 @@ public class BasicLevelGenerator : ILevelGenerator
         EnemySpawnConfig config = possibleConfigs[Random.Range(0, possibleConfigs.Count - 1)];
 
         //config.printConfig();
+
+        //return new List<SpawnData> {
+        //    new SpawnData(1, 1, basicEnemyPrefab)
+        //};
 
         return new List<SpawnData> { 
             new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
