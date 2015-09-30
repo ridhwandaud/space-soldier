@@ -12,6 +12,8 @@ public class MachineGun : Weapon
             GameObject bullet = stackPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
+            // Interface for projectiles?
+            bullet.GetComponent<BasicPlayerProjectile>().damage = 1;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 

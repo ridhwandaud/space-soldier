@@ -61,7 +61,7 @@ public class EnemyUtil {
             }
 
             Vector2 push = enemyPosition - nearbyEnemies[i].transform.position;
-            pushVector += push / push.sqrMagnitude;
+            pushVector = push.sqrMagnitude == 0f ? Vector2.zero : push / push.sqrMagnitude;
 
             contenders++;
         }
@@ -84,7 +84,7 @@ public class EnemyUtil {
             if (list.Count > 1)
             {
                 Vector2 aStarDir = (AStar.arrayIndicesToPosition(list[1].point) - pos).normalized;
-                if(Physics2D.BoxCast(pos, colliderSize, 0f, (aStarDir), 2f, LayerMasks.WallLayerMask).transform == null) {
+                if(Physics2D.BoxCast(pos, colliderSize, 0f, (aStarDir), 1.25f, LayerMasks.WallLayerMask).transform == null) {
                     return aStarDir;
                 }
             }

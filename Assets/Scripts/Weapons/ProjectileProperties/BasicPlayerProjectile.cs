@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BasicPlayerProjectile : MonoBehaviour
 {
-    public int damage = 1;
+    public int damage;
 
     void OnTriggerEnter2D(Collider2D other)
     {

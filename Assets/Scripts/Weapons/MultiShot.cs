@@ -56,5 +56,6 @@ public class MultiShot : Weapon
         bullet.transform.rotation = Quaternion.Euler(VectorUtil.RotateVector(transform.rotation.eulerAngles, angleOffset));
         bullet.SetActive(true);
         bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * projectileSpeed;
+        bullet.GetComponent<BasicPlayerProjectile>().damage = 1;
     }
 }
