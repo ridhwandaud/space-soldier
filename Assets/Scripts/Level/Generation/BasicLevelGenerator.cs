@@ -75,7 +75,7 @@ public class BasicLevelGenerator : ILevelGenerator
         config.printConfig();
 
         //return new List<SpawnData> {
-        //    new SpawnData(2, 2, gordoPrefab)
+        //    new SpawnData(1, 1, gordoPrefab)
         //};
 
         return new List<SpawnData> { 

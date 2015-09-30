@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class EnemyUtil {
+    private static int squaredGuidedWanderDistance = 200;
+
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
         return Physics2D.Linecast(pos1, pos2, LayerMasks.WallLayerMask).transform == null;
@@ -76,17 +78,15 @@ public class EnemyUtil {
     public static Vector2 CalculateUnblockedDirection(Vector2 pos, Vector2 colliderSize, float castDistance,
         bool wandering)
     {
-        if (wandering && Random.Range(0, 2) < 1)
+        if (wandering && Random.Range(0, 2) < 1
+            && (Player.PlayerTransform.position - (Vector3)pos).sqrMagnitude < squaredGuidedWanderDistance)
         {
             List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(pos),
                 AStar.positionToArrayIndices(Player.PlayerTransform.position));
 
             if (list.Count > 1)
             {
-                Vector2 aStarDir = (AStar.arrayIndicesToPosition(list[1].point) - pos).normalized;
-                if(Physics2D.BoxCast(pos, colliderSize, 0f, (aStarDir), 1.25f, LayerMasks.WallLayerMask).transform == null) {
-                    return aStarDir;
-                }
+                return (AStar.arrayIndicesToPosition(list[1].point) - pos).normalized;
             }
         }
 
