@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class BasicEnemyProjectile : MonoBehaviour {
-    public int damage = 1;
+    public int damage;
 
     void OnTriggerEnter2D(Collider2D other)
     {

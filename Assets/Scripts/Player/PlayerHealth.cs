@@ -18,7 +18,7 @@ public class PlayerHealth : MonoBehaviour {
         healthPoints -= damage;
         healthSlider.value = healthPoints;
 
-        if (healthPoints == 0)
+        if (healthPoints <= 0)
         {
             gameObject.SetActive(false);
         }
