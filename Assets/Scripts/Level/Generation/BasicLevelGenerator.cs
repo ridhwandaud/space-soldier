@@ -11,6 +11,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject basicEnemyPrefab;
     GameObject footSoldierPrefab;
     GameObject gordoPrefab;
+    GameObject sniperPrefab;
     GameObject gordoTrapPrefab;
 
     enum BasicLevelSize { Small = 80, Medium = 100, Large = 200 };
@@ -23,6 +24,7 @@ public class BasicLevelGenerator : ILevelGenerator
         basicEnemyPrefab = Resources.Load("Enemy") as GameObject;
         footSoldierPrefab = Resources.Load("FootSoldier") as GameObject;
         gordoPrefab = Resources.Load("Gordo") as GameObject;
+        sniperPrefab = Resources.Load("Sniper") as GameObject;
         gordoTrapPrefab = Resources.Load("GordoTrap") as GameObject;
 
         configsBySize[BasicLevelSize.Small] = smallLevelConfig;
@@ -74,9 +76,9 @@ public class BasicLevelGenerator : ILevelGenerator
 
         config.printConfig();
 
-        //return new List<SpawnData> {
-        //    new SpawnData(1, 1, gordoPrefab)
-        //};
+        return new List<SpawnData> {
+            new SpawnData(1, 1, sniperPrefab)
+        };
 
         return new List<SpawnData> { 
             new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
