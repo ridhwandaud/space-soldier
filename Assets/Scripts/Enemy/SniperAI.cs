@@ -11,7 +11,7 @@ public class SniperAI : EnemyAI {
     private Animator animator;
     private Camera mainCam;
 
-    // TODO: Delete. This is just for testing.
+    // TODO: Refactor.
     private float projectileSpeed = 10f;
     private StackPool projectilePool;
     private bool sniperWasHit = false;
@@ -62,6 +62,7 @@ public class SniperAI : EnemyAI {
         }
     }
 
+    // TODO: Remove code duplication
     void Fire()
     {
         StopCharging();

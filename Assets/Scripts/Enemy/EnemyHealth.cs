@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class EnemyHealth : MonoBehaviour {
+    public bool invincible = false;
+
     private EnemyAI enemyAI;
     private EnemyDeath enemyDeath;
 
@@ -15,6 +17,11 @@ public class EnemyHealth : MonoBehaviour {
 
     public void InflictDamage(int damagePoints)
     {
+        if (invincible)
+        {
+            return;
+        }
+
         health -= damagePoints;
         enemyAI.chasing = true;
 

@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof (EnemyHealth))]
+[RequireComponent (typeof(SpriteRenderer))]
+[RequireComponent (typeof(BoxCollider2D))]
+[RequireComponent (typeof(Rigidbody2D))]
+[RequireComponent (typeof(EnemyDeath))]
 public class EnemyAI : MonoBehaviour {
     public float chaseActivationRadius;
     public float chaseCheckInterval;
