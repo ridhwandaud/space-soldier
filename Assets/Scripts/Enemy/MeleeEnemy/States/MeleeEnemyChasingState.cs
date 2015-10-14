@@ -12,8 +12,6 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
         }
     }
 
-    public MeleeEnemyChasingState() : base() {}
-
     public override void Execute(MeleeEnemyAI enemy)
     {
         float distanceFromPlayer = Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position);
