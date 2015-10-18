@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class EnemyHealth : MonoBehaviour {
-    public bool invincible = false;
+    public bool guarded = false;
 
     private EnemyAI enemyAI;
     private EnemyDeath enemyDeath;
@@ -17,7 +17,7 @@ public class EnemyHealth : MonoBehaviour {
 
     public void InflictDamage(int damagePoints)
     {
-        if (invincible)
+        if (guarded)
         {
             return;
         }

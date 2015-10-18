@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class KirbySeekingState : State<KirbyAI> {
     private static KirbySeekingState instance;
@@ -14,20 +13,12 @@ public class KirbySeekingState : State<KirbyAI> {
 
     public override void Execute(KirbyAI enemy)
     {
-        Debug.Log("Seeking");
+        enemy.lineRenderer.enabled = false;
 
-        // Should this happen at an interval, rather than every update loop? How expensive is this?
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
-
-        if (nearbyEnemies.Length != 0 || (nearbyEnemies.Length == 1 && nearbyEnemies[0].transform == enemy.transform))
+        if (KirbyAI.GetClosestGuardableEnemy(enemy) != null)
         {
             enemy.fsm.ChangeState(KirbyDefendingState.Instance);
             return;
-        }
-
-        if ((enemy.transform.position - Player.PlayerTransform.position).sqrMagnitude <= enemy.squaredRange)
-        {
-            enemy.fsm.ChangeState(KirbyAttackingState.Instance);
         }
     }
 }

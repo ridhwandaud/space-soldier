@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class KirbyDefendingState : State<KirbyAI> {
     private static KirbyDefendingState instance;
@@ -12,36 +11,48 @@ public class KirbyDefendingState : State<KirbyAI> {
         }
     }
 
-    private EnemyAI guardedEnemy = null;
-
     public override void Execute(KirbyAI enemy)
     {
-        Debug.Log("Defending");
+        enemy.lineRenderer.enabled = true;
 
-        // I should extract the sqrMagnitude comparison to a utility.
-        if(guardedEnemy == null || (enemy.transform.position - guardedEnemy.transform.position).sqrMagnitude > enemy.squaredRange) {
-            Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
-            if (nearbyEnemies.Length == 0)
+        if (enemy.guardedEnemy == null || !guardedEnemyIsInRange(enemy))
+        {
+            if (enemy.guardedEnemy != null)
             {
-                if ((enemy.transform.position - Player.PlayerTransform.position).sqrMagnitude <= enemy.squaredRange)
-                {
-                    //enemy.fsm.ChangeState(KirbyAttackingState.Instance);
-                    enemy.lineRenderer.SetPosition(0, enemy.transform.position);
-                    enemy.lineRenderer.SetPosition(1, Player.PlayerTransform.position);
-                }
-                else
-                {
-                    enemy.fsm.ChangeState(KirbySeekingState.Instance);
-                }
+                //Debug.Break();
+                enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = false;
+            }
+
+            EnemyAI closestGuardableEnemy = KirbyAI.GetClosestGuardableEnemy(enemy);
+            if (closestGuardableEnemy == null)
+            {
+                enemy.guardedEnemy = null;
+                enemy.fsm.ChangeState(KirbySeekingState.Instance);
+                return;
             }
             else
             {
-                guardedEnemy = nearbyEnemies[0].gameObject.GetComponent<EnemyAI>();
-                //Debug.Log("rendering line");
+                enemy.guardedEnemy = closestGuardableEnemy;
+                enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = true;
             }
         }
 
         enemy.lineRenderer.SetPosition(0, enemy.transform.position);
-        enemy.lineRenderer.SetPosition(1, guardedEnemy.transform.position);
+        enemy.lineRenderer.SetPosition(1, enemy.guardedEnemy.transform.position);
+    }
+
+    bool guardedEnemyIsInRange(KirbyAI enemy)
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(enemy.transform.position, enemy.guardedEnemy.transform.position - enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
+
+        foreach (RaycastHit2D hit in hits)
+        {
+            if(hit.transform.gameObject == enemy.guardedEnemy.gameObject)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

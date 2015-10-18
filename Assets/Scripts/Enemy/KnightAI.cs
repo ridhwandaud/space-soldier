@@ -58,14 +58,14 @@ public class KnightAI : EnemyAI {
     void ActivateAttack()
     {
         attacking = true;
-        enemyHealth.invincible = false;
+        enemyHealth.guarded = false;
         renderer.sprite = attackingSprite;
     }
 
     void ActivateGuard()
     {
         attacking = false;
-        enemyHealth.invincible = true;
+        enemyHealth.guarded = true;
         renderer.sprite = guardingSprite;
     }
 }
