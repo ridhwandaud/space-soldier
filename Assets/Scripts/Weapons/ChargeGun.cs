@@ -36,7 +36,8 @@ public class ChargeGun : Weapon
             energyCostSoFar = 0;
 
             currentShot.SetActive(true);
-            Debug.Break();
+            // Do not show the sprite until the animation has begun, since the sprite may have been on the final frame of the explosion animation when it was recycled.
+            currentShot.GetComponent<SpriteRenderer>().enabled = false;
         }
         else if (chargeDuration >= thresholds[0] && chargeDuration < thresholds[1])
         {

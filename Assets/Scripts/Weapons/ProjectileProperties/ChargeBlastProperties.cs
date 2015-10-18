@@ -11,6 +11,7 @@ public class ChargeBlastProperties : MonoBehaviour {
     private ProjectileDestroy projectileDestroy;
     private Animator animator;
     private Rigidbody2D rb;
+    private SpriteRenderer renderer;
     private int enemyLayerMask = 1 << 9;
 
     private List<int> damageLevels = new List<int> { 3, 5, 7 };
@@ -22,12 +23,18 @@ public class ChargeBlastProperties : MonoBehaviour {
         projectileDestroy = GetComponent<ProjectileDestroy>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        renderer = GetComponent<SpriteRenderer>();
     }
 
     void DestroyEnergyOrb()
     {
         animator.SetTrigger("Destroyed");
         projectileDestroy.Destroy();
+    }
+
+    void RevealOrb()
+    {
+        renderer.enabled = true;
     }
 
     void OnTriggerEnter2D(Collider2D other)
