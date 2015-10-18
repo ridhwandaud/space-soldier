@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KirbyAI : MonoBehaviour {
+public class KirbyAI : EnemyAI {
     public float range;
     public float squaredRange;
     public FiniteStateMachine<KirbyAI> fsm;

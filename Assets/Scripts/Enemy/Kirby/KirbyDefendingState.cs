@@ -12,14 +12,21 @@ public class KirbyDefendingState : State<KirbyAI> {
         }
     }
 
+    // This needs to be moved into the KirbyAI, since this state is a singleton.
     private EnemyAI guardedEnemy = null;
 
     public override void Execute(KirbyAI enemy)
     {
-        Debug.Log("Defending");
+        enemy.lineRenderer.enabled = true;
 
         // I should extract the sqrMagnitude comparison to a utility.
-        if(guardedEnemy == null || (enemy.transform.position - guardedEnemy.transform.position).sqrMagnitude > enemy.squaredRange) {
+        if (guardedEnemy == null || guardedEnemyIsInRange(enemy))
+        {
+            Debug.Log("Re-evaluating");
+            if (guardedEnemy != null)
+            {
+                guardedEnemy.GetComponent<EnemyHealth>().invincible = false;
+            }
             Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
             if (nearbyEnemies.Length == 0)
             {
@@ -37,11 +44,19 @@ public class KirbyDefendingState : State<KirbyAI> {
             else
             {
                 guardedEnemy = nearbyEnemies[0].gameObject.GetComponent<EnemyAI>();
-                //Debug.Log("rendering line");
+                guardedEnemy.GetComponent<EnemyHealth>().invincible = true;
             }
         }
 
         enemy.lineRenderer.SetPosition(0, enemy.transform.position);
         enemy.lineRenderer.SetPosition(1, guardedEnemy.transform.position);
+    }
+
+    bool guardedEnemyIsInRange(KirbyAI enemy)
+    {
+        Vector3 point = enemy.transform.position + (guardedEnemy.transform.position - enemy.transform.position) * enemy.range;
+
+        // I should probably cache this.
+        return guardedEnemy.GetComponent<BoxCollider2D>().bounds.Contains(point);
     }
 }

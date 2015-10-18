@@ -14,6 +14,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject sniperPrefab;
     GameObject gordoTrapPrefab;
     GameObject knightPrefab;
+    GameObject kirbyPrefab;
 
     enum BasicLevelSize { Small = 80, Medium = 100, Large = 200 };
     enum BasicLevelDifficulty { Easy, Hard};
@@ -28,6 +29,7 @@ public class BasicLevelGenerator : ILevelGenerator
         sniperPrefab = Resources.Load("Sniper") as GameObject;
         gordoTrapPrefab = Resources.Load("GordoTrap") as GameObject;
         knightPrefab = Resources.Load("Knight") as GameObject;
+        kirbyPrefab = Resources.Load("Kirby") as GameObject;
 
         configsBySize[BasicLevelSize.Small] = smallLevelConfig;
         configsBySize[BasicLevelSize.Medium] = mediumLevelConfig;
@@ -87,8 +89,9 @@ public class BasicLevelGenerator : ILevelGenerator
             new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
             new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
             new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
-            new SpawnData(3, 4, sniperPrefab),
+            //new SpawnData(3, 4, sniperPrefab),
             new SpawnData(1, 1, knightPrefab)
+            //new SpawnData(2, 2, kirbyPrefab)
         };
     }
 
