@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ProjectileDestroy : MonoBehaviour {
 
@@ -11,10 +10,6 @@ public class ProjectileDestroy : MonoBehaviour {
     {
         stackPool = GameObject.Find(poolName).GetComponent<StackPool>();
     }
-
-	void OnEnable () {
-        //Invoke("Destroy", 2f);
-	}
 
     public void Destroy()
     {

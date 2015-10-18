@@ -93,6 +93,6 @@ public class FootSoldierAI : EnemyAI {
     void DeactivateAttack()
     {
         rb2d.velocity = Vector2.zero;
-        chasing = false;
+        DeactivateChase();
     }
 }

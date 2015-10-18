@@ -21,7 +21,7 @@ public class EnemyAI : MonoBehaviour {
     {
         if (chasing == false && Time.time > nextChaseCheckTime)
         {
-            nextChaseCheckTime += chaseCheckInterval;
+            nextChaseCheckTime = Time.time + chaseCheckInterval;
             Collider2D[] otherEnemies = Physics2D.OverlapCircleAll(transform.position, chaseActivationRadius, LayerMasks.EnemyLayerMask);
             for (int x = 0; x < otherEnemies.Length; x++)
             {
@@ -38,6 +38,6 @@ public class EnemyAI : MonoBehaviour {
     {
         chasing = false;
         // To prevent enemies from perpetually chasing due to immediately reactivating chase after idling.
-        nextChaseCheckTime += chaseCheckCooldown;
+        nextChaseCheckTime = Time.time + chaseCheckCooldown;
     }
 }

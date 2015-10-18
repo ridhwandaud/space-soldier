@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class ChargeGun : Weapon
@@ -37,6 +36,7 @@ public class ChargeGun : Weapon
             energyCostSoFar = 0;
 
             currentShot.SetActive(true);
+            Debug.Break();
         }
         else if (chargeDuration >= thresholds[0] && chargeDuration < thresholds[1])
         {
@@ -95,7 +95,7 @@ public class ChargeGun : Weapon
 
     public override float GetEnergyRequirement()
     {
-        return 0;
+        return minEnergyCost;
     }
 
     public override string GetName()
