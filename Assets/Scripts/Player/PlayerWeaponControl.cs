@@ -40,17 +40,18 @@ public class PlayerWeaponControl : MonoBehaviour {
             leftGun.Release(transform);
         }
 
-        if (Input.GetMouseButton(1))
+        // My original idea of doing the energy management here in a generic way is just not playing nicely at all with the
+        // charge gun because of its unusual energy consumption patterns. The interface is basically broken now since I had to hack
+        // the energy requirement functions and add the logic into the click handler. Lesson learned: too much abstraction = very
+        // inflexible. Better to err on the side of too little abstraction and refactor later once I have a better understanding of
+        // my use cases and the variations. Also, TODO: Fix the shit.
+        if (Input.GetMouseButton(1) && Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
         {
-            if (Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
-            {
-                Player.PlayerEnergy.energy -= rightGun.Click(transform);
-            }
+            Player.PlayerEnergy.energy -= rightGun.Click(transform);
         }
 
         if (Input.GetButtonDown("ToggleRightWeapon"))
         {
-            //Player.PlayerEnergy.energy -= rightGun.Release(transform);
             ToggleRightWeapon();
         }
 

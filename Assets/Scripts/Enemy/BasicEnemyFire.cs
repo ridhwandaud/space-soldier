@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class BasicEnemyFire : MonoBehaviour {
 
@@ -31,7 +30,6 @@ public class BasicEnemyFire : MonoBehaviour {
 
             projectile.SetActive(true);
 
-            // Whoah why am I rotating it again?
             projectile.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(projectileSpeed * offset.normalized, Mathf.Deg2Rad * missAmountDegrees);
             return 1;
         }

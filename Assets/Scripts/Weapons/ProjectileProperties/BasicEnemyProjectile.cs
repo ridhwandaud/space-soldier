@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 
+[RequireComponent (typeof(SpriteRenderer))]
+[RequireComponent (typeof(BoxCollider2D))]
+[RequireComponent (typeof(ProjectileDestroy))]
+[RequireComponent (typeof(Rigidbody2D))]
 public class BasicEnemyProjectile : MonoBehaviour {
     public int damage;
 

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class KnightAI : EnemyAI {
     // 1 Attack = a volley of shots.
@@ -14,15 +13,13 @@ public class KnightAI : EnemyAI {
     private float nextAttackTime = 0;
     private int shotsFiredThisTurn = 0;
 
-    private Rigidbody2D rb2d;
     private EnemyHealth enemyHealth;
-    private SpriteRenderer renderer;
+    private SpriteRenderer spriteRenderer;
     private BasicEnemyFire firingScript;
 
 	void Awake () {
-        rb2d = GetComponent<Rigidbody2D>();
         enemyHealth = GetComponent<EnemyHealth>();
-        renderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         firingScript = GetComponent<BasicEnemyFire>();
 
         ActivateGuard();
@@ -59,13 +56,13 @@ public class KnightAI : EnemyAI {
     {
         attacking = true;
         enemyHealth.guarded = false;
-        renderer.sprite = attackingSprite;
+        spriteRenderer.sprite = attackingSprite;
     }
 
     void ActivateGuard()
     {
         attacking = false;
         enemyHealth.guarded = true;
-        renderer.sprite = guardingSprite;
+        spriteRenderer.sprite = guardingSprite;
     }
 }

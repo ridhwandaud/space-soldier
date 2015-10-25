@@ -41,7 +41,7 @@ public class SniperAI : EnemyAI {
 
         if (isPreparingForShot)
         {
-            if(EnemyUtil.CanSee(transform.position, playerPosition) && IsVisible())
+            if (EnemyUtil.CanSee(transform.position, playerPosition) && IsVisible())
             {
                 // turn sprite and gun to face player.
             }

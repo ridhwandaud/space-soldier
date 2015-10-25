@@ -29,7 +29,7 @@ public class KirbyAI : EnemyAI {
 
         foreach (Collider2D enemyCollider in nearbyEnemies)
         {
-            if (enemyCollider.gameObject != enemy.gameObject && !enemyCollider.gameObject.GetComponent<EnemyHealth>().guarded)
+            if (enemyCollider.gameObject != enemy.gameObject && !enemyCollider.gameObject.GetComponent<EnemyHealth>().guarded && enemyCollider.gameObject.GetComponent<KirbyAI>() == null)
             {
                 return enemyCollider.gameObject.GetComponent<EnemyAI>();
             }

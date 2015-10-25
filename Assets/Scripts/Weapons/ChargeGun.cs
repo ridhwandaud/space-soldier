@@ -10,8 +10,7 @@ public class ChargeGun : Weapon
     private GameObject currentShot;
     private bool charging = false;
     private float chargeStartTime;
-    private float playerEnergyAtChargeStart;
-    private float energyCostSoFar;
+    private float chargeDuration;
 
     private List<float> thresholds = new List<float> { .2f, .8f };
     private List<string> animationLevels = new List<string> { "SmallShotFired", "MediumShotFired", "LargeShotFired" };
@@ -20,7 +19,21 @@ public class ChargeGun : Weapon
 
     public override float Click(Transform transform)
     {
-        float chargeDuration = Time.time - chargeStartTime;
+        if (Player.PlayerEnergy.energy < minEnergyCost && !charging)
+        {
+            // Player can't fire.
+            return 0;
+        }
+
+        if (Player.PlayerEnergy.energy <= 0 && currentShot)
+        {
+            charging = false;
+            currentShot.GetComponent<Animator>().enabled = false;
+            return 0;
+        }
+
+        chargeDuration = Time.time - chargeStartTime;
+
         if (!charging)
         {
             Player.PlayerEnergy.PauseRecharge();
@@ -32,17 +45,17 @@ public class ChargeGun : Weapon
 
             charging = true;
             chargeStartTime = Time.time;
-            playerEnergyAtChargeStart = Player.PlayerEnergy.energy;
-            energyCostSoFar = 0;
 
             currentShot.SetActive(true);
             // Do not show the sprite until the animation has begun, since the sprite may have been on the final frame of the explosion animation when it was recycled.
             currentShot.GetComponent<SpriteRenderer>().enabled = false;
+
+            // If player fires before breaching the first threshold, the energy cost will simply be minEnergyCost. After breaching
+            // the threshold, player will gradually start using energy to increase the charge size.
         }
         else if (chargeDuration >= thresholds[0] && chargeDuration < thresholds[1])
         {
-            energyCostSoFar = (chargeDuration - thresholds[0]) * energyCostPerSecond;
-            return energyCostSoFar - (playerEnergyAtChargeStart - Player.PlayerEnergy.energy);
+            return Time.deltaTime * energyCostPerSecond;
         }
 
         return 0;
@@ -50,7 +63,9 @@ public class ChargeGun : Weapon
 
     public override float Release(Transform transform)
     {
-        if (CanFire())
+        float chargeDuration = Time.time - chargeStartTime;
+        
+        if (CanFire() && playerHasEnoughEnergy(chargeDuration) && currentShot)
         {
             Player.PlayerEnergy.UnpauseRecharge();
 
@@ -58,19 +73,20 @@ public class ChargeGun : Weapon
             ChargeBlastProperties chargeBlastProperties = currentShot.GetComponent<ChargeBlastProperties>();
 
             charging = false;
-            float chargeDuration = Time.time - chargeStartTime;
             int chargeLevel = getChargeLevel(chargeDuration);
             chargeBlastProperties.ChargeLevel = chargeLevel;
             chargeBlastProperties.Fired = true;
 
+            currentShot.GetComponent<Animator>().enabled = true; // in case it was disabled due to player running out of energy
             currentShot.transform.SetParent(stackPool.transform);
             currentShot.GetComponent<Animator>().SetTrigger(getShotAnimationTrigger(chargeLevel));
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
             currentShot.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+            currentShot = null;
 
-            return energyCostSoFar > minEnergyCost ? 0 : minEnergyCost - energyCostSoFar;
+            return chargeDuration >= thresholds[0] ? 0 : minEnergyCost;
         }
 
         return 0;
@@ -94,9 +110,16 @@ public class ChargeGun : Weapon
         return thresholds.Count;
     }
 
+    private bool playerHasEnoughEnergy(float chargeDuration)
+    {
+        return chargeDuration >= thresholds[0] || Player.PlayerEnergy.energy > minEnergyCost;
+    }
+
     public override float GetEnergyRequirement()
     {
-        return minEnergyCost;
+        // This weird value basically means "always let the click logic run". Player energy can dip slightly below 0 when
+        // charging (which is OK) but the click handler still must execute since it might have to pause the animation.
+        return -5;
     }
 
     public override string GetName()

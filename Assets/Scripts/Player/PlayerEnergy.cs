@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class PlayerEnergy : MonoBehaviour {
     public float energyMax;
@@ -10,7 +9,12 @@ public class PlayerEnergy : MonoBehaviour {
 
     private bool rechargePaused = false;
 
-    void Awake()
+    void OnLevelWasLoaded ()
+    {
+        energy = energyMax;
+    }
+
+    void Awake ()
     {
         energySlider.maxValue = energyMax;
         energySlider.value = energyMax;
