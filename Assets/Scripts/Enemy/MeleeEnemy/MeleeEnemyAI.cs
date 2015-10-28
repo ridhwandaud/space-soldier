@@ -68,12 +68,12 @@ public class MeleeEnemyAI : EnemyAI {
 
     public void ExecuteAStar(Vector3 target)
     {
-        EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, speed, nearbyEnemyRadius);
+        EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, speed);
     }
 
     public void CalculateVelocity(Vector2 target)
     {
-        rb2d.velocity = EnemyUtil.CalculateVelocity(transform, target, speed, nearbyEnemyRadius);
+        rb2d.velocity = EnemyUtil.CalculateVelocity(transform, target, speed);
     }
 
     public void StopMovement()

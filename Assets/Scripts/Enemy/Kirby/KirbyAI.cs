@@ -1,16 +1,27 @@
 ﻿using UnityEngine;
 
 public class KirbyAI : EnemyAI {
-    public float range;
-    public float squaredRange;
+    public float guardRange;
+    public float seekRange;
     public FiniteStateMachine<KirbyAI> fsm;
     public LineRenderer lineRenderer;
     public EnemyAI guardedEnemy;
 
+    // TODO: Consider moving these into the parent class...
+    public Rigidbody2D rb2d;
+    public BoxCollider2D boxCollider2D;
+
+    private float squaredGuardRange;
+
+    public float lastPathfindTime = 0;
+    public float pathFindingRate;
+
     void Awake () {
-        squaredRange = range * range;
+        squaredGuardRange = guardRange * guardRange;
         lineRenderer = GetComponent<LineRenderer>();
         fsm = new FiniteStateMachine<KirbyAI>(this, KirbySeekingState.Instance);
+        rb2d = GetComponent<Rigidbody2D>();
+        boxCollider2D = GetComponent<BoxCollider2D>();
 	}
 	
 	void Update () {
@@ -22,20 +33,32 @@ public class KirbyAI : EnemyAI {
         fsm.Update();
 	}
 
-    public static EnemyAI GetClosestGuardableEnemy(KirbyAI enemy)
+    public EnemyAI GetClosestSeekableEnemy()
     {
         // Should this happen at an interval, rather than every update loop? How expensive is this?
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(transform.position, seekRange, LayerMasks.EnemyLayerMask);
+
+        float minSqrMagnitude = float.MaxValue;
+        GameObject closest = null;
 
         foreach (Collider2D enemyCollider in nearbyEnemies)
         {
-            if (enemyCollider.gameObject != enemy.gameObject && !enemyCollider.gameObject.GetComponent<EnemyHealth>().guarded && enemyCollider.gameObject.GetComponent<KirbyAI>() == null)
+            if (enemyCollider.gameObject != gameObject 
+                && !enemyCollider.gameObject.GetComponent<EnemyHealth>().guarded 
+                && enemyCollider.gameObject.GetComponent<KirbyAI>() == null
+                && Vector3.SqrMagnitude(enemyCollider.transform.position - transform.position) < minSqrMagnitude)
             {
-                return enemyCollider.gameObject.GetComponent<EnemyAI>();
+                minSqrMagnitude = Vector3.SqrMagnitude(enemyCollider.transform.position - transform.position);
+                closest = enemyCollider.gameObject;
             }
         }
 
-        return null;
+        return closest == null ? null : closest.GetComponent<EnemyAI>();
+    }
+
+    public bool CanGuardEnemy(EnemyAI enemy)
+    {
+        return enemy != null && (enemy.transform.position - transform.position).sqrMagnitude < squaredGuardRange;
     }
 
     void OnDisable()

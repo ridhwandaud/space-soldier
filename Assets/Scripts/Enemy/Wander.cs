@@ -45,13 +45,13 @@ public class Wander : MonoBehaviour {
             {
                 shouldMove = false;
                 Vector2 dir = EnemyUtil.CalculateUnblockedDirection(transform.position, colliderSize, 1f, true);
-                rb.velocity = EnemyUtil.CalculateVelocityFromPullVector(transform, dir, wanderSpeed, enemyAI.nearbyEnemyRadius);
+                rb.velocity = EnemyUtil.CalculateVelocityFromPullVector(transform, dir, wanderSpeed);
                 nextWanderTime = Time.time + Random.Range(walkTimeRange.x, walkTimeRange.y);
             }
             else
             {
                 shouldMove = true;
-                rb.velocity = EnemyUtil.CalculateVelocity(transform, transform.position, wanderSpeed, enemyAI.nearbyEnemyRadius);
+                rb.velocity = EnemyUtil.CalculateVelocity(transform, transform.position, wanderSpeed);
                 nextWanderTime = Time.time + Random.Range(waitTimeRange.x, waitTimeRange.y);
             }
         }

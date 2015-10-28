@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class EnemyUtil {
     private static int squaredGuidedWanderDistance = 200;
+    private static float nearbyEnemyRadius = .5f;
 
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
@@ -22,7 +22,7 @@ public class EnemyUtil {
     }
 
     public static void ExecuteAStar(Transform enemyTransform, Vector2 target, Rigidbody2D rb2d, ref float lastPathfindTime,
-        float pathFindingRate, float speed, float nearbyEnemyRadius)
+        float pathFindingRate, float speed)
     {
         Vector2 enemyPosition = enemyTransform.position;
 
@@ -34,19 +34,19 @@ public class EnemyUtil {
 
             if (list.Count > 1)
             {
-                rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(list[1].point), speed, nearbyEnemyRadius);
+                rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(list[1].point), speed);
             }
         }
     }
 
-    public static Vector2 CalculateVelocity(Transform enemyTransform, Vector2 target, float speed, float nearbyEnemyRadius)
+    public static Vector2 CalculateVelocity(Transform enemyTransform, Vector2 target, float speed)
     {
         Vector3 enemyPosition = enemyTransform.position;
         return CalculateVelocityFromPullVector(enemyTransform, new Vector2(target.x - enemyPosition.x, target.y - enemyPosition.y).normalized,
-            speed, nearbyEnemyRadius);
+            speed);
     }
 
-    public static Vector2 CalculateVelocityFromPullVector(Transform enemyTransform, Vector2 pullVector, float speed, float nearbyEnemyRadius)
+    public static Vector2 CalculateVelocityFromPullVector(Transform enemyTransform, Vector2 pullVector, float speed)
     {
         Vector3 enemyPosition = enemyTransform.position;
         Vector2 pushVector = Vector2.zero;

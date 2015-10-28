@@ -22,7 +22,7 @@ public class HomingMissile : MonoBehaviour {
         float angle = Mathf.Atan2(playerOffset.y, playerOffset.x) * Mathf.Rad2Deg + 90;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-        rb2d.velocity = (rb2d.velocity + (Seek() + Separate() * Time.deltaTime)).normalized * speed;
+        rb2d.velocity = (rb2d.velocity + (Seek() + Separate() * Time.fixedDeltaTime)).normalized * speed;
     }
 
     void OnTriggerEnter2D(Collider2D other)

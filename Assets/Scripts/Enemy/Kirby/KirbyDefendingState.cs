@@ -23,8 +23,8 @@ public class KirbyDefendingState : State<KirbyAI> {
                 enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = false;
             }
 
-            EnemyAI closestGuardableEnemy = KirbyAI.GetClosestGuardableEnemy(enemy);
-            if (closestGuardableEnemy == null)
+            EnemyAI closestSeekableEnemy = enemy.GetClosestSeekableEnemy();
+            if (!enemy.CanGuardEnemy(closestSeekableEnemy))
             {
                 enemy.guardedEnemy = null;
                 enemy.fsm.ChangeState(KirbySeekingState.Instance);
@@ -32,7 +32,7 @@ public class KirbyDefendingState : State<KirbyAI> {
             }
             else
             {
-                enemy.guardedEnemy = closestGuardableEnemy;
+                enemy.guardedEnemy = closestSeekableEnemy;
                 enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = true;
             }
         }
@@ -43,7 +43,7 @@ public class KirbyDefendingState : State<KirbyAI> {
 
     bool guardedEnemyIsInRange(KirbyAI enemy)
     {
-        RaycastHit2D[] hits = Physics2D.RaycastAll(enemy.transform.position, enemy.guardedEnemy.transform.position - enemy.transform.position, enemy.range, LayerMasks.EnemyLayerMask);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(enemy.transform.position, enemy.guardedEnemy.transform.position - enemy.transform.position, enemy.guardRange, LayerMasks.EnemyLayerMask);
 
         foreach (RaycastHit2D hit in hits)
         {

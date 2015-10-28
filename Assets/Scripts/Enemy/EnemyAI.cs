@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 [RequireComponent (typeof (EnemyHealth))]
 [RequireComponent (typeof(SpriteRenderer))]
@@ -11,7 +10,6 @@ public class EnemyAI : MonoBehaviour {
     public float chaseCheckInterval;
     public float chaseCheckCooldown;
     public float speed;
-    public float nearbyEnemyRadius;
     public bool chasing = false;
 
     //TODO: Add jitter so everyone isn't checking at the same time.

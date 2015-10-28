@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using SpriteTile;
 
 public class BasicEnemyAI : EnemyAI {
 
@@ -107,11 +104,11 @@ public class BasicEnemyAI : EnemyAI {
 
     void ExecuteAStar(Vector2 enemyPosition, Vector2 playerPosition)
     {
-        EnemyUtil.ExecuteAStar(transform, playerPosition, rb2d, ref lastPathfindTime, pathFindingRate, speed, nearbyEnemyRadius);
+        EnemyUtil.ExecuteAStar(transform, playerPosition, rb2d, ref lastPathfindTime, pathFindingRate, speed);
     }
 
     public Vector2 CalculateVelocity(Vector2 target)
     {
-        return EnemyUtil.CalculateVelocity(transform, target, speed, nearbyEnemyRadius);
+        return EnemyUtil.CalculateVelocity(transform, target, speed);
     }
 }
