@@ -58,7 +58,9 @@ public class KirbyAI : EnemyAI {
 
     public bool CanGuardEnemy(EnemyAI enemy)
     {
-        return enemy != null && (enemy.transform.position - transform.position).sqrMagnitude < squaredGuardRange;
+        Vector3 toEnemy = enemy.transform.position - transform.position;
+        return enemy != null && (enemy.transform.position - transform.position).sqrMagnitude < squaredGuardRange
+            && Physics2D.Raycast(transform.position, toEnemy, toEnemy.magnitude, LayerMasks.WallLayerMask).transform == null;
     }
 
     void OnDisable()

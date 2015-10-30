@@ -34,6 +34,7 @@ public class EnemyUtil {
 
             if (list.Count > 1)
             {
+                Debug.DrawLine(enemyTransform.position, AStar.arrayIndicesToPosition(list[1].point), Color.green, 1f);
                 rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(list[1].point), speed);
             }
         }

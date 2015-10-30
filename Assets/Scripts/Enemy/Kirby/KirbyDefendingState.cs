@@ -15,7 +15,7 @@ public class KirbyDefendingState : State<KirbyAI> {
     {
         enemy.lineRenderer.enabled = true;
 
-        if (enemy.guardedEnemy == null || !guardedEnemyIsInRange(enemy))
+        if (enemy.guardedEnemy == null || !guardedEnemyIsInRange(enemy) || !enemy.CanGuardEnemy(enemy.guardedEnemy))
         {
             if (enemy.guardedEnemy != null)
             {
