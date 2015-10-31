@@ -70,4 +70,25 @@ public class KirbyAI : EnemyAI {
             guardedEnemy.GetComponent<EnemyHealth>().guarded = false;
         }
     }
+
+    public void Approach(Vector3 target)
+    {
+        // TODO: Move this into the util
+        if ((transform.position - target).sqrMagnitude < .4f)
+        {
+            rb2d.velocity = Vector2.zero;
+            return;
+        }
+
+        if (EnemyUtil.CanSee(transform.position, target) &&
+            EnemyUtil.PathIsNotBlocked(boxCollider2D, transform.position, target))
+        {
+            //rb2d.velocity = EnemyUtil.CalculateVelocity(transform, target, speed);
+            rb2d.velocity = (target - transform.position).normalized * speed;
+        }
+        else
+        {
+            EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, speed);
+        }
+    }
 }

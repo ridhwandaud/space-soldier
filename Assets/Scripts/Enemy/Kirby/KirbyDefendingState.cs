@@ -19,12 +19,11 @@ public class KirbyDefendingState : State<KirbyAI> {
         {
             if (enemy.guardedEnemy != null)
             {
-                //Debug.Break();
                 enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = false;
             }
 
             EnemyAI closestSeekableEnemy = enemy.GetClosestSeekableEnemy();
-            if (!enemy.CanGuardEnemy(closestSeekableEnemy))
+            if (closestSeekableEnemy == null || !enemy.CanGuardEnemy(closestSeekableEnemy))
             {
                 enemy.guardedEnemy = null;
                 enemy.fsm.ChangeState(KirbySeekingState.Instance);
@@ -35,6 +34,36 @@ public class KirbyDefendingState : State<KirbyAI> {
                 enemy.guardedEnemy = closestSeekableEnemy;
                 enemy.guardedEnemy.GetComponent<EnemyHealth>().guarded = true;
             }
+        }
+
+        // Check if guarded enemy is between player and kirbz. Eventually consolidate the raycasts.
+        RaycastHit2D enemyBetweenPlayer = Physics2D.Linecast(enemy.transform.position, Player.PlayerTransform.position, LayerMasks.EnemyLayerMask);
+        RaycastHit2D wallBetweenPlayer = Physics2D.Linecast(enemy.transform.position, Player.PlayerTransform.position, LayerMasks.WallLayerMask);
+        bool kirbyIsInDanger = enemyBetweenPlayer.transform == null || wallBetweenPlayer.transform == null;
+        if (kirbyIsInDanger && enemy.guardedEnemy != null)
+        {
+            // move to other side of the enemy as far as possible
+            Vector3 playerToGuardedEnemy = (enemy.guardedEnemy.transform.position - Player.PlayerTransform.position).normalized;
+            RaycastHit2D toHidingSpotBehindEnemy = Physics2D.Raycast(enemy.guardedEnemy.transform.position, playerToGuardedEnemy, 3, LayerMasks.WallLayerMask);
+            if (toHidingSpotBehindEnemy.transform != null && toHidingSpotBehindEnemy.distance > enemy.boxCollider2D.bounds.size.x)
+            {
+                enemy.Approach((Vector3)toHidingSpotBehindEnemy.point - playerToGuardedEnemy * (enemy.boxCollider2D.bounds.extents.x + .1f));
+                //Debug.Log("Guarding at reduced distance.");
+                //Debug.DrawRay(toHidingSpotBehindEnemy.point, -playerToGuardedEnemy * (enemy.boxCollider2D.bounds.extents.x + .1f), Color.blue, 1f);
+            }
+            else
+            {
+                enemy.Approach(enemy.guardedEnemy.transform.position + playerToGuardedEnemy * 3);
+                //Debug.Log("Guarding at the normal position.");
+                //Debug.DrawLine(enemy.guardedEnemy.transform.position, enemy.guardedEnemy.transform.position + playerToGuardedEnemy * 3,
+                //    Color.red, 1f);
+            }
+
+        }
+        else
+        {
+            //Debug.Log("Stopping");
+            enemy.rb2d.velocity = Vector2.zero;
         }
 
         enemy.lineRenderer.SetPosition(0, enemy.transform.position);
