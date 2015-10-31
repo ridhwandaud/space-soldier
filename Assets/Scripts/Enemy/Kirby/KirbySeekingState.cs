@@ -13,33 +13,21 @@ public class KirbySeekingState : State<KirbyAI> {
 
     public override void Execute(KirbyAI kirby)
     {
+        Debug.Log("Seeking");
         kirby.lineRenderer.enabled = false;
 
         EnemyAI closestSeekableEnemy = kirby.GetClosestSeekableEnemy();
-        if (kirby.CanGuardEnemy(closestSeekableEnemy))
+        if (closestSeekableEnemy != null && kirby.CanGuardEnemy(closestSeekableEnemy))
         {
             kirby.rb2d.velocity = Vector2.zero;
             kirby.fsm.ChangeState(KirbyDefendingState.Instance);
             return;
         } else if (closestSeekableEnemy != null)
         {
-            Approach(kirby, closestSeekableEnemy.transform.position);
+            kirby.Approach(closestSeekableEnemy.transform.position);
         } else
         {
             kirby.rb2d.velocity = Vector2.zero;
-        }
-    }
-
-    public void Approach(KirbyAI kirby, Vector2 target)
-    {
-        if (EnemyUtil.CanSee(kirby.transform.position, Player.PlayerTransform.position) &&
-            EnemyUtil.PathIsNotBlocked(kirby.boxCollider2D, kirby.transform.position, Player.PlayerTransform.position))
-        {
-            kirby.rb2d.velocity = EnemyUtil.CalculateVelocity(kirby.transform, target, kirby.speed);
-        }
-        else
-        {
-            EnemyUtil.ExecuteAStar(kirby.transform, target, kirby.rb2d, ref kirby.lastPathfindTime, kirby.pathFindingRate, kirby.speed);
         }
     }
 }
