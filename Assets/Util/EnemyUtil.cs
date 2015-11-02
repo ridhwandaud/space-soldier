@@ -22,7 +22,7 @@ public class EnemyUtil {
     }
 
     public static void ExecuteAStar(Transform enemyTransform, Vector2 target, Rigidbody2D rb2d, ref float lastPathfindTime,
-        float pathFindingRate, float speed)
+        float pathFindingRate, float speed, bool debug = false)
     {
         Vector2 enemyPosition = enemyTransform.position;
 
@@ -34,7 +34,10 @@ public class EnemyUtil {
 
             if (list.Count > 1)
             {
-                Debug.DrawLine(enemyTransform.position, AStar.arrayIndicesToPosition(list[1].point), Color.green, 1f);
+                if(debug)
+                {
+                    Debug.DrawLine(enemyTransform.position, AStar.arrayIndicesToPosition(list[1].point), Color.green, 1f);
+                }
                 rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(list[1].point), speed);
             }
         }

@@ -6,6 +6,8 @@ public class KirbyAI : EnemyAI {
     public FiniteStateMachine<KirbyAI> fsm;
     public LineRenderer lineRenderer;
     public EnemyAI guardedEnemy;
+    public float hideDistance;
+    public float actualSpeed;
 
     // TODO: Consider moving these into the parent class...
     public Rigidbody2D rb2d;
@@ -22,6 +24,7 @@ public class KirbyAI : EnemyAI {
         fsm = new FiniteStateMachine<KirbyAI>(this, KirbySeekingState.Instance);
         rb2d = GetComponent<Rigidbody2D>();
         boxCollider2D = GetComponent<BoxCollider2D>();
+        actualSpeed = speed;
 	}
 	
 	void Update () {
@@ -63,6 +66,13 @@ public class KirbyAI : EnemyAI {
             && Physics2D.Raycast(transform.position, toEnemy, toEnemy.magnitude, LayerMasks.WallLayerMask).transform == null;
     }
 
+    public bool CanSeeEnemy(EnemyAI enemy)
+    {
+        Vector3 toEnemy = enemy.transform.position - transform.position;
+        return (enemy.transform.position - transform.position).sqrMagnitude < squaredGuardRange
+            && Physics2D.Raycast(transform.position, toEnemy, toEnemy.magnitude, LayerMasks.WallLayerMask).transform == null;
+    }
+
     void OnDisable()
     {
         if (guardedEnemy != null)
@@ -73,9 +83,12 @@ public class KirbyAI : EnemyAI {
 
     public void Approach(Vector3 target)
     {
+        CancelFreeze();
+
         // TODO: Move this into the util
         if ((transform.position - target).sqrMagnitude < .4f)
         {
+            //Debug.Log("distance from position " + transform.position + " to target " + target + " sqrMagnitude is " + (transform.position - target).sqrMagnitude);
             rb2d.velocity = Vector2.zero;
             return;
         }
@@ -84,11 +97,26 @@ public class KirbyAI : EnemyAI {
             EnemyUtil.PathIsNotBlocked(boxCollider2D, transform.position, target))
         {
             //rb2d.velocity = EnemyUtil.CalculateVelocity(transform, target, speed);
-            rb2d.velocity = (target - transform.position).normalized * speed;
+            rb2d.velocity = (target - transform.position).normalized * actualSpeed;
         }
         else
         {
-            EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, speed);
+            EnemyUtil.ExecuteAStar(transform, target, rb2d, ref lastPathfindTime, pathFindingRate, actualSpeed, true);
         }
+    }
+
+    public void Freeze()
+    {
+        Invoke("DoFreeze", .5f);
+    }
+
+    public void CancelFreeze()
+    {
+        CancelInvoke("DoFreeze");
+    }
+
+    private void DoFreeze()
+    {
+        rb2d.velocity = Vector2.zero;
     }
 }

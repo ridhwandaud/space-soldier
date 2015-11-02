@@ -14,6 +14,7 @@ public class KirbySeekingState : State<KirbyAI> {
     public override void Execute(KirbyAI kirby)
     {
         kirby.lineRenderer.enabled = false;
+        kirby.actualSpeed = kirby.speed;
 
         EnemyAI closestSeekableEnemy = kirby.GetClosestSeekableEnemy();
         if (closestSeekableEnemy != null && kirby.CanGuardEnemy(closestSeekableEnemy))
