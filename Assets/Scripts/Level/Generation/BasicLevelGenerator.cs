@@ -93,7 +93,7 @@ public class BasicLevelGenerator : ILevelGenerator
             new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
             new SpawnData(3, 4, sniperPrefab),
             new SpawnData(1, 1, knightPrefab),
-            new SpawnData(1, 1, kirbyPrefab)
+            new SpawnData(2, 2, kirbyPrefab)
         };
     }
 

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class SniperAI : EnemyAI {
 
@@ -10,6 +9,8 @@ public class SniperAI : EnemyAI {
     private bool isPreparingForShot = false;
     private Animator animator;
     private Camera mainCam;
+    private Wander wanderScript;
+    private Rigidbody2D rb2d;
 
     // TODO: Refactor.
     private float projectileSpeed = 10f;
@@ -20,6 +21,8 @@ public class SniperAI : EnemyAI {
         projectilePool = GameObject.Find("FireballPool").GetComponent<StackPool>();
         animator = GetComponent<Animator>();
         mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        wanderScript = GetComponent<Wander>();
+        rb2d = GetComponent<Rigidbody2D>();
     }
 	
 	void Update () {
@@ -49,6 +52,9 @@ public class SniperAI : EnemyAI {
             {
                 StopCharging();
             }
+        } else
+        {
+            wanderScript.DoWander();
         }
 	}
 
@@ -82,14 +88,17 @@ public class SniperAI : EnemyAI {
 
     void StartCharging()
     {
+        rb2d.velocity = Vector2.zero;
         isPreparingForShot = true;
         animator.SetBool("Charging", true);
+        chasing = true;
     }
 
     void StopCharging()
     {
         isPreparingForShot = false;
         animator.SetBool("Charging", false);
+        chasing = false;
     }
 
     bool IsVisible()
