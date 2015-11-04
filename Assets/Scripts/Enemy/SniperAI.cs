@@ -36,10 +36,17 @@ public class SniperAI : EnemyAI {
             return;
         }
 
-        if (EnemyUtil.CanSee(transform.position, playerPosition) && IsVisible() && 
-            Time.time > nextFiringTime && !isPreparingForShot)
+        if (EnemyUtil.CanSee(transform.position, playerPosition))
         {
-            StartCharging();
+            if (IsVisible() && Time.time > nextFiringTime && !isPreparingForShot)
+            {
+                chasing = true;
+                StartCharging();
+            }
+        } else
+        {
+            // TODO: Add some time before the next wander so that the sniper doesn't always move the second you get out of its view.
+            chasing = false;
         }
 
         if (isPreparingForShot)
@@ -91,14 +98,12 @@ public class SniperAI : EnemyAI {
         rb2d.velocity = Vector2.zero;
         isPreparingForShot = true;
         animator.SetBool("Charging", true);
-        chasing = true;
     }
 
     void StopCharging()
     {
         isPreparingForShot = false;
         animator.SetBool("Charging", false);
-        chasing = false;
     }
 
     bool IsVisible()
