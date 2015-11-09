@@ -12,15 +12,15 @@ public class Pistol : Weapon
     {
         if (CanFire())
         {
-            nextFiringTime = Time.time + firingDelay;
-            GameObject bullet = stackPool.Pop();
+            nextFiringTime = Time.time + FiringDelay;
+            GameObject bullet = StackPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
             bullet.SetActive(true);
-            bullet.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+            bullet.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
 
             return energyCost;
         }

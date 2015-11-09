@@ -2,10 +2,10 @@
 
 public abstract class Weapon : MonoBehaviour
 {
-    public SkillTree skillTree;
-    public StackPool stackPool;
-    public float firingDelay;
-    public float projectileSpeed;
+    public int Points;
+    public StackPool StackPool;
+    public float FiringDelay;
+    public float ProjectileSpeed;
 
     protected float nextFiringTime = 0;
 
@@ -18,13 +18,13 @@ public abstract class Weapon : MonoBehaviour
         return 0;
     }
 
-    protected int GetPoints()
-    {
-        return skillTree.GetNumPointsForSkill(GetName());
-    }
-
     protected bool CanFire()
     {
         return Time.time > nextFiringTime;
+    }
+
+    public void AddPoints()
+    {
+        Points++;
     }
 }

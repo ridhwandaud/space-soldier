@@ -7,25 +7,30 @@ public class SkillTreeNode : MonoBehaviour {
     public int MaxPointValue;
     public int Points;
     public bool Unlocked;
+    public Weapon weapon;
     public List<SkillTreeNode> Children;
     public List<SkillDependency> Dependencies;
+    public PlayerWeaponControl playerWeaponControl;
 
     private Button button;
     private Text pointsText;
-    private PlayerWeaponControl playerWeaponControl;
 
     void Awake()
     {
         button = GetComponent<Button>();
-        pointsText = GetComponent<Text>();
-        playerWeaponControl = GetComponent<PlayerWeaponControl>();
+        pointsText = GetComponentInChildren<Text>();
     }
 
     public void OnClick()
     {
         if (Unlocked)
         {
-            // Do stuff.
+            if (Points == 0)
+            {
+                playerWeaponControl.AddWeapon(weapon, PlayerWeaponControl.WeaponSide.Right);
+            }
+
+            IncrementPoints();
         }
     }
 
@@ -35,7 +40,7 @@ public class SkillTreeNode : MonoBehaviour {
         {
             Points++;
             pointsText.text = Points.ToString();
-            // Increment the points in the skill GameObject if it exists, otherwise add into inventory
+            // Increment the points in the skill GameObject (TODO: Add a method for incrementing points in the weapon class).
         }
     }
 

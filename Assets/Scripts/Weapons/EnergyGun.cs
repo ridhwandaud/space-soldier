@@ -8,15 +8,15 @@ public class EnergyGun : Weapon
     {
         if (CanFire())
         {
-            nextFiringTime = Time.time + firingDelay;
-            GameObject orb = stackPool.Pop();
+            nextFiringTime = Time.time + FiringDelay;
+            GameObject orb = StackPool.Pop();
             orb.transform.position = transform.position;
             orb.transform.rotation = transform.rotation;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
             orb.SetActive(true);
-            orb.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+            orb.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
 
             return energyCost;
         }

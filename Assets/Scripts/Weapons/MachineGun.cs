@@ -8,8 +8,8 @@ public class MachineGun : Weapon
     {
         if (CanFire())
         {
-            nextFiringTime = Time.time + firingDelay;
-            GameObject bullet = stackPool.Pop();
+            nextFiringTime = Time.time + FiringDelay;
+            GameObject bullet = StackPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
             // Interface for projectiles?
@@ -19,7 +19,7 @@ public class MachineGun : Weapon
 
             // this has to be done before setting velocity or it won't work.
             bullet.SetActive(true);
-            bullet.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+            bullet.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
 
             return energyCost;
         }

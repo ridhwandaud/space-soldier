@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class MultiShot : Weapon
 {
@@ -10,8 +9,8 @@ public class MultiShot : Weapon
     {
         if (CanFire())
         {
-            nextFiringTime = Time.time + firingDelay;
-            int numberOfShots = GetPoints() + 3;
+            nextFiringTime = Time.time + FiringDelay;
+            int numberOfShots = Points + 3;
             bool evenNumberOfShots = numberOfShots % 2 == 0;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
@@ -50,12 +49,12 @@ public class MultiShot : Weapon
 
     private void createAndActivateBullet(Vector2 centerDirection, float angleOffset, Transform transform)
     {
-        GameObject bullet = stackPool.Pop();
+        GameObject bullet = StackPool.Pop();
         bullet.transform.position = transform.position;
         bullet.transform.rotation = transform.rotation;
         bullet.transform.rotation = Quaternion.Euler(VectorUtil.RotateVector(transform.rotation.eulerAngles, angleOffset));
         bullet.SetActive(true);
-        bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * projectileSpeed;
+        bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * ProjectileSpeed;
         bullet.GetComponent<BasicPlayerProjectile>().damage = 1;
     }
 }

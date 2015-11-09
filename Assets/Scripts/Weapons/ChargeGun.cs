@@ -38,7 +38,7 @@ public class ChargeGun : Weapon
         {
             Player.PlayerEnergy.PauseRecharge();
 
-            currentShot = stackPool.Pop();
+            currentShot = StackPool.Pop();
             currentShot.transform.SetParent(playerTransform);
             currentShot.transform.localPosition = chargeShotRelativePosition;
             currentShot.transform.localRotation = Quaternion.Euler(0, 0, 90);
@@ -69,7 +69,7 @@ public class ChargeGun : Weapon
         {
             Player.PlayerEnergy.UnpauseRecharge();
 
-            nextFiringTime = Time.time + firingDelay;
+            nextFiringTime = Time.time + FiringDelay;
             ChargeBlastProperties chargeBlastProperties = currentShot.GetComponent<ChargeBlastProperties>();
 
             charging = false;
@@ -78,12 +78,12 @@ public class ChargeGun : Weapon
             chargeBlastProperties.Fired = true;
 
             currentShot.GetComponent<Animator>().enabled = true; // in case it was disabled due to player running out of energy
-            currentShot.transform.SetParent(stackPool.transform);
+            currentShot.transform.SetParent(StackPool.transform);
             currentShot.GetComponent<Animator>().SetTrigger(getShotAnimationTrigger(chargeLevel));
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 
-            currentShot.GetComponent<Rigidbody2D>().velocity = direction * projectileSpeed;
+            currentShot.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
             currentShot = null;
 
             return chargeDuration >= thresholds[0] ? 0 : minEnergyCost;
