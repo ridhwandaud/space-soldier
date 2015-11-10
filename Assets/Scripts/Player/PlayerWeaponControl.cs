@@ -15,6 +15,9 @@ public class PlayerWeaponControl : MonoBehaviour {
     private int currentLeftWeaponIndex = 0;
     private int currentRightWeaponIndex = 0;
 
+    private int numLeftGuns = 1;
+    private int numRightGuns = 0;
+
 	void Awake () {
         leftGun = leftWeapons[0];
         rightGun = rightWeapons[0];
@@ -39,7 +42,6 @@ public class PlayerWeaponControl : MonoBehaviour {
         // my use cases and the variations. Also, TODO: Fix the shit.
         if (Input.GetMouseButton(1) && rightGun != null && Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
         {
-            print("FIRING YO");
             Player.PlayerEnergy.energy -= rightGun.Click(transform);
         }
 
@@ -64,7 +66,9 @@ public class PlayerWeaponControl : MonoBehaviour {
             if (holster[i] == null)
             {
                 holster[i] = newWeapon;
-                if (rightGun == null)
+                IncrementWeaponCount(weaponSide);
+
+                if (rightGun == null) // Hardcoded to rightGun for testing purposes.
                 {
                     rightGun = newWeapon;
                 }
@@ -80,27 +84,61 @@ public class PlayerWeaponControl : MonoBehaviour {
     {
         Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
         holster[slot] = newWeapon;
+        IncrementWeaponCount(weaponSide);
     }
 
     void ToggleRightWeapon()
     {
+        if (rightGun != null && numRightGuns > 1)
+        {
+            // TODO: Don't do this if this is the player's only gun.
+            Player.PlayerEnergy.energy -= rightGun.Release(transform);
+        }
+
+        int weaponsExamined = 0;
         do
         {
             currentRightWeaponIndex = currentRightWeaponIndex == rightWeapons.Length - 1 ? 0 : ++currentRightWeaponIndex;
-        } while (rightWeapons[currentRightWeaponIndex] == null);
+            weaponsExamined++;
+        } while (rightWeapons[currentRightWeaponIndex] == null && weaponsExamined < rightWeapons.Length);
 
         rightGun = rightWeapons[currentRightWeaponIndex];
     }
 
-    // It's actually cleaner to separate these functions then to try to merge them into one.
+    // TODO: Merge the left/right toggle functions. Code duplication = no goody.
     void ToggleLeftWeapon ()
     {
+        int weaponsExamined = 0;
         do
         {
             currentLeftWeaponIndex = currentLeftWeaponIndex == leftWeapons.Length - 1 ? 0 : ++currentLeftWeaponIndex;
-        } while (leftWeapons[currentLeftWeaponIndex] == null);
+            weaponsExamined++;
+        } while (leftWeapons[currentLeftWeaponIndex] == null && weaponsExamined < leftWeapons.Length);
 
         leftGun = leftWeapons[currentLeftWeaponIndex];
+    }
+
+    private void IncrementWeaponCount(WeaponSide side)
+    {
+        if (side == WeaponSide.Left)
+        {
+            numLeftGuns++;
+        } else
+        {
+            numRightGuns++;
+        }
+    }
+
+    private void DecrementWeaponCount (WeaponSide side)
+    {
+        if (side == WeaponSide.Left)
+        {
+            numLeftGuns--;
+        }
+        else
+        {
+            numRightGuns--;
+        }
     }
 
     public enum WeaponSide { Left, Right };
