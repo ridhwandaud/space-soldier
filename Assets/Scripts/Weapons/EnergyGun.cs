@@ -31,6 +31,6 @@ public class EnergyGun : Weapon
 
     public override string GetName()
     {
-        return "machineGun";
+        return "energyGun";
     }
 }

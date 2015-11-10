@@ -106,7 +106,7 @@ public class BasicLevelAlgorithm {
             directionWeightSum += weight;
         }
 
-        int random = UnityEngine.Random.Range(0, directionWeightSum);
+        int random = Random.Range(0, directionWeightSum);
 
         if (random < directionWeights[0])
             return Int2.up;
