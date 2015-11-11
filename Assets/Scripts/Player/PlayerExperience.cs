@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class PlayerExperience : MonoBehaviour {
 
@@ -29,6 +28,11 @@ public class PlayerExperience : MonoBehaviour {
         }
 
         expSlider.value = experiencePoints;
+    }
+
+    public void UseSkillPoint()
+    {
+        AvailableSkillPoints--;
     }
 
     private void LevelUp()

@@ -27,18 +27,19 @@ public class SkillTreeNode : MonoBehaviour {
 
     public void OnClick()
     {
-        if (Unlocked)
+        if (Unlocked && Player.PlayerExperience.AvailableSkillPoints > 0)
         {
             if (Points == 0)
             {
                 playerWeaponControl.AddWeapon(weapon, PlayerWeaponControl.WeaponSide.Right);
             }
 
+            Player.PlayerExperience.UseSkillPoint();
             IncrementPoints();
             Children.ForEach(child => child.UnlockIfNecessary());
         } else
         {
-            print("NOT UNLOCKED.");
+            print("NA DAWG.");
         }
     }
 
