@@ -11,12 +11,28 @@ public class InventoryManager : MonoBehaviour {
     public float SkillTileStartingOffsetY;
 
     private Queue<SkillTileInfo> toRender;
-    private bool[] slots = new bool[50]; // what does this default to?
+    private bool[] slots = new bool[50];
 
     private float rowWidth;
 
+    void Update ()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            EnqueueNewSkill(new SkillTileInfo());
+        }
+
+        if (Input.GetButtonDown("Submit"))
+        {
+            OnEnable();
+        }
+    }
+
     void Awake ()
     {
+        // temporary code to pause game for testing
+        Time.timeScale = 0;
+
         rowWidth = NumTilesPerRow * SkillTileWidth;
         toRender = new Queue<SkillTileInfo>();
     }
@@ -40,8 +56,8 @@ public class InventoryManager : MonoBehaviour {
     private Vector2 GetLocalPositionFromSlotIndex(int index)
     {
         float x = (index * SkillTileWidth) % rowWidth;
-        float y = index / NumTilesPerRow;
-        return new Vector2(x + SkillTileStartingOffsetX, y + SkillTileStartingOffsetY);
+        float y = index / NumTilesPerRow * SkillTileHeight;
+        return new Vector2(x + SkillTileStartingOffsetX, SkillTileStartingOffsetY - y);
     }
 
     private int GetSlotIndexFromLocalPosition(Vector2 pos)
@@ -52,7 +68,7 @@ public class InventoryManager : MonoBehaviour {
     private void InstantiateNewTile(SkillTileInfo info, Vector2 pos)
     {
         GameObject newTile = Instantiate(GenericSkillTile) as GameObject;
-        newTile.transform.parent = transform; // Make sure this is on the panel.
+        newTile.transform.SetParent(transform);
         newTile.transform.localPosition = pos;
         // TODO: set the image and weapon.
     }
