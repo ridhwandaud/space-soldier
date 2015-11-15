@@ -12,7 +12,7 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     {
         SnapPosition = transform.position;
         tileRectTransform = transform as RectTransform;
-        // GetComponentInParent doesn't only look at the immediate parent - keeps going up till it finds one.
+        // GetComponentInParent doesn't only look at the immediate parent.
         canvasRectTransform = GetComponentInParent<Canvas>().transform as RectTransform;
     }
 
@@ -24,13 +24,26 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     public void OnDrag (PointerEventData data)
     {
         Vector2 localPointerPosition;
+        // Canvas rectangle != Screen rectangle.
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, data.position, data.pressEventCamera, out localPointerPosition);
 
-        tileRectTransform.localPosition = localPointerPosition - pointerOffset;
+        tileRectTransform.localPosition = ClampToWindow(localPointerPosition - pointerOffset);
+
     }
 
     public void OnPointerUp (PointerEventData data)
     {
         transform.position = SnapPosition;
+    }
+
+    Vector2 ClampToWindow (Vector2 pos)
+    {
+        Vector3[] canvasCorners = new Vector3[4];
+        canvasRectTransform.GetLocalCorners(canvasCorners); // 0: lower left, 1: upper left, 2: upper right, 3: lower right
+
+        float clampedX = Mathf.Clamp(pos.x, canvasCorners[0].x + 30, canvasCorners[2].x - 30);
+        float clampedY = Mathf.Clamp(pos.y, canvasCorners[0].y + 30, canvasCorners[2].y - 30);
+
+        return new Vector2(clampedX, clampedY);
     }
 }
