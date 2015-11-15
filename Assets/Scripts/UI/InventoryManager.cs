@@ -9,9 +9,12 @@ public class InventoryManager : MonoBehaviour {
     public int NumTilesPerRow;
     public float SkillTileStartingOffsetX;
     public float SkillTileStartingOffsetY;
+    public float PaddingBetweenTiles;
 
     private Queue<SkillTileInfo> toRender;
     private bool[] slots = new bool[50];
+    private float cellWidth;
+    private float cellHeight;
 
     private float rowWidth;
 
@@ -33,7 +36,9 @@ public class InventoryManager : MonoBehaviour {
         // temporary code to pause game for testing
         Time.timeScale = 0;
 
-        rowWidth = NumTilesPerRow * SkillTileWidth;
+        cellWidth = SkillTileWidth + PaddingBetweenTiles;
+        cellHeight = SkillTileHeight + PaddingBetweenTiles;
+        rowWidth = NumTilesPerRow * cellWidth;
         toRender = new Queue<SkillTileInfo>();
     }
 
@@ -55,8 +60,8 @@ public class InventoryManager : MonoBehaviour {
 
     private Vector2 GetLocalPositionFromSlotIndex(int index)
     {
-        float x = (index * SkillTileWidth) % rowWidth;
-        float y = index / NumTilesPerRow * SkillTileHeight;
+        float x = (index * cellWidth) % rowWidth;
+        float y = index / NumTilesPerRow * cellHeight;
         return new Vector2(x + SkillTileStartingOffsetX, SkillTileStartingOffsetY - y);
     }
 
