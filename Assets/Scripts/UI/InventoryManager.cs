@@ -3,16 +3,17 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour {
-    public GameObject GenericSkillTile;
-    public float SkillTileWidth;
-    public float SkillTileHeight;
+    public GameObject GenericInventoryTile;
+    public float InventoryTileWidth;
+    public float InventoryTileHeight;
     public int NumTilesPerRow;
-    public float SkillTileStartingOffsetX;
-    public float SkillTileStartingOffsetY;
+    public float InventoryTileStartingOffsetX;
+    public float InventoryTileStartingOffsetY;
     public float PaddingBetweenTiles;
+    public int MaxTiles;
 
-    private Queue<SkillTileInfo> toRender;
-    private bool[] slots = new bool[50];
+    private Queue<InventoryTileInfo> toRender;
+    private bool[] slots;
     private float cellWidth;
     private float cellHeight;
 
@@ -22,7 +23,7 @@ public class InventoryManager : MonoBehaviour {
     {
         if (Input.GetButtonDown("Jump"))
         {
-            EnqueueNewSkill(new SkillTileInfo());
+            EnqueueNewSkill(new InventoryTileInfo());
         }
 
         if (Input.GetButtonDown("Submit"))
@@ -36,24 +37,25 @@ public class InventoryManager : MonoBehaviour {
         // temporary code to pause game for testing
         Time.timeScale = 0;
 
-        cellWidth = SkillTileWidth + PaddingBetweenTiles;
-        cellHeight = SkillTileHeight + PaddingBetweenTiles;
+        slots = new bool[MaxTiles];
+        cellWidth = InventoryTileWidth + PaddingBetweenTiles;
+        cellHeight = InventoryTileHeight + PaddingBetweenTiles;
         rowWidth = NumTilesPerRow * cellWidth;
-        toRender = new Queue<SkillTileInfo>();
+        toRender = new Queue<InventoryTileInfo>();
     }
 
     void OnEnable ()
     {
         while(toRender.Count != 0)
         {
-            SkillTileInfo info = toRender.Dequeue();
+            InventoryTileInfo info = toRender.Dequeue();
             int indexOfNewTile = AddToInventorySlot();
             Vector2 pos = GetLocalPositionFromSlotIndex(indexOfNewTile);
             InstantiateNewTile(info, pos);
         }
     }
 
-    public void EnqueueNewSkill(SkillTileInfo info)
+    public void EnqueueNewSkill(InventoryTileInfo info)
     {
         toRender.Enqueue(info);
     }
@@ -62,7 +64,7 @@ public class InventoryManager : MonoBehaviour {
     {
         float x = (index * cellWidth) % rowWidth;
         float y = index / NumTilesPerRow * cellHeight;
-        return new Vector2(x + SkillTileStartingOffsetX, SkillTileStartingOffsetY - y);
+        return new Vector2(x + InventoryTileStartingOffsetX, InventoryTileStartingOffsetY - y);
     }
 
     private int GetSlotIndexFromLocalPosition(Vector2 pos)
@@ -70,11 +72,12 @@ public class InventoryManager : MonoBehaviour {
         return -1;
     }
 
-    private void InstantiateNewTile(SkillTileInfo info, Vector2 pos)
+    private void InstantiateNewTile(InventoryTileInfo info, Vector2 pos)
     {
-        GameObject newTile = Instantiate(GenericSkillTile) as GameObject;
+        GameObject newTile = Instantiate(GenericInventoryTile) as GameObject;
         newTile.transform.SetParent(transform);
         newTile.transform.localPosition = pos;
+        newTile.GetComponent<InventoryTile>().Init();
         // TODO: set the image and weapon.
     }
 
@@ -93,12 +96,12 @@ public class InventoryManager : MonoBehaviour {
         return -1;
     }
 
-    public struct SkillTileInfo
+    public struct InventoryTileInfo
     {
         public Image Image;
         public Weapon Weapon;
 
-        public SkillTileInfo(Image image, Weapon weapon)
+        public InventoryTileInfo(Image image, Weapon weapon)
         {
             Image = image;
             Weapon = weapon;
