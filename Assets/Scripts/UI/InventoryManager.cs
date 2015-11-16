@@ -1,23 +1,20 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 public class InventoryManager : MonoBehaviour {
+    public static float TileSideLength = 50; //tile is a square, so this is both length and width
+
     public GameObject GenericInventoryTile;
-    public float InventoryTileWidth;
-    public float InventoryTileHeight;
-    public int NumTilesPerRow;
-    public float InventoryTileStartingOffsetX;
-    public float InventoryTileStartingOffsetY;
-    public float PaddingBetweenTiles;
     public int MaxTiles;
 
     private Queue<InventoryTileInfo> toRender;
+    private List<Transform> slotTransforms;
     private bool[] slots;
-    private float cellWidth;
-    private float cellHeight;
+    private Vector2 tileSize;
 
-    private float rowWidth;
+    private string UnequippedPanelName = "Unequipped";
 
     void Update ()
     {
@@ -38,10 +35,26 @@ public class InventoryManager : MonoBehaviour {
         Time.timeScale = 0;
 
         slots = new bool[MaxTiles];
-        cellWidth = InventoryTileWidth + PaddingBetweenTiles;
-        cellHeight = InventoryTileHeight + PaddingBetweenTiles;
-        rowWidth = NumTilesPerRow * cellWidth;
         toRender = new Queue<InventoryTileInfo>();
+        slotTransforms = new List<Transform>();
+        Transform[] transforms = GameObject.Find(UnequippedPanelName).GetComponentsInChildren<Transform>();
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            if (transforms[i].name != UnequippedPanelName)
+            {
+                slotTransforms.Add(transforms[i]);
+            }
+        }
+        StartCoroutine("ConfigureSize");
+    }
+
+    IEnumerator ConfigureSize()
+    {
+        yield return new WaitForEndOfFrame();
+
+        RectTransform slotTransform = slotTransforms[0].GetComponent<RectTransform>();
+        // sizeDelta == size (for rect transforms)
+        tileSize = new Vector2(slotTransform.sizeDelta.x, slotTransform.sizeDelta.y);
     }
 
     void OnEnable ()
@@ -50,8 +63,7 @@ public class InventoryManager : MonoBehaviour {
         {
             InventoryTileInfo info = toRender.Dequeue();
             int indexOfNewTile = AddToInventorySlot();
-            Vector2 pos = GetLocalPositionFromSlotIndex(indexOfNewTile);
-            InstantiateNewTile(info, pos);
+            InstantiateNewTile(info, indexOfNewTile);
         }
     }
 
@@ -60,24 +72,18 @@ public class InventoryManager : MonoBehaviour {
         toRender.Enqueue(info);
     }
 
-    private Vector2 GetLocalPositionFromSlotIndex(int index)
+    private void InstantiateNewTile(InventoryTileInfo info, int tileIndex)
     {
-        float x = (index * cellWidth) % rowWidth;
-        float y = index / NumTilesPerRow * cellHeight;
-        return new Vector2(x + InventoryTileStartingOffsetX, InventoryTileStartingOffsetY - y);
-    }
-
-    private int GetSlotIndexFromLocalPosition(Vector2 pos)
-    {
-        return -1;
-    }
-
-    private void InstantiateNewTile(InventoryTileInfo info, Vector2 pos)
-    {
+        Transform slotTransform = slotTransforms[tileIndex];
         GameObject newTile = Instantiate(GenericInventoryTile) as GameObject;
+
         newTile.transform.SetParent(transform);
-        newTile.transform.localPosition = pos;
-        newTile.GetComponent<InventoryTile>().Init();
+        newTile.transform.position = slotTransform.position;
+        // Need to set this explicitly or else scale will automatically be set to the wrong value.
+        newTile.transform.localScale = new Vector2(1, 1);
+
+        newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
+        newTile.GetComponent<InventoryTile>().Init(slotTransform);
         // TODO: set the image and weapon.
     }
 

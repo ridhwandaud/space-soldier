@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class PlayerExperience : MonoBehaviour {
 
     public int Level { get; set; }
-    public int AvailableSkillPoints { get; set; }
+
+    public int AvailableSkillPoints;
     public Slider expSlider;
     public Text levelIndicator;
 
