@@ -36,7 +36,11 @@ public class SkillTreeNode : MonoBehaviour {
         {
             if (Points == 0)
             {
-                playerWeaponControl.AddWeapon(weapon, PlayerWeaponControl.WeaponSide.Right);
+                bool weaponWasEquipped = playerWeaponControl.AddWeaponIfAble(weapon);
+                if (!weaponWasEquipped)
+                {
+                    InventoryManager.Instance.EnqueueNewSkill(new InventoryManager.InventoryTileInfo(null, weapon));
+                }
             }
 
             Player.PlayerExperience.UseSkillPoint();

@@ -56,6 +56,11 @@ public class PlayerWeaponControl : MonoBehaviour {
             Player.PlayerEnergy.energy -= rightGun.Click(transform);
         }
 
+        if (Input.GetButtonDown("ToggleLeftWeapon"))
+        {
+            ToggleLeftWeapon();
+        }
+
         if (Input.GetButtonDown("ToggleRightWeapon"))
         {
             ToggleRightWeapon();
@@ -68,27 +73,40 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 	}
 
-    // Will be removed once inventory screen is created.
-    public void AddWeapon(Weapon newWeapon, WeaponSide weaponSide)
+    public bool AddWeaponIfAble(Weapon newWeapon)
     {
-        Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
-
-        for (int i = 0; i < holster.Length; i++)
+        // First, try adding to right holster.
+        for (int i = 0; i < rightWeapons.Length; i++)
         {
-            if (holster[i] == null)
+            if (rightWeapons[i] == null)
             {
-                holster[i] = newWeapon;
-                IncrementWeaponCount(weaponSide);
-
-                if (rightGun == null) // Hardcoded to rightGun for testing purposes.
+                rightWeapons[i] = newWeapon;
+                IncrementWeaponCount(WeaponSide.Right);
+                if (rightGun == null)
                 {
                     rightGun = newWeapon;
                 }
-                return;
+                return true;
             }
         }
 
-        print("holster is full. failed to add weapon.");
+        // If right holster is full, try adding to left holster.
+        for (int i = 0; i < leftWeapons.Length; i++)
+        {
+            if (leftWeapons[i] == null)
+            {
+                leftWeapons[i] = newWeapon;
+                IncrementWeaponCount(WeaponSide.Left);
+                if (leftGun == null)
+                {
+                    leftGun = newWeapon;
+                }
+                return true;
+            }
+        }
+
+        // If both holsters are full, return false.
+        return false;
     }
 
     // For use by inventory.

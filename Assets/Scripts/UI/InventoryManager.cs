@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 
 public class InventoryManager : MonoBehaviour {
+    public static InventoryManager Instance;
     public static float TileSideLength = 50; //tile is a square, so this is both length and width
 
     public GameObject GenericInventoryTile;
@@ -31,6 +32,21 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void Awake ()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Init();
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    void Init()
     {
         // temporary code to pause game for testing
         //Time.timeScale = 0;
