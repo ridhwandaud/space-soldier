@@ -8,21 +8,26 @@ public class SkillTreeNode : MonoBehaviour {
     public int Points;
     public bool Unlocked;
     public Weapon weapon;
-    // Is there a point in explicitly setting the children here? This info is already implicit in the children's Dependencies field. Maybe in Awake, each node
-    // can just add itself to the child list of all dependencies. Might save me some manual effort...
-    public List<SkillTreeNode> Children;
+
     public List<SkillDependency> Dependencies;
     public PlayerWeaponControl playerWeaponControl;
 
     private Button button;
     private Text pointsText;
+    private List<SkillTreeNode> children;
 
     void Awake()
     {
         button = GetComponent<Button>();
         pointsText = GetComponentInChildren<Text>();
+        children = new List<SkillTreeNode>();
 
         Unlocked = Dependencies.Count == 0 && MinLevelRequirement == 1;
+    }
+
+    void Start()
+    {
+        Dependencies.ForEach(dependency => dependency.Dependency.AddChild(this));
     }
 
     public void OnClick()
@@ -36,7 +41,7 @@ public class SkillTreeNode : MonoBehaviour {
 
             Player.PlayerExperience.UseSkillPoint();
             IncrementPoints();
-            Children.ForEach(child => child.UnlockIfNecessary());
+            children.ForEach(child => child.UnlockIfNecessary());
         } else
         {
             print("NA DAWG.");
@@ -51,6 +56,11 @@ public class SkillTreeNode : MonoBehaviour {
             pointsText.text = Points.ToString();
             // Increment the points in the skill GameObject (TODO: Add a method for incrementing points in the weapon class).
         }
+    }
+
+    public void AddChild(SkillTreeNode child)
+    {
+        children.Add(child);
     }
 
     void UnlockIfNecessary()
