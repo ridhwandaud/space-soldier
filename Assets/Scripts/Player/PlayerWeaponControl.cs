@@ -3,11 +3,18 @@ using UnityEngine.UI;
 
 public class PlayerWeaponControl : MonoBehaviour {
 
-    public float firingDelay;
-    public float bulletSpeed;
-    public Slider energySlider;
-    public Weapon[] leftWeapons;
-    public Weapon[] rightWeapons;
+    [SerializeField]
+    private float firingDelay;
+    [SerializeField]
+    private float bulletSpeed;
+    [SerializeField]
+    private Slider energySlider;
+    [SerializeField]
+    private Weapon[] leftWeapons;
+    [SerializeField]
+    private Weapon[] rightWeapons;
+    [SerializeField]
+    private Weapon defaultStartingWeapon;
 
     private Weapon leftGun;
     private Weapon rightGun;
@@ -22,8 +29,8 @@ public class PlayerWeaponControl : MonoBehaviour {
     private bool rightMouseButtonClicked = false;
 
 	void Awake () {
-        leftGun = leftWeapons[0];
-        rightGun = rightWeapons[0];
+        leftWeapons[0] = leftGun = defaultStartingWeapon;
+        InventoryManager.EnqueueNewSkill(new InventoryManager.InventoryTileInfo(null, defaultStartingWeapon));
 	}
 	
 	void Update () {
@@ -75,7 +82,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     public bool AddWeaponIfAble(Weapon newWeapon)
     {
-        // First, try adding to right holster.
+        // First, try adding to right side.
         for (int i = 0; i < rightWeapons.Length; i++)
         {
             if (rightWeapons[i] == null)
@@ -90,7 +97,7 @@ public class PlayerWeaponControl : MonoBehaviour {
             }
         }
 
-        // If right holster is full, try adding to left holster.
+        // If right side is full, try adding to left side.
         for (int i = 0; i < leftWeapons.Length; i++)
         {
             if (leftWeapons[i] == null)
@@ -105,15 +112,21 @@ public class PlayerWeaponControl : MonoBehaviour {
             }
         }
 
-        // If both holsters are full, return false.
+        // If both sides are full, return false.
         return false;
     }
 
     // For use by inventory.
     public void SetWeapon(Weapon newWeapon, WeaponSide weaponSide, int slot)
     {
-        Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
-        holster[slot] = newWeapon;
+        Weapon[] weapons = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
+        if (weapons[slot] != null)
+        {
+            print("can't equip. not enough slots.");
+            return;
+        }
+
+        weapons[slot] = newWeapon;
         IncrementWeaponCount(weaponSide);
 
         if (weaponSide == WeaponSide.Left && leftGun == null)
@@ -128,8 +141,8 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     public void UnsetWeapon(WeaponSide weaponSide, int slot)
     {
-        Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
-        holster[slot] = null;
+        Weapon[] weapons = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
+        weapons[slot] = null;
 
         if (weaponSide == WeaponSide.Left)
         {

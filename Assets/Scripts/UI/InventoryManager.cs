@@ -5,16 +5,15 @@ using System.Collections;
 using System.Linq;
 
 public class InventoryManager : MonoBehaviour {
-    public static InventoryManager Instance;
     public static float TileSideLength = 50; //tile is a square, so this is both length and width
+    public static Queue<InventoryTileInfo> ToRender = new Queue<InventoryTileInfo>();
 
     public GameObject GenericInventoryTile;
-    public Weapon weapon; // temporary
 
     private List<RectTransform> slotRects;
-    private Queue<InventoryTileInfo> toRender;
     private List<Transform> slotTransforms;
     private Vector2 tileSize;
+    private bool sizeHasBeenConfigured = false;
 
     private string UnequippedPanelName = "Unequipped";
 
@@ -33,21 +32,6 @@ public class InventoryManager : MonoBehaviour {
 
     void Awake ()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            Init();
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    void Init()
-    {
         // temporary code to pause game for testing
         //Time.timeScale = 0;
 
@@ -58,7 +42,6 @@ public class InventoryManager : MonoBehaviour {
             slotRects.Add(slotObjects[i].GetComponent<RectTransform>());
         }
 
-        toRender = new Queue<InventoryTileInfo>();
         slotTransforms = new List<Transform>();
         Transform[] transforms = GameObject.Find(UnequippedPanelName).GetComponentsInChildren<Transform>();
         for (int i = 0; i < transforms.Length; i++)
@@ -77,20 +60,30 @@ public class InventoryManager : MonoBehaviour {
 
         RectTransform slotTransform = slotTransforms[0].GetComponent<RectTransform>();
         tileSize = new Vector2(slotTransform.sizeDelta.x, slotTransform.sizeDelta.y);
+        sizeHasBeenConfigured = true;
+        RenderTiles();
     }
 
     void OnEnable ()
     {
-        while(toRender.Count != 0)
+        if (sizeHasBeenConfigured)
         {
-            InventoryTileInfo info = toRender.Dequeue();
+            RenderTiles();
+        }
+    }
+
+    void RenderTiles()
+    {
+        while (ToRender.Count != 0)
+        {
+            InventoryTileInfo info = ToRender.Dequeue();
             InstantiateNewTile(info);
         }
     }
 
-    public void EnqueueNewSkill(InventoryTileInfo info)
+    public static void EnqueueNewSkill(InventoryTileInfo info)
     {
-        toRender.Enqueue(info);
+        ToRender.Enqueue(info);
     }
 
     private void InstantiateNewTile(InventoryTileInfo info)
@@ -110,7 +103,6 @@ public class InventoryManager : MonoBehaviour {
 
         if (slotTransform == null)
         {
-            print("inventory full.");
             return;
         }
 
@@ -122,8 +114,8 @@ public class InventoryManager : MonoBehaviour {
         newTile.transform.localScale = new Vector2(1, 1);
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
-        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, weapon);
-        // TODO: set the image and weapon.
+        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, info.Weapon);
+        // TODO: set the image.
     }
 
     public struct InventoryTileInfo
