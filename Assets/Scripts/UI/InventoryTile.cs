@@ -12,11 +12,13 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private float rectWidth;
     private float rectHeight;
     private RectTransform mostOverlappedRect;
+    private Weapon weapon;
 
-    public void Init(Transform slotTransform, List<RectTransform> slotRects)
+    public void Init(Transform slotTransform, List<RectTransform> slotRects, Weapon weapon)
     {
         this.slotTransform = slotTransform;
         this.slotRects = slotRects;
+        this.weapon = weapon;
         tileRectTransform = transform as RectTransform;
         canvasRectTransform = GetComponentInParent<Canvas>().transform as RectTransform;
 
@@ -72,12 +74,45 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     {
         if (mostOverlappedRect && !mostOverlappedRect.GetComponent<InventorySlot>().Occupied)
         {
-            slotTransform.GetComponent<InventorySlot>().Occupied = false;
+            InventorySlot oldSlot = slotTransform.GetComponent<InventorySlot>();
+
+            if (oldSlot.WeaponSlot != 0)
+            {
+                // Unequip the weapon (make sure to rotate it if the player already has it equipped. If the player
+                // has no weapons left, make sure that firing is a no-op instead of throwing a npe).
+                Player.PlayerWeaponControl.UnsetWeapon(WeaponSideFromIndex(oldSlot.WeaponSlot), HolsterIndexFromWeaponSlotIndex(oldSlot.WeaponSlot));
+            }
+
+            oldSlot.Occupied = false;
             slotTransform = mostOverlappedRect.transform;
-            slotTransform.GetComponent<InventorySlot>().Occupied = true;
+
+            InventorySlot newSlot = slotTransform.GetComponent<InventorySlot>();
+            newSlot.Occupied = true;
+
+            if (newSlot.WeaponSlot != 0)
+            {
+                EquipWeaponFromInventory(newSlot);
+            }
         }
 
         transform.position = slotTransform.position;
+    }
+
+    void EquipWeaponFromInventory(InventorySlot toEquip)
+    {
+        Player.PlayerWeaponControl.SetWeapon(weapon, WeaponSideFromIndex(toEquip.WeaponSlot), HolsterIndexFromWeaponSlotIndex(toEquip.WeaponSlot));
+    }
+
+    PlayerWeaponControl.WeaponSide WeaponSideFromIndex(int index)
+    {
+        // Non-weapon slot = index 0. Indices 1-3 = left side. Indices 4-6 = right side.
+        return index < 4 ? PlayerWeaponControl.WeaponSide.Left : PlayerWeaponControl.WeaponSide.Right;
+    }
+
+    int HolsterIndexFromWeaponSlotIndex(int index)
+    {
+        // Non-weapon slot = index 0. Indices 1-3 = left side. Indices 4-6 = right side.
+        return index < 4 ? index - 1 : index - 4;
     }
 
     Vector2 ClampToWindow (Vector2 pos)

@@ -97,6 +97,30 @@ public class PlayerWeaponControl : MonoBehaviour {
         Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
         holster[slot] = newWeapon;
         IncrementWeaponCount(weaponSide);
+
+        if (weaponSide == WeaponSide.Left && leftGun == null)
+        {
+            leftGun = newWeapon;
+        }
+        else if (weaponSide == WeaponSide.Right && rightGun == null)
+        {
+            rightGun = newWeapon;
+        }
+    }
+
+    public void UnsetWeapon(WeaponSide weaponSide, int slot)
+    {
+        Weapon[] holster = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
+        holster[slot] = null;
+
+        if (weaponSide == WeaponSide.Left)
+        {
+            ToggleLeftWeapon();
+        }
+        else
+        {
+            ToggleRightWeapon();
+        }
     }
 
     private void ToggleWeapon (ref bool mouseButtonClicked, ref int weaponIndex, ref Weapon currentWeapon, Weapon[] weapons, int numGuns)

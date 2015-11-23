@@ -8,6 +8,7 @@ public class InventoryManager : MonoBehaviour {
     public static float TileSideLength = 50; //tile is a square, so this is both length and width
 
     public GameObject GenericInventoryTile;
+    public Weapon weapon; // temporary
 
     private List<RectTransform> slotRects;
     private Queue<InventoryTileInfo> toRender;
@@ -32,7 +33,7 @@ public class InventoryManager : MonoBehaviour {
     void Awake ()
     {
         // temporary code to pause game for testing
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
 
         slotRects = new List<RectTransform>();
         GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Slot Tile");
@@ -105,7 +106,7 @@ public class InventoryManager : MonoBehaviour {
         newTile.transform.localScale = new Vector2(1, 1);
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
-        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects);
+        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, weapon);
         // TODO: set the image and weapon.
     }
 
