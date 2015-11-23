@@ -2,16 +2,16 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class InventoryManager : MonoBehaviour {
     public static float TileSideLength = 50; //tile is a square, so this is both length and width
 
     public GameObject GenericInventoryTile;
-    public int MaxTiles;
 
+    private List<RectTransform> slotRects;
     private Queue<InventoryTileInfo> toRender;
     private List<Transform> slotTransforms;
-    private bool[] slots;
     private Vector2 tileSize;
 
     private string UnequippedPanelName = "Unequipped";
@@ -34,7 +34,13 @@ public class InventoryManager : MonoBehaviour {
         // temporary code to pause game for testing
         Time.timeScale = 0;
 
-        slots = new bool[MaxTiles];
+        slotRects = new List<RectTransform>();
+        GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Slot Tile");
+        for (int i = 0; i < slotObjects.Length; i++)
+        {
+            slotRects.Add(slotObjects[i].GetComponent<RectTransform>());
+        }
+
         toRender = new Queue<InventoryTileInfo>();
         slotTransforms = new List<Transform>();
         Transform[] transforms = GameObject.Find(UnequippedPanelName).GetComponentsInChildren<Transform>();
@@ -53,7 +59,6 @@ public class InventoryManager : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         RectTransform slotTransform = slotTransforms[0].GetComponent<RectTransform>();
-        // sizeDelta == size (for rect transforms)
         tileSize = new Vector2(slotTransform.sizeDelta.x, slotTransform.sizeDelta.y);
     }
 
@@ -62,8 +67,7 @@ public class InventoryManager : MonoBehaviour {
         while(toRender.Count != 0)
         {
             InventoryTileInfo info = toRender.Dequeue();
-            int indexOfNewTile = AddToInventorySlot();
-            InstantiateNewTile(info, indexOfNewTile);
+            InstantiateNewTile(info);
         }
     }
 
@@ -72,9 +76,27 @@ public class InventoryManager : MonoBehaviour {
         toRender.Enqueue(info);
     }
 
-    private void InstantiateNewTile(InventoryTileInfo info, int tileIndex)
+    private void InstantiateNewTile(InventoryTileInfo info)
     {
-        Transform slotTransform = slotTransforms[tileIndex];
+        Transform slotTransform = null;
+
+        for (int i = 0; i < slotTransforms.Count; i++)
+        {
+            InventorySlot inventorySlot = slotTransforms[i].GetComponent<InventorySlot>();
+            if (!inventorySlot.Occupied)
+            {
+                inventorySlot.Occupied = true;
+                slotTransform = slotTransforms[i];
+                break;
+            }
+        }
+
+        if (slotTransform == null)
+        {
+            print("inventory full.");
+            return;
+        }
+
         GameObject newTile = Instantiate(GenericInventoryTile) as GameObject;
 
         newTile.transform.SetParent(transform);
@@ -83,23 +105,8 @@ public class InventoryManager : MonoBehaviour {
         newTile.transform.localScale = new Vector2(1, 1);
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
-        newTile.GetComponent<InventoryTile>().Init(slotTransform);
+        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects);
         // TODO: set the image and weapon.
-    }
-
-    private int AddToInventorySlot()
-    {
-        for (int i = 0; i < slots.Length; i++)
-        {
-            if (slots[i] == false)
-            {
-                slots[i] = true;
-                return i;
-            }
-        }
-
-        print("something went horribly wrong and your inventory filled up.");
-        return -1;
     }
 
     public struct InventoryTileInfo
