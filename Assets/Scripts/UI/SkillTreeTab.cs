@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SkillTreeTab : MonoBehaviour, IPointerClickHandler {
+public class SkillTreeTab : MonoBehaviour, IPointerDownHandler {
     // These will eventually be replaced by different frames.
     private static Color ActiveColor = Color.green;
     private static Color InactiveColor = Color.gray;
@@ -23,7 +23,7 @@ public class SkillTreeTab : MonoBehaviour, IPointerClickHandler {
         image.color = skillTreeBody.activeSelf ? ActiveColor : InactiveColor;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         for (int i = 0; i < otherSkillTreeTabs.Length; i++)
         {

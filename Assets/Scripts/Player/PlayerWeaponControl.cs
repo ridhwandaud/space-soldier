@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerWeaponControl : MonoBehaviour {
 
@@ -30,8 +31,15 @@ public class PlayerWeaponControl : MonoBehaviour {
 
 	void Awake () {
         leftWeapons[0] = leftGun = defaultStartingWeapon;
-        InventoryManager.EnqueueNewSkill(new InventoryManager.InventoryTileInfo(null, defaultStartingWeapon));
+        StartCoroutine("AddPistolToInventory");
 	}
+
+    IEnumerator AddPistolToInventory()
+    {
+        // Must wait for end of frame so that UI scaling can take place. This ensures that the tile is initialized properly.
+        yield return new WaitForEndOfFrame();
+        InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, defaultStartingWeapon));
+    }
 	
 	void Update () {
         if (GameState.Paused)

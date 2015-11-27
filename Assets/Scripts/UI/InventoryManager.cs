@@ -5,35 +5,25 @@ using System.Collections;
 using System.Linq;
 
 public class InventoryManager : MonoBehaviour {
-    public static float TileSideLength = 50; //tile is a square, so this is both length and width
-    public static Queue<InventoryTileInfo> ToRender = new Queue<InventoryTileInfo>();
+    public static InventoryManager Instance = null;
 
-    public GameObject GenericInventoryTile;
+    public static float TileSideLength = 50; //tile is a square, so this is both length and width
+
+    [SerializeField]
+    private GameObject genericInventoryTile;
+    [SerializeField]
+    private List<Transform> slotTransforms;
 
     private List<RectTransform> slotRects;
-    private List<Transform> slotTransforms;
-    private Vector2 tileSize;
+    private Vector2 tileSize = new Vector2(50, 50);
     private bool sizeHasBeenConfigured = false;
-
-    private string UnequippedPanelName = "Unequipped";
-
-    void Update ()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            EnqueueNewSkill(new InventoryTileInfo());
-        }
-
-        if (Input.GetButtonDown("Submit"))
-        {
-            OnEnable();
-        }
-    }
 
     void Awake ()
     {
-        // temporary code to pause game for testing
-        //Time.timeScale = 0;
+        if (!Instance)
+        {
+            Instance = this;
+        }
 
         slotRects = new List<RectTransform>();
         GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Slot Tile");
@@ -41,52 +31,9 @@ public class InventoryManager : MonoBehaviour {
         {
             slotRects.Add(slotObjects[i].GetComponent<RectTransform>());
         }
-
-        slotTransforms = new List<Transform>();
-        Transform[] transforms = GameObject.Find(UnequippedPanelName).GetComponentsInChildren<Transform>();
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            if (transforms[i].name != UnequippedPanelName)
-            {
-                slotTransforms.Add(transforms[i]);
-            }
-        }
-        StartCoroutine("ConfigureSize");
     }
 
-    IEnumerator ConfigureSize()
-    {
-        yield return new WaitForEndOfFrame();
-
-        RectTransform slotTransform = slotTransforms[0].GetComponent<RectTransform>();
-        tileSize = new Vector2(slotTransform.sizeDelta.x, slotTransform.sizeDelta.y);
-        sizeHasBeenConfigured = true;
-        RenderTiles();
-    }
-
-    void OnEnable ()
-    {
-        if (sizeHasBeenConfigured)
-        {
-            RenderTiles();
-        }
-    }
-
-    void RenderTiles()
-    {
-        while (ToRender.Count != 0)
-        {
-            InventoryTileInfo info = ToRender.Dequeue();
-            InstantiateNewTile(info);
-        }
-    }
-
-    public static void EnqueueNewSkill(InventoryTileInfo info)
-    {
-        ToRender.Enqueue(info);
-    }
-
-    private void InstantiateNewTile(InventoryTileInfo info)
+    public void InstantiateNewTile(InventoryTileInfo info)
     {
         Transform slotTransform = null;
 
@@ -106,7 +53,7 @@ public class InventoryManager : MonoBehaviour {
             return;
         }
 
-        GameObject newTile = Instantiate(GenericInventoryTile) as GameObject;
+        GameObject newTile = Instantiate(genericInventoryTile) as GameObject;
 
         newTile.transform.SetParent(transform);
         newTile.transform.position = slotTransform.position;

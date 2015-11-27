@@ -1,24 +1,22 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuInitializer : MonoBehaviour {
-    public GameObject SkillTree;
-    public GameObject Inventory;
+    [SerializeField]
+    private CanvasGroup skillTreeCanvasGroup;
+    [SerializeField]
+    private CanvasGroup inventoryCanvasGroup;
 
 	void Update () {
 	    if (Input.GetButtonDown("SkillTree"))
         {
             if (!GameState.Paused)
             {
-                // This naive method of pausing will probably have to be changed later. Having timeScale as 0 isn't going to be good if I ever want my pause menu
-                // to have animations or physics. But I don't expect that will happen anytime soon, so I'll leave this minimalist (but functional) solution for now.
-                GameState.Paused = true;
-                Time.timeScale = 0;
-                SkillTree.SetActive(true);
+                OpenMenu(skillTreeCanvasGroup);
             }
-            else if (SkillTree.activeSelf) {
-                GameState.Paused = false;
-                Time.timeScale = 1;
-                SkillTree.SetActive(false);
+            else if (MenuIsOpen(skillTreeCanvasGroup)) {
+
+                CloseMenu(skillTreeCanvasGroup);
             }
         }
 
@@ -27,18 +25,34 @@ public class MenuInitializer : MonoBehaviour {
         {
             if (!GameState.Paused)
             {
-                // This naive method of pausing will probably have to be changed later. Having timeScale as 0 isn't going to be good if I ever want my pause menu
-                // to have animations or physics. But I don't expect that will happen anytime soon, so I'll leave this minimalist (but functional) solution for now.
-                GameState.Paused = true;
-                Time.timeScale = 0;
-                Inventory.SetActive(true);
+                OpenMenu(inventoryCanvasGroup);
             }
-            else if (Inventory.activeSelf)
+            else if (MenuIsOpen(inventoryCanvasGroup))
             {
-                GameState.Paused = false;
-                Time.timeScale = 1;
-                Inventory.SetActive(false);
+
+                CloseMenu(inventoryCanvasGroup);
             }
         }
 	}
+
+    void OpenMenu(CanvasGroup menu)
+    {
+        GameState.Paused = true;
+        Time.timeScale = 0;
+        menu.blocksRaycasts = true;
+        menu.alpha = 1;
+    }
+
+    void CloseMenu(CanvasGroup menu)
+    {
+        GameState.Paused = false;
+        Time.timeScale = 1;
+        menu.blocksRaycasts = false;
+        menu.alpha = 0;
+    }
+
+    bool MenuIsOpen(CanvasGroup menu)
+    {
+        return menu.blocksRaycasts == true && menu.alpha == 1;
+    }
 }
