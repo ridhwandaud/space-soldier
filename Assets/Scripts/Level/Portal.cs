@@ -6,6 +6,7 @@ public class Portal : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
+            GameState.LevelIndex++;
             Application.LoadLevel(Application.loadedLevel);
         }
     }

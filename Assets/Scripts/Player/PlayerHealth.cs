@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class PlayerHealth : MonoBehaviour {
 
-    public int healthPoints;
-    public Slider healthSlider;
+    [SerializeField]
+    private int healthPoints;
+    [SerializeField]
+    private Slider healthSlider;
+    [SerializeField]
+    private GameObject gameOverUI;
 
     void Awake()
     {
@@ -21,6 +24,12 @@ public class PlayerHealth : MonoBehaviour {
         if (healthPoints <= 0)
         {
             gameObject.SetActive(false);
+            ShowGameOverScreen();
         }
+    }
+
+    void ShowGameOverScreen()
+    {
+        gameOverUI.SetActive(true);
     }
 }

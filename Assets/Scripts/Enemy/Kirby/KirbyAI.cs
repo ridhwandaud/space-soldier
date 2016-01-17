@@ -28,7 +28,7 @@ public class KirbyAI : EnemyAI {
 	}
 	
 	void Update () {
-        if (!LoadLevel.WALL_COLLIDERS_INITIALIZED)
+        if (!LoadLevel.WallCollidersInitialized)
         {
             return;
         }

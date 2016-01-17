@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class EnemyDeath : MonoBehaviour {
     public int experiencePoints;
@@ -13,6 +12,7 @@ public class EnemyDeath : MonoBehaviour {
         if (!destroyed)
         {
             Player.PlayerExperience.IncrementExperience(experiencePoints);
+            GameState.NumEnemiesKilled++;
             Destroy(gameObject);
             destroyed = true;
             GameState.NumEnemiesRemaining--;

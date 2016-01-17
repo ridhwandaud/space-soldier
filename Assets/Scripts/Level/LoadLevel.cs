@@ -2,20 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using SpriteTile;
-using System;
-using System.Text;
 
 public class LoadLevel : MonoBehaviour {
-    public static HashSet<int> WALL_INDICES = new HashSet<int>() {2};
-    public static HashSet<int> FLOOR_INDICES = new HashSet<int>() {0, 1};
+    public static HashSet<int> WallIndices = new HashSet<int>() {2};
+    public static HashSet<int> FloorIndices = new HashSet<int>() {0, 1};
 
-    public static float TILE_SIZE = 2f;
+    public static float TileSize = 2f;
     public static LoadLevel instance = null;
-    public static bool WALL_COLLIDERS_INITIALIZED = false;
+    public static bool WallCollidersInitialized = false;
 
-    private static int WALL_LAYER = 8;
-
-    private int levelIndex = 0;
+    private static int WallLayer = 8;
 
 	void Awake () {
         if (instance == null) {
@@ -32,13 +28,13 @@ public class LoadLevel : MonoBehaviour {
 
     void OnLevelWasLoaded(int index)
     {
-        levelIndex++;
         InitLevel();
     }
 
     void InitLevel()
     {
-        WALL_COLLIDERS_INITIALIZED = false;
+        Debug.Log("You have killed " + GameState.NumEnemiesKilled + " enemies.");
+        WallCollidersInitialized = false;
 
         Vector3 playerSpawn;
         GameObject player = GameObject.Find("Soldier");
@@ -46,7 +42,7 @@ public class LoadLevel : MonoBehaviour {
         Tile.SetCamera();
 
         BasicLevelGenerator generator = new BasicLevelGenerator();
-        int[,] generatedLevel = generator.GenerateLevel(levelIndex, out playerSpawn);
+        int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
         setTiles(generatedLevel, playerSpawn, player);
         AStar.world = generatedLevel;
     }
@@ -56,22 +52,22 @@ public class LoadLevel : MonoBehaviour {
         Int2 mapDimensions = new Int2(generatedLevel.GetLength(1), generatedLevel.GetLength(0));
 
         // create level
-        Tile.NewLevel(mapDimensions, 0, TILE_SIZE, 0, LayerLock.None);
-        Tile.AddLayer(mapDimensions, 0, TILE_SIZE, 0, LayerLock.None);
+        Tile.NewLevel(mapDimensions, 0, TileSize, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, TileSize, 0, LayerLock.None);
 
         // set sorting layers
         Tile.SetLayerSorting(0, 0);
         Tile.SetLayerSorting(1, 1);
 
         // set collider layer so that walls can be detected by raycasting
-        Tile.SetColliderLayer(WALL_LAYER);
+        Tile.SetColliderLayer(WallLayer);
 
         for (int row = 0; row < generatedLevel.GetLength(0); row++)
         {
             for (int col = 0; col < generatedLevel.GetLength(1); col++)
             {
                 Int2 tileLocation = new Int2(col, row);
-                bool isWall = WALL_INDICES.Contains(generatedLevel[row, col]);
+                bool isWall = WallIndices.Contains(generatedLevel[row, col]);
                 int tileIndex = generatedLevel[row, col];
                 int spriteTileLayerIndex = isWall ? 1 : 0;
 
@@ -98,14 +94,14 @@ public class LoadLevel : MonoBehaviour {
             collider.tag = "Wall";
         }
 
-        WALL_COLLIDERS_INITIALIZED = true;
+        WallCollidersInitialized = true;
     }
 
     private bool hasAdjacentFloor(int[,] level, int x, int y)
     {
-        return (x < level.GetLength(0) - 1 && FLOOR_INDICES.Contains(level[x + 1, y]))
-            || (x > 0 && FLOOR_INDICES.Contains(level[x - 1, y]))
-            || (y < level.GetLength(1) - 1 && FLOOR_INDICES.Contains(level[x, y + 1]))
-            || (y > 0 && FLOOR_INDICES.Contains(level[x, y - 1]));
+        return (x < level.GetLength(0) - 1 && FloorIndices.Contains(level[x + 1, y]))
+            || (x > 0 && FloorIndices.Contains(level[x - 1, y]))
+            || (y < level.GetLength(1) - 1 && FloorIndices.Contains(level[x, y + 1]))
+            || (y > 0 && FloorIndices.Contains(level[x, y - 1]));
     }
 }
