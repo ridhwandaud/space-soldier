@@ -30,7 +30,11 @@ public class PlayerWeaponControl : MonoBehaviour {
     private bool rightMouseButtonClicked = false;
 
 	void Awake () {
-        leftWeapons[0] = leftGun = defaultStartingWeapon;
+        if(!GameState.TutorialMode)
+        {
+            leftWeapons[0] = leftGun = defaultStartingWeapon;
+        }
+
         StartCoroutine("AddPistolToInventory");
 	}
 
@@ -38,7 +42,16 @@ public class PlayerWeaponControl : MonoBehaviour {
     {
         // Must wait for end of frame so that UI scaling can take place. This ensures that the tile is initialized properly.
         yield return new WaitForEndOfFrame();
-        InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, defaultStartingWeapon));
+
+        InventoryManager.InventoryTileInfo tileInfo = new InventoryManager.InventoryTileInfo(null, defaultStartingWeapon);
+
+        if (GameState.TutorialMode)
+        {
+            InventoryManager.Instance.InstantiateTileAtPosition(tileInfo, 6);
+        } else
+        {
+            InventoryManager.Instance.InstantiateNewTile(tileInfo);
+        }
     }
 	
 	void Update () {

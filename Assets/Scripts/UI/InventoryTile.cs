@@ -91,6 +91,11 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
             if (newSlot.WeaponSlot != 0)
             {
+                if (GameState.TutorialMode && newSlot.WeaponSlot < 4 && weapon.name == "Pistol")
+                {
+                    TutorialEngine.Instance.Trigger(TutorialTrigger.EquipLaserPistol);
+                }
+
                 EquipWeaponFromInventory(newSlot);
             }
         }

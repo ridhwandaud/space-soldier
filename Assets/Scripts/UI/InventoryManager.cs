@@ -35,23 +35,30 @@ public class InventoryManager : MonoBehaviour {
 
     public void InstantiateNewTile(InventoryTileInfo info)
     {
-        Transform slotTransform = null;
+        int slotNumber = -1;
 
         for (int i = 0; i < slotTransforms.Count; i++)
         {
             InventorySlot inventorySlot = slotTransforms[i].GetComponent<InventorySlot>();
             if (!inventorySlot.Occupied)
             {
-                inventorySlot.Occupied = true;
-                slotTransform = slotTransforms[i];
+                slotNumber = i;
                 break;
             }
         }
 
-        if (slotTransform == null)
+        if (slotNumber != -1)
         {
-            return;
+            InstantiateTileAtPosition(info, slotNumber);
         }
+    }
+
+    public void InstantiateTileAtPosition(InventoryTileInfo info, int position)
+    {
+        InventorySlot inventorySlot = slotTransforms[position].GetComponent<InventorySlot>();
+        inventorySlot.Occupied = true;
+
+        Transform slotTransform = slotTransforms[position];
 
         GameObject newTile = Instantiate(genericInventoryTile) as GameObject;
 
@@ -62,7 +69,6 @@ public class InventoryManager : MonoBehaviour {
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
         newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, info.Weapon);
-        // TODO: set the image.
     }
 
     public struct InventoryTileInfo

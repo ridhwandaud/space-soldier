@@ -1,11 +1,23 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialEngine : MonoBehaviour {
+    [SerializeField]
+    private TutorialState initialState;
+    [SerializeField]
+    private Text tutorialConsoleText;
+
+    public static TutorialEngine Instance;
+
     private TutorialState currentState;
 
     void Awake()
     {
+        Instance = this;
+        currentState = initialState;
         currentState.Initialize();
+        GameState.TutorialMode = true;
+        GameState.SpaceLocked = true;
     }
 
     void Update()
@@ -24,8 +36,8 @@ public class TutorialEngine : MonoBehaviour {
         currentState.Initialize();
     }
 
-    public void RenderText ()
+    public void RenderText (string textToRender)
     {
-        // display code in the tutorial console
+        tutorialConsoleText.text = textToRender;
     }
 }

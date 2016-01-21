@@ -23,6 +23,7 @@ public class MenuInitializer : MonoBehaviour {
         // TODO: Make a single menu from which both the skill tree and the inventory can be accessed.
         if (Input.GetButtonDown("Inventory"))
         {
+            TutorialEngine.Instance.Trigger(TutorialTrigger.OpenInventory);
             if (!GameState.Paused)
             {
                 OpenMenu(inventoryCanvasGroup);

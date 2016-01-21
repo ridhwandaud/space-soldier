@@ -1,5 +1,7 @@
 ﻿public enum TutorialTrigger
 {
+    Walk,
+    OpenInventory,
     EquipLaserPistol,
     FireLaserPistol,
     EnemyKilled,
