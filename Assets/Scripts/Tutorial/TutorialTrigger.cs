@@ -2,6 +2,7 @@
 {
     Walk,
     OpenInventory,
+    CloseInventory,
     EquipLaserPistol,
     FireLaserPistol,
     EnemyKilled,

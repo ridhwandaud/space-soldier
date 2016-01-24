@@ -51,7 +51,6 @@ public abstract class TutorialState : MonoBehaviour {
 
     protected void GoToNextState()
     {
-        Debug.Log(nextState);
         TutorialEngine.Instance.ChangeState(nextState);
     }
 }

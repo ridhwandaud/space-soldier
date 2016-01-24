@@ -16,25 +16,32 @@ public class EquipPistolTutorial : TutorialState
 
     public override void Trigger (TutorialTrigger trigger)
     {
-        if (trigger.Equals(TutorialTrigger.OpenInventory) && !inventoryOpened)
-        {
-            inventoryOpened = true;
-            ExplainInventory();
-        }
-
         switch (trigger)
         {
+            case TutorialTrigger.OpenInventory:
+                if (!inventoryOpened)
+                {
+                    inventoryOpened = true;
+                    ExplainInventory();
+                }
+                break;
             case TutorialTrigger.EquipLaserPistol:
                 pistolEquipped = true;
                 if (inventoryMissionAssigned)
                 {
-                    CompleteMission();
+                    CongratulatePlayer();
+                }
+                break;
+            case TutorialTrigger.CloseInventory:
+                if (pistolEquipped)
+                {
+                    GoToNextState();
                 }
                 break;
         }
     }
 
-    void CompleteMission()
+    void CongratulatePlayer()
     {
         RenderText("Nicely done. You can access your inventory with the \"Space\" bar at any point during gameplay. Now press \"Space\" again to " +
             "close the inventory menu and return to the game.");
@@ -64,7 +71,7 @@ public class EquipPistolTutorial : TutorialState
             {
                 if (pistolEquipped)
                 {
-                    CompleteMission();
+                    CongratulatePlayer();
                 }
             }, 0f)
         }));
