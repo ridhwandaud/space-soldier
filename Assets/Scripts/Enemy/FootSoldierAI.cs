@@ -30,7 +30,7 @@ public class FootSoldierAI : EnemyAI {
 
     void Update()
     {
-        if (!LoadLevel.WallCollidersInitialized)
+        if (!GameState.WallCollidersInitialized)
         {
             return;
         }

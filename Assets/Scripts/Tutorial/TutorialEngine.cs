@@ -16,8 +16,6 @@ public class TutorialEngine : MonoBehaviour {
         Instance = this;
         currentState = initialState;
         currentState.Initialize();
-        GameState.TutorialMode = true;
-        GameState.SpaceLocked = true;
     }
 
     void Update()

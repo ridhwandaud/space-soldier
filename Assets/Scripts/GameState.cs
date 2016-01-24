@@ -4,6 +4,7 @@ public class GameState : MonoBehaviour {
     public static int NumEnemiesRemaining = 0;
     public static bool Paused = false;
     public static bool TutorialMode = false;
+    public static bool WallCollidersInitialized = false;
 
     // These are for score tracking (to display at the end of the game)
     public static int NumEnemiesKilled = 0;
@@ -15,6 +16,7 @@ public class GameState : MonoBehaviour {
     public static void ResetGameState()
     {
         NumEnemiesRemaining = 0;
+        WallCollidersInitialized = false;
         Paused = false;
         NumEnemiesKilled = 0;
         LevelIndex = 0;

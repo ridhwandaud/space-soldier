@@ -34,7 +34,6 @@ public class LoadLevel : MonoBehaviour {
     void InitLevel()
     {
         Debug.Log("You have killed " + GameState.NumEnemiesKilled + " enemies.");
-        WallCollidersInitialized = false;
 
         Vector3 playerSpawn;
         GameObject player = GameObject.Find("Soldier");
@@ -44,6 +43,7 @@ public class LoadLevel : MonoBehaviour {
         BasicLevelGenerator generator = new BasicLevelGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
         setTiles(generatedLevel, playerSpawn, player);
+
         AStar.world = generatedLevel;
     }
 
@@ -84,7 +84,7 @@ public class LoadLevel : MonoBehaviour {
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 
-    IEnumerator ConfigureColliders()
+    public static IEnumerator ConfigureColliders()
     {
         yield return new WaitForEndOfFrame();
 
@@ -94,7 +94,7 @@ public class LoadLevel : MonoBehaviour {
             collider.tag = "Wall";
         }
 
-        WallCollidersInitialized = true;
+        GameState.WallCollidersInitialized = true;
     }
 
     private bool hasAdjacentFloor(int[,] level, int x, int y)
