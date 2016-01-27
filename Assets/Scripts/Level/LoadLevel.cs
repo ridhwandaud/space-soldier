@@ -6,12 +6,10 @@ using SpriteTile;
 public class LoadLevel : MonoBehaviour {
     public static HashSet<int> WallIndices = new HashSet<int>() {2};
     public static HashSet<int> FloorIndices = new HashSet<int>() {0, 1};
+    public static int WallLayer = 8;
 
     public static float TileSize = 2f;
     public static LoadLevel instance = null;
-    public static bool WallCollidersInitialized = false;
-
-    private static int WallLayer = 8;
 
 	void Awake () {
         if (instance == null) {
@@ -80,7 +78,7 @@ public class LoadLevel : MonoBehaviour {
             }
         }
 
-        StartCoroutine("ConfigureColliders");
+        StartCoroutine(ConfigureColliders());
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 

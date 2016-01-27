@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnergyOrbProperties : MonoBehaviour
+public class EnergyOrbProperties : BasicPlayerProjectile
 {
-    public int damage = 3;
     public int explosionDamage = 3;
     public float explosionRadius = .6f;
 
@@ -17,21 +16,6 @@ public class EnergyOrbProperties : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         projectileDestroy = GetComponent<ProjectileDestroy>();
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Enemy" || other.tag == "Wall")
-        {
-            rb.velocity = Vector2.zero;
-            animator.SetBool("exploding", true);
-            DoExplosion();
-        }
-
-        if (other.tag == "Enemy")
-        {
-            other.GetComponent<EnemyHealth>().InflictDamage(damage);
-        }
     }
 
     void DestroyEnergyOrb()

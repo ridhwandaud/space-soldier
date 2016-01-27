@@ -4,9 +4,9 @@
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(ProjectileDestroy))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class HomingMissile : MonoBehaviour {
+public class HomingMissile : BasicPlayerProjectile
+{
     public float speed;
-    public int damage;
     public float neighborhoodRadius;
 
     private Rigidbody2D rb2d;
@@ -23,19 +23,6 @@ public class HomingMissile : MonoBehaviour {
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
         rb2d.velocity = (rb2d.velocity + (Seek() + Separate() * Time.fixedDeltaTime)).normalized * speed;
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Player")
-        {
-            other.GetComponent<PlayerHealth>().InflictDamage(damage);
-        }
-
-        if (other.tag == "Player" || other.tag == "Wall")
-        {
-            GetComponent<ProjectileDestroy>().Destroy();
-        }
     }
 
     Vector2 Seek ()

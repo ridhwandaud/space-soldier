@@ -28,7 +28,7 @@ public class BasicEnemyAI : EnemyAI {
 
     void Update()
     {
-        if (!LoadLevel.WallCollidersInitialized)
+        if (!GameState.WallCollidersInitialized)
         {
             return;
         }

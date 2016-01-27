@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class ChargeBlastProperties : MonoBehaviour {
+public class ChargeBlastProperties : BasicPlayerProjectile
+{
     public int ImpactDamage { get;  set; }
 
     // int defaults to 0.
@@ -11,7 +12,7 @@ public class ChargeBlastProperties : MonoBehaviour {
     private ProjectileDestroy projectileDestroy;
     private Animator animator;
     private Rigidbody2D rb;
-    private SpriteRenderer renderer;
+    private SpriteRenderer spriteRenderer;
     private int enemyLayerMask = 1 << 9;
 
     private List<int> damageLevels = new List<int> { 3, 5, 7 };
@@ -23,7 +24,7 @@ public class ChargeBlastProperties : MonoBehaviour {
         projectileDestroy = GetComponent<ProjectileDestroy>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        renderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void DestroyEnergyOrb()
@@ -34,22 +35,22 @@ public class ChargeBlastProperties : MonoBehaviour {
 
     void RevealOrb()
     {
-        renderer.enabled = true;
+        spriteRenderer.enabled = true;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    protected override void OnTriggerEnter2D(Collider2D other)
     {
         if (!Fired)
         {
             return;
         }
 
-        if (other.tag == "Enemy")
+        if (isEnemy(other))
         {
             other.GetComponent<EnemyHealth>().InflictDamage(damageLevels[ChargeLevel]);
         }
 
-        if (other.tag == "Enemy" || other.tag == "Wall")
+        if (isObstacle(other))
         {
             if (ChargeLevel == 0)
             {

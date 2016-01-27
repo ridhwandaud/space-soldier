@@ -5,15 +5,30 @@ public class BasicPlayerProjectile : MonoBehaviour
 {
     public int damage;
 
-    void OnTriggerEnter2D(Collider2D other)
+    protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Enemy")
+        if (isEnemy(other))
         {
             other.GetComponent<EnemyHealth>().InflictDamage(damage);
         }
-        if (other.tag == "Enemy" || other.tag == "Wall")
+        if (isObstacle(other))
         {
             GetComponent<ProjectileDestroy>().Destroy();
+            Destructible destructible = other.GetComponent<Destructible>();
+            if (destructible)
+            {
+                destructible.InflictDamage(damage);
+            }
         }
+    }
+
+    protected bool isEnemy(Collider2D other)
+    {
+        return other.tag == "Enemy";
+    }
+
+    protected bool isObstacle(Collider2D other)
+    {
+        return other.tag == "Enemy" || other.tag == "Wall" || other.tag == "Obstacle";
     }
 }
