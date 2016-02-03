@@ -14,27 +14,18 @@ public class TutorialEngine : MonoBehaviour {
     void Awake ()
     {
         Instance = this;
-        if (currentState)
-        {
-            currentState = initialState;
-            currentState.Initialize();
-        }
+        currentState = initialState;
+        currentState.Initialize();
     }
 
     void Update()
     {
-        if (currentState)
-        {
-            currentState.Update();
-        }
+        currentState.Update();
     }
 
 	public void Trigger(TutorialTrigger trigger)
     {
-        if (currentState)
-        {
-            currentState.Trigger(trigger);
-        }
+        currentState.Trigger(trigger);
     }
 
     public void ChangeState(TutorialState nextState)

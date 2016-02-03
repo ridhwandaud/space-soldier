@@ -21,4 +21,17 @@ public class GameState : MonoBehaviour {
         NumEnemiesKilled = 0;
         LevelIndex = 0;
     }
+
+    public static void PauseGame()
+    {
+        Paused = true;
+        Time.timeScale = 0;
+    }
+
+    public static void UnpauseGame()
+    {
+        Paused = false;
+        Time.timeScale = 1;
+
+    }
 }

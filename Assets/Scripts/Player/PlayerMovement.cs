@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
         float inputY = Input.GetAxisRaw("Vertical");
         float halfCollisionDistance = collisionDistance / 2;
  
-        if(inputX != 0 || inputY != 0)
+        if(GameState.TutorialMode && (inputX != 0 || inputY != 0))
         {
             TutorialEngine.Instance.Trigger(TutorialTrigger.Walk);
         }

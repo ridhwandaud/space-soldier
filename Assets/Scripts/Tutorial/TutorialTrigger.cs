@@ -5,6 +5,8 @@
     CloseInventory,
     EquipLaserPistol,
     FireLaserPistol,
+    ItemDestroyed,
+    CombatTutorialRoomEntered,
     EnemyKilled,
     NewSkillAcquired,
     BothGunsFired,

@@ -25,12 +25,18 @@ public class MenuInitializer : MonoBehaviour {
         {
             if (!GameState.Paused)
             {
-                TutorialEngine.Instance.Trigger(TutorialTrigger.OpenInventory);
+                if (GameState.TutorialMode)
+                {
+                    TutorialEngine.Instance.Trigger(TutorialTrigger.OpenInventory);
+                }
                 OpenMenu(inventoryCanvasGroup);
             }
             else if (MenuIsOpen(inventoryCanvasGroup))
             {
-                TutorialEngine.Instance.Trigger(TutorialTrigger.CloseInventory);
+                if (GameState.TutorialMode)
+                {
+                    TutorialEngine.Instance.Trigger(TutorialTrigger.CloseInventory);
+                }
                 CloseMenu(inventoryCanvasGroup);
             }
         }
@@ -38,16 +44,14 @@ public class MenuInitializer : MonoBehaviour {
 
     void OpenMenu(CanvasGroup menu)
     {
-        GameState.Paused = true;
-        Time.timeScale = 0;
+        GameState.PauseGame();
         menu.blocksRaycasts = true;
         menu.alpha = 1;
     }
 
     void CloseMenu(CanvasGroup menu)
     {
-        GameState.Paused = false;
-        Time.timeScale = 1;
+        GameState.UnpauseGame();
         menu.blocksRaycasts = false;
         menu.alpha = 0;
     }

@@ -7,7 +7,8 @@ public class EnemyUtil {
 
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
-        return Physics2D.Linecast(pos1, pos2, LayerMasks.WallLayerMask).transform == null;
+        return Physics2D.Linecast(pos1, pos2, LayerMasks.WallLayerMask).transform == null &&
+            Physics2D.Linecast(pos1, pos2, LayerMasks.ObstacleLayerMask).transform == null;
     }
 
     public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 pos1, Vector2 pos2, float colliderSizeMultiplierX = 1.25f,

@@ -10,6 +10,10 @@ public class Destructible : MonoBehaviour {
         if (health <= 0)
         {
             Destroy(gameObject);
+            if (GameState.TutorialMode)
+            {
+                TutorialEngine.Instance.Trigger(TutorialTrigger.ItemDestroyed);
+            }
         }
     }
 }

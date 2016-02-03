@@ -8,6 +8,7 @@ public class WalkingTutorial : TutorialState
 
     public override void Initialize ()
     {
+        Debug.Log("Rendering text");
         RenderText("Move with the W, A, S, and D keys. Try walking around the room a bit.");
     }
 

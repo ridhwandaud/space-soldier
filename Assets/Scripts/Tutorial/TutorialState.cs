@@ -11,6 +11,8 @@ public abstract class TutorialState : MonoBehaviour {
 
     protected delegate void TutFunc ();
 
+    private bool awaitingConfirmation = false;
+
     public virtual void Update () { }
 
     protected void RenderText(string textToRender)
@@ -18,14 +20,19 @@ public abstract class TutorialState : MonoBehaviour {
         TutorialEngine.Instance.RenderText(textToRender);
     }
 
-    protected IEnumerator ExecuteSequence(List<TutorialAction> tutorialActions)
+    protected IEnumerator ExecuteSequence(List<TimedTutorialAction> tutorialActions)
     {
         for (int x = 0; x < tutorialActions.Count; x++)
         {
-            TutorialAction curr = tutorialActions[x];
+            TimedTutorialAction curr = tutorialActions[x];
             curr.Action();
             yield return StartCoroutine(WaitForRealSeconds(curr.Seconds));
         }
+    }
+
+    protected void ExecuteSequenceWithConfirmations(List<TutFunc> actions)
+    {
+        
     }
 
     protected IEnumerator WaitForRealSeconds(float time)
@@ -37,12 +44,12 @@ public abstract class TutorialState : MonoBehaviour {
         }
     }
 
-    protected struct TutorialAction
+    protected struct TimedTutorialAction
     {
         public TutFunc Action;
         public float Seconds;
 
-        public TutorialAction(TutFunc action, float seconds)
+        public TimedTutorialAction(TutFunc action, float seconds)
         {
             Action = action;
             Seconds = seconds;
@@ -52,5 +59,10 @@ public abstract class TutorialState : MonoBehaviour {
     protected void GoToNextState()
     {
         TutorialEngine.Instance.ChangeState(nextState);
+    }
+
+    public void ConfirmInstruction()
+    {
+        awaitingConfirmation = false;
     }
 }

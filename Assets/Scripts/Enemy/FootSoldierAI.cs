@@ -46,7 +46,7 @@ public class FootSoldierAI : EnemyAI {
         {
             Invoke("DeactivateAttack", attackDuration);
         }
-        else
+        else if (!GameState.TutorialMode)
         {
             wanderScript.DoWander();
         }
