@@ -21,6 +21,10 @@ public class TutorialEngine : MonoBehaviour {
     void Update()
     {
         currentState.Update();
+        if(Input.GetButtonDown("ConfirmInstruction"))
+        {
+            currentState.ConfirmInstruction();
+        }
     }
 
 	public void Trigger(TutorialTrigger trigger)

@@ -16,6 +16,12 @@ public class EnemyDeath : MonoBehaviour {
             Destroy(gameObject);
             destroyed = true;
             GameState.NumEnemiesRemaining--;
+
+            if(GameState.TutorialMode)
+            {
+                TutorialEngine.Instance.Trigger(TutorialTrigger.EnemyKilled);
+            }
+
             if (GameState.NumEnemiesRemaining == 0)
             {
                 createPortal();

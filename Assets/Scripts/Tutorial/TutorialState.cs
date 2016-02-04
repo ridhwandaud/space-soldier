@@ -13,11 +13,20 @@ public abstract class TutorialState : MonoBehaviour {
 
     private bool awaitingConfirmation = false;
 
+    // These fields are used for tutorial states that have steps that require confirmation.
+    private List<TutFunc> blockingActions;
+    private int nextBlockingActionIndex = 0;
+
     public virtual void Update () { }
 
     protected void RenderText(string textToRender)
     {
         TutorialEngine.Instance.RenderText(textToRender);
+    }
+
+    protected void ClearText()
+    {
+        TutorialEngine.Instance.RenderText("");
     }
 
     protected IEnumerator ExecuteSequence(List<TimedTutorialAction> tutorialActions)
@@ -30,9 +39,12 @@ public abstract class TutorialState : MonoBehaviour {
         }
     }
 
-    protected void ExecuteSequenceWithConfirmations(List<TutFunc> actions)
+    protected void LoadBlockingSteps(List<TutFunc> actions)
     {
-        
+        awaitingConfirmation = true;
+        GameState.PauseGame();
+        blockingActions = actions;
+        actions[nextBlockingActionIndex = 0]();
     }
 
     protected IEnumerator WaitForRealSeconds(float time)
@@ -63,6 +75,19 @@ public abstract class TutorialState : MonoBehaviour {
 
     public void ConfirmInstruction()
     {
-        awaitingConfirmation = false;
+        if (awaitingConfirmation && blockingActions.Count > 0)
+        {
+            nextBlockingActionIndex++;
+            if (nextBlockingActionIndex < blockingActions.Count)
+            {
+                blockingActions[nextBlockingActionIndex]();
+            }
+            awaitingConfirmation = nextBlockingActionIndex < blockingActions.Count;
+            if (!awaitingConfirmation)
+            {
+                ClearText();
+                GameState.UnpauseGame();
+            }
+        }
     }
 }
