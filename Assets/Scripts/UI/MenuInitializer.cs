@@ -12,6 +12,11 @@ public class MenuInitializer : MonoBehaviour {
         {
             if (!GameState.Paused)
             {
+                Debug.Log("ain't paused, yo");
+                if (GameState.TutorialMode)
+                {
+                    TutorialEngine.Instance.Trigger(TutorialTrigger.SkillTreeOpened);
+                }
                 OpenMenu(skillTreeCanvasGroup);
             }
             else if (MenuIsOpen(skillTreeCanvasGroup)) {

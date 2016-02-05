@@ -13,8 +13,9 @@ public class CombatTutorial : TutorialState
             () => RenderText("Pay close attention to this health bar. Each time you get hit, you will lose " +
                 "a little bit of health. When it's all gone, you die."),
             () => RenderText("To defeat an enemy, shoot it until it disappears."),
-            () => RenderText("Once you're ready, press 'ctrl' to begin.")
-        });
+            () => RenderText("Once you're ready, press 'ctrl' to begin."),
+            () => ClearText()
+        }, true);
     }
 
     public override void Trigger (TutorialTrigger trigger)
@@ -23,11 +24,15 @@ public class CombatTutorial : TutorialState
         {
             LoadBlockingSteps(new List<TutFunc>()
         {
-            () => RenderText("Nice job! You gained some experience points from killing that enemy. This yellow bar in the upper " + 
+            () => RenderText("Nice job! You gained some experience points from killing that enemy. This yellow bar in the upper " +
                 "right hand corner of the screen shows your experience."),
             () => RenderText("Once your experience meter fills up, you will level up."),
-            () => RenderText("You're almost at the next level already! There's one more enemy waiting for you in the next room - destroy " + 
-                " the block obstructing your path and go get 'em.")
+            () => {
+                RenderText("You're almost at the next level already! There's one more enemy waiting for you in the next room - destroy " +
+                "the block obstructing your path and go defeat it.");
+                GoToNextState();
+                Invoke("ClearText", 3f);
+            }
         });
         }
     }

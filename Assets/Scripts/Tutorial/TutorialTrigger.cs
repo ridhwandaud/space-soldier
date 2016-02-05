@@ -9,6 +9,7 @@
     CombatTutorialRoomEntered,
     EnemyKilled,
     NewSkillAcquired,
+    SkillTreeOpened,
     BothGunsFired,
     LeftWeaponSwitched
 }

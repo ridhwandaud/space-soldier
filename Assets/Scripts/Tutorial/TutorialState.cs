@@ -16,6 +16,7 @@ public abstract class TutorialState : MonoBehaviour {
     // These fields are used for tutorial states that have steps that require confirmation.
     private List<TutFunc> blockingActions;
     private int nextBlockingActionIndex = 0;
+    private bool pauseForSequence = false;
 
     public virtual void Update () { }
 
@@ -39,12 +40,17 @@ public abstract class TutorialState : MonoBehaviour {
         }
     }
 
-    protected void LoadBlockingSteps(List<TutFunc> actions)
+    protected void LoadBlockingSteps(List<TutFunc> actions, bool pause = false)
     {
         awaitingConfirmation = true;
-        GameState.PauseGame();
+        if (pause)
+        {
+            GameState.PauseGame();
+            pauseForSequence = true;
+        }
         blockingActions = actions;
-        actions[nextBlockingActionIndex = 0]();
+        actions[0]();
+        nextBlockingActionIndex = 1;
     }
 
     protected IEnumerator WaitForRealSeconds(float time)
@@ -77,16 +83,16 @@ public abstract class TutorialState : MonoBehaviour {
     {
         if (awaitingConfirmation && blockingActions.Count > 0)
         {
-            nextBlockingActionIndex++;
-            if (nextBlockingActionIndex < blockingActions.Count)
-            {
-                blockingActions[nextBlockingActionIndex]();
-            }
+            blockingActions[nextBlockingActionIndex++]();
             awaitingConfirmation = nextBlockingActionIndex < blockingActions.Count;
             if (!awaitingConfirmation)
             {
-                ClearText();
-                GameState.UnpauseGame();
+                // Must use this variable to avoid wrongly unpausing a game during a menu tutorial sequence.
+                if (pauseForSequence)
+                {
+                    GameState.UnpauseGame();
+                }
+                pauseForSequence = false;
             }
         }
     }
