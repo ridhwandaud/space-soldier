@@ -8,7 +8,7 @@
     ItemDestroyed,
     CombatTutorialRoomEntered,
     EnemyKilled,
-    NewSkillAcquired,
+    MachineGunAcquired,
     SkillTreeOpened,
     BothGunsFired,
     LeftWeaponSwitched

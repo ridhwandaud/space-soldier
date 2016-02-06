@@ -38,6 +38,10 @@ public class SkillTreeNode : MonoBehaviour {
             {
                 playerWeaponControl.AddWeaponIfAble(weapon);
                 InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon));
+                if (GameState.TutorialMode && weapon.GetName() == "machineGun")
+                {
+                    TutorialEngine.Instance.Trigger(TutorialTrigger.MachineGunAcquired);
+                }
             }
 
             Player.PlayerExperience.UseSkillPoint();

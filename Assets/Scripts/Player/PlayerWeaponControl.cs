@@ -84,6 +84,11 @@ public class PlayerWeaponControl : MonoBehaviour {
             Player.PlayerEnergy.energy -= rightGun.Click(transform);
         }
 
+        if (leftMouseButtonClicked && rightMouseButtonClicked && GameState.TutorialMode)
+        {
+            TutorialEngine.Instance.Trigger(TutorialTrigger.BothGunsFired);
+        }
+
         if (Input.GetButtonDown("ToggleLeftWeapon"))
         {
             ToggleLeftWeapon();
