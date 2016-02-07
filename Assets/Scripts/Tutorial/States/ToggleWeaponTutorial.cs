@@ -18,14 +18,20 @@ public class ToggleWeaponTutorial : TutorialState
         switch (trigger)
         {
             case TutorialTrigger.OpenInventory:
-                RenderText("Notice that each side of the inventory has two slots. Drag the machine gun tile into one of the open " +
-                    "left slots.");
-                equipMissionAssigned = true;
+                if(openInventoryMissionAssigned)
+                {
+                    openInventoryMissionAssigned = false;
+                    MenuInitializer.LockMenu();
+                    RenderText("Notice that each side of the inventory has two slots. Drag the machine gun tile into one of the open " +
+                        "left slots.");
+                    equipMissionAssigned = true;
+                }
                 break;
             case TutorialTrigger.SecondLeftWeaponEquipped:
                 if (equipMissionAssigned)
                 {
                     equipMissionAssigned = false;
+                    MenuInitializer.UnlockMenu();
                     RenderText("Both of your weapons are now assigned to the left mouse button. " +
                         "Now exit the inventory with the shift key.");
                     closeInventoryMissionAssigned = true;

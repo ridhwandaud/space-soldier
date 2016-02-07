@@ -7,8 +7,10 @@ public class MenuInitializer : MonoBehaviour {
     [SerializeField]
     private CanvasGroup inventoryCanvasGroup;
 
+    private static bool MenuLocked = false;
+
 	void Update () {
-	    if (Input.GetButtonDown("SkillTree"))
+	    if (Input.GetButtonDown("SkillTree") && !MenuLocked)
         {
             if (!GameState.Paused)
             {
@@ -24,7 +26,7 @@ public class MenuInitializer : MonoBehaviour {
         }
 
         // TODO: Make a single menu from which both the skill tree and the inventory can be accessed.
-        if (Input.GetButtonDown("Inventory"))
+        if (Input.GetButtonDown("Inventory") && !MenuLocked)
         {
             if (!GameState.Paused)
             {
@@ -62,5 +64,15 @@ public class MenuInitializer : MonoBehaviour {
     bool MenuIsOpen(CanvasGroup menu)
     {
         return menu.blocksRaycasts == true && menu.alpha == 1;
+    }
+
+    public static void LockMenu()
+    {
+        MenuLocked = true;
+    }
+
+    public static void UnlockMenu()
+    {
+        MenuLocked = false;
     }
 }

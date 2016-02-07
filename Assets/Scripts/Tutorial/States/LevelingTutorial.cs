@@ -23,6 +23,7 @@ public class LevelingTutorial : TutorialState
             case TutorialTrigger.SkillTreeOpened:
                 if (skillTreeMissionAssigned)
                 {
+                    MenuInitializer.LockMenu();
                     skillTreeMissionAssigned = false;
                     LoadBlockingSteps(new List<TutFunc>()
                     {
@@ -41,6 +42,7 @@ public class LevelingTutorial : TutorialState
             case TutorialTrigger.MachineGunAcquired:
                 if (clickMissionAssigned)
                 {
+                    MenuInitializer.UnlockMenu();
                     GoToNextState();
                 }
                 break;
