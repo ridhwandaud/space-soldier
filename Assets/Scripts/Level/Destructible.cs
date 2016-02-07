@@ -3,9 +3,16 @@ using System.Collections;
 
 public class Destructible : MonoBehaviour {
     public int health;
+    [SerializeField]
+    private bool invincible = false;
 
 	public void InflictDamage(int damagePoints)
     {
+        if(invincible)
+        {
+            return;
+        }
+
         health -= damagePoints;
         if (health <= 0)
         {
@@ -15,5 +22,10 @@ public class Destructible : MonoBehaviour {
                 TutorialEngine.Instance.Trigger(TutorialTrigger.ItemDestroyed);
             }
         }
+    }
+
+    public void SetInvincibility(bool invincible)
+    {
+        this.invincible = invincible;
     }
 }

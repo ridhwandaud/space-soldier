@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class CombatTutorial : TutorialState
 {
+    [SerializeField]
+    private Destructible crate;
 
     public override void Initialize ()
     {
@@ -30,6 +32,7 @@ public class CombatTutorial : TutorialState
             () => {
                 RenderText("You're almost at the next level already! There's one more enemy waiting for you in the next room - destroy " +
                 "the block obstructing your path and go defeat it.");
+                crate.SetInvincibility(false);
                 GoToNextState();
                 Invoke("ClearText", 3f);
             }

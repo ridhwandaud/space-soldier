@@ -49,6 +49,7 @@ public class ToggleWeaponTutorial : TutorialState
             case TutorialTrigger.LeftWeaponSwitched:
                 if (toggleMissionAssigned)
                 {
+                    toggleMissionAssigned = false;
                     Invoke("CompleteMission", 4f);
                 }
                 break;
