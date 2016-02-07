@@ -6,11 +6,6 @@ public class LevelingTutorial : TutorialState
     private bool skillTreeMissionAssigned = false;
     private bool clickMissionAssigned = false;
 
-    public override void Initialize()
-    {
-        // Do nothing.
-    }
-
     public override void Trigger(TutorialTrigger trigger)
     {
         switch(trigger)
@@ -46,8 +41,6 @@ public class LevelingTutorial : TutorialState
             case TutorialTrigger.MachineGunAcquired:
                 if (clickMissionAssigned)
                 {
-                    RenderText("Good work! Now you have a machine gun. Press 'Tab' again to close your skill tree and press " +
-                        "space to go back to your inventory.");
                     GoToNextState();
                 }
                 break;

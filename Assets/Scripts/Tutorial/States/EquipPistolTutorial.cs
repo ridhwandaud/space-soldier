@@ -10,7 +10,7 @@ public class EquipPistolTutorial : TutorialState
 
     public override void Initialize ()
     {
-        RenderText("Now you'll need a weapon. Press the \"Space\" bar to open up your inventory.");
+        RenderText("Now you'll need a weapon. Press the Shift key to open up your inventory.");
         // Unlock the space bar.
     }
 
@@ -43,7 +43,7 @@ public class EquipPistolTutorial : TutorialState
 
     void CongratulatePlayer()
     {
-        RenderText("Nicely done. You can access your inventory with the \"Space\" bar at any point during gameplay. Now press \"Space\" again to " +
+        RenderText("Nicely done. You can access your inventory with the Shift bar at any point during gameplay. Now press \"Space\" again to " +
             "close the inventory menu and return to the game.");
     }
 

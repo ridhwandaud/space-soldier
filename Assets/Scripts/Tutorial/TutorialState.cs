@@ -6,7 +6,7 @@ public abstract class TutorialState : MonoBehaviour {
     [SerializeField]
     private TutorialState nextState;
 
-    public abstract void Initialize ();
+    public virtual void Initialize () { }
     public abstract void Trigger (TutorialTrigger trigger);
 
     protected delegate void TutFunc ();

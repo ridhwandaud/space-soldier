@@ -82,6 +82,11 @@ public class PlayerWeaponControl : MonoBehaviour {
         {
             rightMouseButtonClicked = true;
             Player.PlayerEnergy.energy -= rightGun.Click(transform);
+            
+            if (GameState.TutorialMode)
+            {
+                TutorialEngine.Instance.Trigger(TutorialTrigger.MachineGunFired);
+            }
         }
 
         if (leftMouseButtonClicked && rightMouseButtonClicked && GameState.TutorialMode)
@@ -92,6 +97,10 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetButtonDown("ToggleLeftWeapon"))
         {
             ToggleLeftWeapon();
+            if (GameState.TutorialMode)
+            {
+                TutorialEngine.Instance.Trigger(TutorialTrigger.LeftWeaponSwitched);
+            }
         }
 
         if (Input.GetButtonDown("ToggleRightWeapon"))
@@ -154,6 +163,10 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         weapons[slot] = newWeapon;
         IncrementWeaponCount(weaponSide);
+        if (GameState.TutorialMode && weaponSide == WeaponSide.Left)
+        {
+            TutorialEngine.Instance.Trigger(TutorialTrigger.SecondLeftWeaponEquipped);
+        }
 
         if (weaponSide == WeaponSide.Left && leftGun == null)
         {

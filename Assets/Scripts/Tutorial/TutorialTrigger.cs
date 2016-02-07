@@ -4,12 +4,14 @@
     OpenInventory,
     CloseInventory,
     EquipLaserPistol,
-    FireLaserPistol,
+    LaserPistolFired,
+    MachineGunFired,
     ItemDestroyed,
     CombatTutorialRoomEntered,
     EnemyKilled,
     MachineGunAcquired,
     SkillTreeOpened,
     BothGunsFired,
+    SecondLeftWeaponEquipped,
     LeftWeaponSwitched
 }

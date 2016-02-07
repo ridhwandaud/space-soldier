@@ -13,7 +13,7 @@ public class CombatTutorial : TutorialState
             () => RenderText("Pay close attention to this health bar. Each time you get hit, you will lose " +
                 "a little bit of health. When it's all gone, you die."),
             () => RenderText("To defeat an enemy, shoot it until it disappears."),
-            () => RenderText("Once you're ready, press 'ctrl' to begin."),
+            () => RenderText("Once you're ready, press the space bar to begin."),
             () => ClearText()
         }, true);
     }
