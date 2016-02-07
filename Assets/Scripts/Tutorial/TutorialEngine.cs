@@ -7,12 +7,18 @@ public class TutorialEngine : MonoBehaviour {
     [SerializeField]
     private Text tutorialConsoleText;
     [SerializeField]
+    private Text continueTextContainer;
+    [SerializeField]
     private float textRatio;
+    [SerializeField]
+    private CanvasGroup fader;
 
     public static TutorialEngine Instance;
+    public static bool SkillNodesDisabled = true;
 
     private TutorialState currentState;
     private float previousScreenWidth;
+    private Text continueText;
 
     void Awake ()
     {
@@ -20,6 +26,7 @@ public class TutorialEngine : MonoBehaviour {
         currentState = initialState;
         currentState.Initialize();
         tutorialConsoleText.fontSize = (int)(Screen.width / textRatio);
+        //continueText.fontSize = (int)(Screen.width / textRatio);
         previousScreenWidth = Screen.width;
     }
 
@@ -27,7 +34,12 @@ public class TutorialEngine : MonoBehaviour {
     {
         if (Screen.width != previousScreenWidth)
         {
+            previousScreenWidth = Screen.width;
             tutorialConsoleText.fontSize = (int)(Screen.width / textRatio);
+            if (continueText.gameObject.activeInHierarchy)
+            {
+                continueText.fontSize = (int)(Screen.width / textRatio);
+            }
         }
 
         currentState.Update();
@@ -52,5 +64,30 @@ public class TutorialEngine : MonoBehaviour {
     public void RenderText (string textToRender)
     {
         tutorialConsoleText.text = textToRender;
+    }
+
+    public void ShowContinueText()
+    {
+        if (!continueText)
+        {
+            continueText = continueTextContainer.GetComponent<Text>();
+        }
+        continueText.gameObject.SetActive(true);
+        continueText.fontSize = (int)(Screen.width / textRatio);
+    }
+
+    public void HideContinueText()
+    {
+        continueText.gameObject.SetActive(false);
+    }
+
+    public void Fade ()
+    {
+        fader.alpha = 1;
+    }
+
+    public void Unfade ()
+    {
+        fader.alpha = 0;
     }
 }

@@ -32,6 +32,11 @@ public class SkillTreeNode : MonoBehaviour {
 
     public void OnClick()
     {
+        if (TutorialEngine.SkillNodesDisabled)
+        {
+            return;
+        }
+
         if (Unlocked && Player.PlayerExperience.AvailableSkillPoints > 0)
         {
             if (Points == 0)

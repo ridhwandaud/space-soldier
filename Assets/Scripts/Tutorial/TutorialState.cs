@@ -42,6 +42,7 @@ public abstract class TutorialState : MonoBehaviour {
 
     protected void LoadBlockingSteps(List<TutFunc> actions, bool pause = false)
     {
+        TutorialEngine.Instance.ShowContinueText();
         awaitingConfirmation = true;
         if (pause)
         {
@@ -93,6 +94,7 @@ public abstract class TutorialState : MonoBehaviour {
                     GameState.UnpauseGame();
                 }
                 pauseForSequence = false;
+                TutorialEngine.Instance.HideContinueText();
             }
         }
     }

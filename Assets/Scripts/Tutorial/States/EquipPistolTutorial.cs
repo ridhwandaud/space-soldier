@@ -10,7 +10,7 @@ public class EquipPistolTutorial : TutorialState
 
     public override void Initialize ()
     {
-        RenderText("Now you'll need a weapon. Press the Shift key to open up your inventory.");
+        RenderText("Now you'll need a weapon. Press the shift key to open up your inventory.");
     }
 
     public override void Trigger (TutorialTrigger trigger)
@@ -44,7 +44,7 @@ public class EquipPistolTutorial : TutorialState
 
     void CongratulatePlayer()
     {
-        RenderText("Nicely done. You can access your inventory with the Shift bar at any point during gameplay. Now press Shift again to " +
+        RenderText("Nicely done. You can access your inventory with the shift key at any point during gameplay. Now press shift again to " +
             "close the inventory menu and return to the game.");
     }
 

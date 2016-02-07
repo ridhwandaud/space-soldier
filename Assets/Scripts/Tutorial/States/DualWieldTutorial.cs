@@ -9,8 +9,8 @@ public class DualWieldTutorial : TutorialState
 
     public override void Initialize ()
     {
-        RenderText("Good work! Now you have a machine gun. Press Tab again to close your skill tree and press " +
-            "Shift to go back to your inventory.");
+        RenderText("Good work! Now you have a machine gun. Press tab again to close your skill tree and press " +
+            "shift to go back to your inventory.");
     }
 
     public override void Trigger(TutorialTrigger trigger)

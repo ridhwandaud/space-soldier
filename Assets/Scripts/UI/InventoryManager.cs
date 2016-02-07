@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
 
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance = null;
