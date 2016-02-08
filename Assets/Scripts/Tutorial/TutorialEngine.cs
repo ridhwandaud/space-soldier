@@ -14,7 +14,7 @@ public class TutorialEngine : MonoBehaviour {
     private CanvasGroup fader;
 
     public static TutorialEngine Instance;
-    public static bool SkillNodesDisabled = true;
+    public static bool SkillNodesDisabled = false;
 
     private TutorialState currentState;
     private float previousScreenWidth;
@@ -28,6 +28,7 @@ public class TutorialEngine : MonoBehaviour {
         tutorialConsoleText.fontSize = (int)(Screen.width / textRatio);
         //continueText.fontSize = (int)(Screen.width / textRatio);
         previousScreenWidth = Screen.width;
+        SkillNodesDisabled = true;
     }
 
     void Update()
