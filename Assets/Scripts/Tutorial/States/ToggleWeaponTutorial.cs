@@ -22,7 +22,7 @@ public class ToggleWeaponTutorial : TutorialState
                 {
                     openInventoryMissionAssigned = false;
                     MenuInitializer.LockMenu();
-                    RenderText("Notice that each side of the inventory has two slots. Drag the machine gun tile into one of the open " +
+                    RenderText("Notice that each side of the inventory has three slots. Drag the machine gun tile into one of the open " +
                         "left slots.");
                     equipMissionAssigned = true;
                 }
