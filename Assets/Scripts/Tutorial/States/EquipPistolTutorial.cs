@@ -52,9 +52,9 @@ public class EquipPistolTutorial : TutorialState
     {
         LoadBlockingSteps(new List<TutFunc>()
         {
-            () => RenderText("This is your inventory. Every skill is represented by a tile. The tiles in the highlighted " +
+            () => RenderText("This is your inventory. Every skill is represented by a tile. The tiles in the lower " +
                 "section are your unequipped skills."),
-            () => RenderText("Skills equipped in any of these three left slots can be used with the left mouse button."),
+            () => RenderText("Skills equipped in any of the three top-left slots can be used with the left mouse button."),
             () => {
                 inventoryMissionAssigned = true;
                 RenderText("Notice the unequipped laser pistol skill in your inventory. Drag that tile into " +

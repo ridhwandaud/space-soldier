@@ -55,16 +55,16 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 
         // 0 = left, 1 = right, 2 = middle
-        if (Input.GetMouseButton(0) && leftGun != null)
+        if (Input.GetMouseButton(0) && leftGun != null && Player.PlayerEnergy.HasEnoughEnergy(leftGun.GetEnergyRequirement()))
         {
             leftMouseButtonClicked = true;
-            leftGun.Click(transform);
+            Player.PlayerEnergy.energy -= leftGun.Click(transform);
         }
 
         if (leftMouseButtonClicked && !Input.GetMouseButton(0) && leftGun != null)
         {
             leftMouseButtonClicked = false;
-            leftGun.Release(transform);
+            Player.PlayerEnergy.energy -= leftGun.Release(transform);
         }
 
         // My original idea of doing the energy management here in a generic way is just not playing nicely at all with the
