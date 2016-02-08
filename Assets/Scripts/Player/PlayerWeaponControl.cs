@@ -11,9 +11,9 @@ public class PlayerWeaponControl : MonoBehaviour {
     [SerializeField]
     private Slider energySlider;
     [SerializeField]
-    private Weapon[] leftWeapons;
+    private InventorySlot[] leftWeapons;
     [SerializeField]
-    private Weapon[] rightWeapons;
+    private InventorySlot[] rightWeapons;
     [SerializeField]
     private Weapon defaultStartingWeapon;
 
@@ -23,22 +23,16 @@ public class PlayerWeaponControl : MonoBehaviour {
     private int currentLeftWeaponIndex = 0;
     private int currentRightWeaponIndex = 0;
 
-    private int numLeftGuns = 1;
-    private int numRightGuns = 0;
+    private int numLeftGuns = 0;
 
     private bool leftMouseButtonClicked = false;
     private bool rightMouseButtonClicked = false;
 
 	void Awake () {
-        if(!GameState.TutorialMode)
-        {
-            leftWeapons[0] = leftGun = defaultStartingWeapon;
-        }
-
-        StartCoroutine("AddPistolToInventory");
+        StartCoroutine("AddDefaultStartingWeaponToInventory");
 	}
 
-    IEnumerator AddPistolToInventory()
+    IEnumerator AddDefaultStartingWeaponToInventory ()
     {
         // Must wait for end of frame so that UI scaling can take place. This ensures that the tile is initialized properly.
         yield return new WaitForEndOfFrame();
@@ -115,85 +109,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 	}
 
-    public bool AddWeaponIfAble(Weapon newWeapon)
-    {
-        // First, try adding to right side.
-        for (int i = 0; i < rightWeapons.Length; i++)
-        {
-            if (rightWeapons[i] == null)
-            {
-                rightWeapons[i] = newWeapon;
-                IncrementWeaponCount(WeaponSide.Right);
-                if (rightGun == null)
-                {
-                    rightGun = newWeapon;
-                }
-                return true;
-            }
-        }
-
-        // If right side is full, try adding to left side.
-        for (int i = 0; i < leftWeapons.Length; i++)
-        {
-            if (leftWeapons[i] == null)
-            {
-                leftWeapons[i] = newWeapon;
-                IncrementWeaponCount(WeaponSide.Left);
-                if (leftGun == null)
-                {
-                    leftGun = newWeapon;
-                }
-                return true;
-            }
-        }
-
-        // If both sides are full, return false.
-        return false;
-    }
-
-    // For use by inventory.
-    public void SetWeapon(Weapon newWeapon, WeaponSide weaponSide, int slot)
-    {
-        Weapon[] weapons = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
-        if (weapons[slot] != null)
-        {
-            print("can't equip. not enough slots.");
-            return;
-        }
-
-        weapons[slot] = newWeapon;
-        IncrementWeaponCount(weaponSide);
-        if (GameState.TutorialMode && weaponSide == WeaponSide.Left)
-        {
-            TutorialEngine.Instance.Trigger(TutorialTrigger.SecondLeftWeaponEquipped);
-        }
-
-        if (weaponSide == WeaponSide.Left && leftGun == null)
-        {
-            leftGun = newWeapon;
-        }
-        else if (weaponSide == WeaponSide.Right && rightGun == null)
-        {
-            rightGun = newWeapon;
-        }
-    }
-
-    public void UnsetWeapon(WeaponSide weaponSide, int slot)
-    {
-        Weapon[] weapons = weaponSide == WeaponSide.Left ? leftWeapons : rightWeapons;
-        weapons[slot] = null;
-
-        if (weaponSide == WeaponSide.Left)
-        {
-            ToggleLeftWeapon();
-        }
-        else
-        {
-            ToggleRightWeapon();
-        }
-    }
-
-    private void ToggleWeapon (ref bool mouseButtonClicked, ref int weaponIndex, ref Weapon currentWeapon, Weapon[] weapons, int numGuns)
+    private void ToggleWeapon (ref bool mouseButtonClicked, ref int weaponIndex, ref Weapon currentWeapon, InventorySlot[] weapons)
     {
         int weaponsExamined = 0;
         int originalWeaponIndex = weaponIndex;
@@ -201,47 +117,60 @@ public class PlayerWeaponControl : MonoBehaviour {
         {
             weaponIndex = weaponIndex == weapons.Length - 1 ? 0 : ++weaponIndex;
             weaponsExamined++;
-        } while (weapons[weaponIndex] == null && weaponsExamined < weapons.Length);
+        } while (!weapons[weaponIndex].Occupied && weaponsExamined < weapons.Length);
 
-        if (originalWeaponIndex != weaponIndex && currentWeapon != null && numGuns > 1 && mouseButtonClicked)
+        if (originalWeaponIndex != weaponIndex && currentWeapon != null && mouseButtonClicked)
         {
             Player.PlayerEnergy.energy -= currentWeapon.Release(transform);
             mouseButtonClicked = false;
         }
-        currentWeapon = weapons[weaponIndex];
+
+        currentWeapon = weapons[weaponIndex].GetWeaponIfExists();
     }
 
     void ToggleRightWeapon()
     {
-        ToggleWeapon(ref rightMouseButtonClicked, ref currentRightWeaponIndex, ref rightGun, rightWeapons, numRightGuns);
+        ToggleWeapon(ref rightMouseButtonClicked, ref currentRightWeaponIndex, ref rightGun, rightWeapons);
     }
 
     void ToggleLeftWeapon ()
     {
-        ToggleWeapon(ref leftMouseButtonClicked, ref currentLeftWeaponIndex, ref leftGun, leftWeapons, numLeftGuns);
+        ToggleWeapon(ref leftMouseButtonClicked, ref currentLeftWeaponIndex, ref leftGun, leftWeapons);
     }
 
-    private void IncrementWeaponCount(WeaponSide side)
+    public void ReconfigureWeapons()
     {
-        if (side == WeaponSide.Left)
+        if (!leftWeapons[currentLeftWeaponIndex].Occupied)
         {
-            numLeftGuns++;
-        } else
+            ToggleLeftWeapon();
+        } else if (!leftGun)
         {
-            numRightGuns++;
+            leftGun = leftWeapons[currentLeftWeaponIndex].GetWeaponIfExists();
+        }
+
+        if (!rightWeapons[currentRightWeaponIndex].Occupied)
+        {
+            ToggleRightWeapon();
+        }
+        else if (!rightGun)
+        {
+            rightGun = rightWeapons[currentRightWeaponIndex].GetWeaponIfExists();
         }
     }
 
-    private void DecrementWeaponCount (WeaponSide side)
+    public bool HasGun(WeaponSide side, string weaponName)
     {
-        if (side == WeaponSide.Left)
+        InventorySlot[] weapons = side == WeaponSide.Left ? leftWeapons : rightWeapons;
+
+        for (int i = 0; i < weapons.Length; i++)
         {
-            numLeftGuns--;
+            if (weapons[i].Occupied && weapons[i].GetWeaponIfExists().name == weaponName)
+            {
+                return true;
+            }
         }
-        else
-        {
-            numRightGuns--;
-        }
+
+        return false;
     }
 
     public enum WeaponSide { Left, Right };

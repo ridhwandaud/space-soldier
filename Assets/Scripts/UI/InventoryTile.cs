@@ -75,49 +75,42 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         if (mostOverlappedRect && !mostOverlappedRect.GetComponent<InventorySlot>().Occupied)
         {
             InventorySlot oldSlot = slotTransform.GetComponent<InventorySlot>();
-
-            if (oldSlot.WeaponSlot != 0)
-            {
-                // Unequip the weapon (make sure to rotate it if the player already has it equipped. If the player
-                // has no weapons left, make sure that firing is a no-op instead of throwing a npe).
-                Player.PlayerWeaponControl.UnsetWeapon(WeaponSideFromIndex(oldSlot.WeaponSlot), HolsterIndexFromWeaponSlotIndex(oldSlot.WeaponSlot));
-            }
-
-            oldSlot.Occupied = false;
             slotTransform = mostOverlappedRect.transform;
-
             InventorySlot newSlot = slotTransform.GetComponent<InventorySlot>();
-            newSlot.Occupied = true;
+            MoveTile(oldSlot, newSlot);
 
-            if (newSlot.WeaponSlot != 0)
-            {
-                if (GameState.TutorialMode && newSlot.WeaponSlot < 4 && weapon.name == "Pistol")
-                {
-                    TutorialEngine.Instance.Trigger(TutorialTrigger.EquipLaserPistol);
-                }
+            Player.PlayerWeaponControl.ReconfigureWeapons();
 
-                EquipWeaponFromInventory(newSlot);
-            }
+            TriggerTutorialEventsIfNecessary();
         }
 
         transform.position = slotTransform.position;
     }
 
-    void EquipWeaponFromInventory(InventorySlot toEquip)
+    void MoveTile(InventorySlot oldSlot, InventorySlot newSlot)
     {
-        Player.PlayerWeaponControl.SetWeapon(weapon, WeaponSideFromIndex(toEquip.WeaponSlot), HolsterIndexFromWeaponSlotIndex(toEquip.WeaponSlot));
+        oldSlot.UnsetTile();
+        newSlot.SetTile(this);
     }
 
-    PlayerWeaponControl.WeaponSide WeaponSideFromIndex(int index)
+    void TriggerTutorialEventsIfNecessary()
     {
-        // Non-weapon slot = index 0. Indices 1-3 = left side. Indices 4-6 = right side.
-        return index < 4 ? PlayerWeaponControl.WeaponSide.Left : PlayerWeaponControl.WeaponSide.Right;
-    }
+        if (GameState.TutorialMode)
+        {
+            if (weapon.name == "Pistol"
+                && Player.PlayerWeaponControl.HasGun(PlayerWeaponControl.WeaponSide.Left, "Pistol"))
+            {
+                TutorialEngine.Instance.Trigger(TutorialTrigger.EquipLaserPistol);
+            }
 
-    int HolsterIndexFromWeaponSlotIndex(int index)
-    {
-        // Non-weapon slot = index 0. Indices 1-3 = left side. Indices 4-6 = right side.
-        return index < 4 ? index - 1 : index - 4;
+            if ((weapon.name == "Pistol" || weapon.name == "MachineGun")
+                && Player.PlayerWeaponControl.HasGun(PlayerWeaponControl.WeaponSide.Left, "Pistol")
+                && Player.PlayerWeaponControl.HasGun(PlayerWeaponControl.WeaponSide.Left, "MachineGun"))
+            {
+                // This will also fire if the player just moves around the left items, but it doesn't matter.
+                TutorialEngine.Instance.Trigger(TutorialTrigger.SecondLeftWeaponEquipped);
+            }
+        }
     }
 
     Vector2 ClampToWindow (Vector2 pos)
@@ -131,11 +124,6 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         float clampedY = Mathf.Clamp(pos.y, canvasCorners[0].y + halfTileLength, canvasCorners[2].y - halfTileLength);
 
         return new Vector2(clampedX, clampedY);
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        print("colliding with " + other.tag);
     }
 
     private float CollisionArea(RectTransform box1, RectTransform box2)
@@ -153,5 +141,15 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     {
         return Mathf.Abs(box1.position.x - box2.position.x) < (rectWidth + rectWidth) / 2 &&
             Mathf.Abs(box1.position.y - box2.position.y) < (rectHeight + rectHeight) / 2;
+    }
+
+    public Weapon GetWeapon()
+    {
+        return weapon;
+    }
+
+    public void SetWeapon(Weapon weapon)
+    {
+        this.weapon = weapon;
     }
 }

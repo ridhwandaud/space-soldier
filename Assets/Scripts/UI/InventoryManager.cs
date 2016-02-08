@@ -54,7 +54,6 @@ public class InventoryManager : MonoBehaviour {
     public void InstantiateTileAtPosition(InventoryTileInfo info, int position)
     {
         InventorySlot inventorySlot = slotTransforms[position].GetComponent<InventorySlot>();
-        inventorySlot.Occupied = true;
 
         Transform slotTransform = slotTransforms[position];
 
@@ -67,6 +66,8 @@ public class InventoryManager : MonoBehaviour {
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
         newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, info.Weapon);
+        inventorySlot.SetTile(newTile.GetComponent<InventoryTile>());
+        Player.PlayerWeaponControl.ReconfigureWeapons();
     }
 
     public struct InventoryTileInfo

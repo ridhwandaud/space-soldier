@@ -41,7 +41,7 @@ public class SkillTreeNode : MonoBehaviour {
         {
             if (Points == 0)
             {
-                playerWeaponControl.AddWeaponIfAble(weapon);
+                //playerWeaponControl.AddWeaponIfAble(weapon);
                 InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon));
                 if (GameState.TutorialMode && weapon.GetName() == "machineGun")
                 {
