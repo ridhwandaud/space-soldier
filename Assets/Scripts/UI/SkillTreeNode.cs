@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
-public class SkillTreeNode : MonoBehaviour {
+public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     public int MinLevelRequirement;
     public int MaxPointValue;
     public int Points;
     public bool Unlocked;
+    public Tooltip tooltip;
     public Weapon weapon;
 
     public List<SkillDependency> Dependencies;
@@ -36,6 +38,8 @@ public class SkillTreeNode : MonoBehaviour {
         {
             return;
         }
+
+        //tooltip.Render(transform.position, weapon);
 
         if (Unlocked && Player.PlayerExperience.AvailableSkillPoints > 0)
         {
@@ -100,5 +104,15 @@ public class SkillTreeNode : MonoBehaviour {
         {
             return Dependency.Points >= DependencyPointsRequirement;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData data)
+    {
+        tooltip.Render(data.position, weapon);
+    }
+
+    public void OnPointerExit(PointerEventData data)
+    {
+        tooltip.Hide();
     }
 }

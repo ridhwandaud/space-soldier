@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class Weapon : MonoBehaviour
 {
@@ -26,5 +27,16 @@ public abstract class Weapon : MonoBehaviour
     public void AddPoints()
     {
         Points++;
+    }
+
+    public virtual string GetDescription()
+    {
+        return "This is a placeholder description that will eventually be replaced.";
+    }
+
+    public virtual Dictionary<string, object> GetProperties() {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
+        return dict;
     }
 }
