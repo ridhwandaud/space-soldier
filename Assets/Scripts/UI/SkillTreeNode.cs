@@ -17,12 +17,14 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private Button button;
     private Text pointsText;
     private List<SkillTreeNode> children;
+    private RectTransform rectTransform;
 
     void Awake()
     {
         button = GetComponent<Button>();
         pointsText = GetComponentInChildren<Text>();
         children = new List<SkillTreeNode>();
+        rectTransform = GetComponent<RectTransform>();
 
         Unlocked = Dependencies.Count == 0 && MinLevelRequirement == 1;
     }
@@ -106,9 +108,14 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
+    // data.position is in screen space.
     public void OnPointerEnter(PointerEventData data)
     {
-        tooltip.Render(data.position, weapon);
+        bool showAbove = (data.position.y / Screen.height) <= .6;
+        float tooltipY = showAbove ? rectTransform.position.y + rectTransform.sizeDelta.y / 2:
+            rectTransform.position.y - rectTransform.sizeDelta.y / 2;
+
+        tooltip.Render(new Vector2(rectTransform.position.x, tooltipY), weapon, showAbove);
     }
 
     public void OnPointerExit(PointerEventData data)

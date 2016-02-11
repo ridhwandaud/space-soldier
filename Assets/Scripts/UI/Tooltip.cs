@@ -6,6 +6,7 @@ using System.Text;
 public class Tooltip : MonoBehaviour {
     private Text text;
     private CanvasGroup canvasGroup;
+    private RectTransform rectTransform;
 
     private string separator = ": ";
 
@@ -13,9 +14,10 @@ public class Tooltip : MonoBehaviour {
     {
         text = GetComponentInChildren<Text>();
         canvasGroup = GetComponent<CanvasGroup>();
+        rectTransform = GetComponent<RectTransform>();
     }
 
-	public void Render(Vector2 position, Weapon weapon)
+	public void Render(Vector2 position, Weapon weapon, bool showAbove)
     {
         StringBuilder sb = new StringBuilder(weapon.GetName()).AppendLine().AppendLine();
         Dictionary<string, object> properties = weapon.GetProperties();
@@ -25,13 +27,13 @@ public class Tooltip : MonoBehaviour {
         }
 
         text.text = sb.AppendLine().Append(weapon.GetDescription()).ToString();
+        rectTransform.pivot = showAbove ? new Vector2(.5f, 0) : new Vector2(.5f, 1);
+        rectTransform.position = position;
         canvasGroup.alpha = 1;
-        canvasGroup.blocksRaycasts = true;
     }
 
     public void Hide()
     {
         canvasGroup.alpha = 0;
-        canvasGroup.blocksRaycasts = false;
     }
 }
