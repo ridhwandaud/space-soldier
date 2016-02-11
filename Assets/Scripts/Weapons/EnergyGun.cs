@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class EnergyGun : Weapon
 {
@@ -7,6 +8,8 @@ public class EnergyGun : Weapon
     private int explosionDamage = 3;
     [SerializeField]
     private float explosionRadius = .6f;
+    [SerializeField]
+    private int damage;
 
     public override float Click(Transform transform)
     {
@@ -38,6 +41,20 @@ public class EnergyGun : Weapon
 
     public override string GetName()
     {
-        return "energyGun";
+        return "Energy Gun";
+    }
+
+    public override Dictionary<string, object> GetProperties ()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
+        dict.Add(WeaponProperties.Damage, damage);
+        dict.Add(WeaponProperties.ExplosiveDamage, explosionDamage);
+        return dict;
+    }
+
+    public override string GetDescription ()
+    {
+        return "Fires a powerful exploding ball of energy.";
     }
 }

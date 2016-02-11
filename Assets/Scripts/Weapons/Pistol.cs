@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 /* Currently, this is identical to the MachineGun (except it has a slower rate of fire and a different sprite). However,
  * I have decided to make it a different class for now because the machine gun's behavior will change based on the number of
@@ -38,6 +39,19 @@ public class Pistol : Weapon
 
     public override string GetName()
     {
-        return "pistol";
+        return "Laser Pistol";
+    }
+
+    public override Dictionary<string, object> GetProperties ()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
+        dict.Add(WeaponProperties.Damage, damage);
+        return dict;
+    }
+
+    public override string GetDescription ()
+    {
+        return "Shoots lasers.";
     }
 }

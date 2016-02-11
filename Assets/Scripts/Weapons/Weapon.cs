@@ -13,6 +13,8 @@ public abstract class Weapon : MonoBehaviour
     public abstract float GetEnergyRequirement();
     public abstract float Click(Transform transform);
     public abstract string GetName();
+    public abstract string GetDescription ();
+    public abstract Dictionary<string, object> GetProperties ();
 
     public virtual float Release(Transform transform)
     {
@@ -27,16 +29,5 @@ public abstract class Weapon : MonoBehaviour
     public void AddPoints()
     {
         Points++;
-    }
-
-    public virtual string GetDescription()
-    {
-        return "This is a placeholder description that will eventually be replaced.";
-    }
-
-    public virtual Dictionary<string, object> GetProperties() {
-        Dictionary<string, object> dict = new Dictionary<string, object>();
-        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
-        return dict;
     }
 }

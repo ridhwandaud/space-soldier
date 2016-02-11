@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class MachineGun : Weapon
 {
@@ -36,6 +37,18 @@ public class MachineGun : Weapon
 
     public override string GetName()
     {
-        return "machineGun";
+        return "Machine Gun";
+    }
+
+    public override Dictionary<string, object> GetProperties ()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
+        return dict;
+    }
+
+    public override string GetDescription ()
+    {
+        return "Fires lots of bullets really quickly.";
     }
 }

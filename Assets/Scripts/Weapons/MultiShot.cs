@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class MultiShot : Weapon
 {
@@ -12,7 +13,7 @@ public class MultiShot : Weapon
         if (CanFire())
         {
             nextFiringTime = Time.time + FiringDelay;
-            int numberOfShots = Points + 3;
+            int numberOfShots = GetNumberOfShots();
             bool evenNumberOfShots = numberOfShots % 2 == 0;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
@@ -39,6 +40,11 @@ public class MultiShot : Weapon
         return 0;
     }
 
+    int GetNumberOfShots()
+    {
+        return Points + 3;
+    }
+
     public override float GetEnergyRequirement()
     {
         return energyCost;
@@ -46,7 +52,7 @@ public class MultiShot : Weapon
 
     public override string GetName()
     {
-        return "multiShot";
+        return "Multishot";
     }
 
     private void createAndActivateBullet(Vector2 centerDirection, float angleOffset, Transform transform)
@@ -58,5 +64,19 @@ public class MultiShot : Weapon
         bullet.SetActive(true);
         bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * ProjectileSpeed;
         bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
+    }
+
+    public override Dictionary<string, object> GetProperties ()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.Damage, damage);
+        dict.Add(WeaponProperties.EnergyCost, GetEnergyRequirement());
+        dict.Add(WeaponProperties.NumProjectiles, GetNumberOfShots());
+        return dict;
+    }
+
+    public override string GetDescription ()
+    {
+        return "Fires many bullets at once.";
     }
 }

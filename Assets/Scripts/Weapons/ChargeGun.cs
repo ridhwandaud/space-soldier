@@ -130,6 +130,20 @@ public class ChargeGun : Weapon
 
     public override string GetName()
     {
-        return "chargeGun";
+        return "Charge Gun";
+    }
+
+    public override Dictionary<string, object> GetProperties ()
+    {
+        Dictionary<string, object> dict = new Dictionary<string, object>();
+        dict.Add(WeaponProperties.EnergyCost, energyCostPerSecond + " per second");
+        dict.Add(WeaponProperties.Damage, damageLevels[0] + " to " + damageLevels[1]);
+        dict.Add(WeaponProperties.ExplosiveDamage, explosionDamageLevels[0] + " to " + explosionDamageLevels[1]);
+        return dict;
+    }
+
+    public override string GetDescription ()
+    {
+        return "Futuristic gun that can be charged up to fire more powerful shots.";
     }
 }
