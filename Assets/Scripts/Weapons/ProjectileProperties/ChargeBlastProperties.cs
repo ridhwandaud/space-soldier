@@ -3,21 +3,17 @@ using System.Collections.Generic;
 
 public class ChargeBlastProperties : BasicPlayerProjectile
 {
-    public int ImpactDamage { get;  set; }
-
     // int defaults to 0.
     public int ChargeLevel { get; set; }
     public bool Fired { get; set; }
+    public float ExplosionRadius { get; set; }
+    public int ExplosionDamage { get; set; }
 
     private ProjectileDestroy projectileDestroy;
     private Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private int enemyLayerMask = 1 << 9;
-
-    private List<int> damageLevels = new List<int> { 3, 5, 7 };
-    private List<int> explosionDamageLevels = new List<int> { 1, 2, 3 };
-    private List<float> explosionRadiusLevels = new List<float> { .6f, .8f, .9f };
 
     void Awake()
     {
@@ -47,7 +43,7 @@ public class ChargeBlastProperties : BasicPlayerProjectile
 
         if (isEnemy(other))
         {
-            other.GetComponent<EnemyHealth>().InflictDamage(damageLevels[ChargeLevel]);
+            other.GetComponent<EnemyHealth>().InflictDamage(Damage);
         }
 
         if (isObstacle(other))
@@ -60,7 +56,7 @@ public class ChargeBlastProperties : BasicPlayerProjectile
             {
                 rb.velocity = Vector2.zero;
                 animator.SetTrigger("Impact");
-                DoExplosion(explosionRadiusLevels[ChargeLevel], explosionDamageLevels[ChargeLevel]);
+                DoExplosion(ExplosionRadius, ExplosionDamage);
             }
 
             Fired = false;

@@ -3,13 +3,16 @@ using System.Collections;
 
 public class BasicPlayerProjectile : MonoBehaviour
 {
-    public int damage;
+    public int Damage
+    {
+        get; set;
+    }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (isEnemy(other))
         {
-            other.GetComponent<EnemyHealth>().InflictDamage(damage);
+            other.GetComponent<EnemyHealth>().InflictDamage(Damage);
         }
         if (isObstacle(other))
         {
@@ -17,7 +20,7 @@ public class BasicPlayerProjectile : MonoBehaviour
             Destructible destructible = other.GetComponent<Destructible>();
             if (destructible)
             {
-                destructible.InflictDamage(damage);
+                destructible.InflictDamage(Damage);
             }
         }
     }

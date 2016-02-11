@@ -3,6 +3,10 @@
 public class EnergyGun : Weapon
 {
     public float energyCost;
+    [SerializeField]
+    private int explosionDamage = 3;
+    [SerializeField]
+    private float explosionRadius = .6f;
 
     public override float Click(Transform transform)
     {
@@ -10,6 +14,9 @@ public class EnergyGun : Weapon
         {
             nextFiringTime = Time.time + FiringDelay;
             GameObject orb = StackPool.Pop();
+            EnergyOrbProperties properties = orb.GetComponent<EnergyOrbProperties>();
+            properties.ExplosionDamage = explosionDamage;
+            properties.ExplosionRadius = explosionRadius;
             orb.transform.position = transform.position;
             orb.transform.rotation = transform.rotation;
 

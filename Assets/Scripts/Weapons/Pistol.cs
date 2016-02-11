@@ -7,6 +7,8 @@
 public class Pistol : Weapon
 {
     public float energyCost;
+    [SerializeField]
+    private int damage;
 
     public override float Click(Transform transform)
     {
@@ -16,6 +18,7 @@ public class Pistol : Weapon
             GameObject bullet = StackPool.Pop();
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
+            bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 

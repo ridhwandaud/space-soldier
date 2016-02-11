@@ -4,6 +4,8 @@ public class MultiShot : Weapon
 {
     public int energyCost = 0;
     public float degreesBetweenShots;
+    [SerializeField]
+    private int damage;
 
     public override float Click(Transform transform)
     {
@@ -55,6 +57,6 @@ public class MultiShot : Weapon
         bullet.transform.rotation = Quaternion.Euler(VectorUtil.RotateVector(transform.rotation.eulerAngles, angleOffset));
         bullet.SetActive(true);
         bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * ProjectileSpeed;
-        bullet.GetComponent<BasicPlayerProjectile>().damage = 1;
+        bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
     }
 }

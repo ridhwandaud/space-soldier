@@ -3,6 +3,8 @@
 public class MachineGun : Weapon
 {
     public float energyCost;
+    [SerializeField]
+    private int damage;
 
     public override float Click(Transform transform)
     {
@@ -13,7 +15,7 @@ public class MachineGun : Weapon
             bullet.transform.position = transform.position;
             bullet.transform.rotation = transform.rotation;
             // Interface for projectiles?
-            bullet.GetComponent<BasicPlayerProjectile>().damage = 1;
+            bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
 
             Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
 

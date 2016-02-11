@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class EnergyOrbProperties : BasicPlayerProjectile
 {
-    public int explosionDamage = 3;
-    public float explosionRadius = .6f;
+    public int ExplosionDamage { get; set; }
+    public float ExplosionRadius { get; set; }
 
     private Animator animator;
     private Rigidbody2D rb;
@@ -26,9 +25,9 @@ public class EnergyOrbProperties : BasicPlayerProjectile
 
     void DoExplosion()
     {
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(gameObject.transform.position, explosionRadius, enemyLayerMask);
+        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(gameObject.transform.position, ExplosionRadius, enemyLayerMask);
         foreach(Collider2D collider in nearbyEnemies) {
-            collider.GetComponent<EnemyHealth>().InflictDamage(explosionDamage);
+            collider.GetComponent<EnemyHealth>().InflictDamage(ExplosionDamage);
         }
     }
 }

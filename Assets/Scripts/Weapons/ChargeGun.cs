@@ -14,6 +14,9 @@ public class ChargeGun : Weapon
 
     private List<float> thresholds = new List<float> { .2f, .8f };
     private List<string> animationLevels = new List<string> { "SmallShotFired", "MediumShotFired", "LargeShotFired" };
+    private List<int> damageLevels = new List<int> { 3, 5, 7 };
+    private List<int> explosionDamageLevels = new List<int> { 1, 2, 3 };
+    private List<float> explosionRadiusLevels = new List<float> { .6f, .8f, .9f };
 
     private Vector3 chargeShotRelativePosition = new Vector3(.18f, 1.082f, 0);
 
@@ -76,6 +79,9 @@ public class ChargeGun : Weapon
             int chargeLevel = getChargeLevel(chargeDuration);
             chargeBlastProperties.ChargeLevel = chargeLevel;
             chargeBlastProperties.Fired = true;
+            chargeBlastProperties.Damage = damageLevels[chargeLevel];
+            chargeBlastProperties.ExplosionDamage = explosionDamageLevels[chargeLevel];
+            chargeBlastProperties.ExplosionRadius = explosionRadiusLevels[chargeLevel];
 
             currentShot.GetComponent<Animator>().enabled = true; // in case it was disabled due to player running out of energy
             currentShot.transform.SetParent(StackPool.transform);
