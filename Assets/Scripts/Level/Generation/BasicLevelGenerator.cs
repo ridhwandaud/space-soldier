@@ -44,6 +44,7 @@ public class BasicLevelGenerator : ILevelGenerator
         List<Vector2> openPositions;
         BasicLevelSize size = getLevelSize();
         int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn);
+        Debug.Log(level);
         populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
 
         return level;
@@ -52,8 +53,7 @@ public class BasicLevelGenerator : ILevelGenerator
     private BasicLevelSize getLevelSize()
     {
         return BasicLevelSize.Small;
-
-        int rand = Random.Range(1, 1);
+        int rand = Random.Range(0, 2);
 
         if (rand == 1)
         {

@@ -7,12 +7,15 @@ public class LoadLevel : MonoBehaviour {
     public static HashSet<int> WallIndices = new HashSet<int>() {2};
     public static HashSet<int> FloorIndices = new HashSet<int>() {0, 1};
     public static int WallLayer = 8;
+    public static bool IsFirstLoad = true;
 
     public static float TileSize = 2f;
     public static LoadLevel instance = null;
 
-	void Awake () {
-        if (instance == null) {
+    void Awake ()
+    {
+        if (instance == null)
+        {
             instance = this;
         }
         else if (instance != this)
@@ -21,18 +24,27 @@ public class LoadLevel : MonoBehaviour {
         }
 
         DontDestroyOnLoad(gameObject);
-        InitLevel();
-	}
+        if (IsFirstLoad)
+        {
+            InitLevel();
+        }
+    }
+
+    void Start()
+    {
+        IsFirstLoad = false;
+    }
 
     void OnLevelWasLoaded(int index)
     {
-        InitLevel();
+        if (!IsFirstLoad)
+        {
+            InitLevel();
+        }
     }
 
     void InitLevel()
     {
-        Debug.Log("You have killed " + GameState.NumEnemiesKilled + " enemies.");
-
         Vector3 playerSpawn;
         GameObject player = GameObject.Find("Soldier");
 
