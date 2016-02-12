@@ -3,7 +3,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler {
+public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler,
+    IPointerEnterHandler, IPointerExitHandler
+{
     private Transform slotTransform;
     private Vector2 pointerOffset;
     private RectTransform tileRectTransform;
@@ -12,15 +14,22 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private float rectWidth;
     private float rectHeight;
     private RectTransform mostOverlappedRect;
+    private RectTransform rectTransform;
     private Weapon weapon;
+    private Tooltip tooltip;
 
-    public void Init(Transform slotTransform, List<RectTransform> slotRects, Weapon weapon)
+    private bool pointerDown = false;
+    private bool pointerIn = false;
+
+    public void Init(Transform slotTransform, List<RectTransform> slotRects, Weapon weapon, Tooltip tooltip)
     {
         this.slotTransform = slotTransform;
         this.slotRects = slotRects;
         this.weapon = weapon;
+        this.tooltip = tooltip;
         tileRectTransform = transform as RectTransform;
         canvasRectTransform = GetComponentInParent<Canvas>().transform as RectTransform;
+        rectTransform = GetComponent<RectTransform>();
 
         Vector3[] corners = new Vector3[4];
         tileRectTransform.GetWorldCorners(corners);
@@ -31,7 +40,9 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
 	public void OnPointerDown (PointerEventData data)
     {
+        pointerDown = true;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(tileRectTransform, data.position, data.pressEventCamera, out pointerOffset);
+        tooltip.Hide();
     }
 
     public void OnDrag (PointerEventData data)
@@ -85,6 +96,8 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         }
 
         transform.position = slotTransform.position;
+        pointerDown = false;
+        tooltip.Render(rectTransform, weapon);
     }
 
     void MoveTile(InventorySlot oldSlot, InventorySlot newSlot)
@@ -151,5 +164,22 @@ public class InventoryTile : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     public void SetWeapon(Weapon weapon)
     {
         this.weapon = weapon;
+    }
+
+    public void OnPointerEnter (PointerEventData data)
+    {
+        pointerIn = true;
+        if (pointerDown)
+        {
+            return;
+        }
+
+        tooltip.Render(rectTransform, weapon);
+    }
+
+    public void OnPointerExit (PointerEventData data)
+    {
+        pointerIn = false;
+        tooltip.Hide();
     }
 }

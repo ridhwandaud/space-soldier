@@ -108,14 +108,10 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
-    // data.position is in screen space.
+    // fun fact: data.position is in screen space.
     public void OnPointerEnter(PointerEventData data)
     {
-        bool showAbove = (data.position.y / Screen.height) <= .6;
-        float tooltipY = showAbove ? rectTransform.position.y + rectTransform.sizeDelta.y / 2:
-            rectTransform.position.y - rectTransform.sizeDelta.y / 2;
-
-        tooltip.Render(new Vector2(rectTransform.position.x, tooltipY), weapon, showAbove);
+        tooltip.Render(rectTransform, weapon);
     }
 
     public void OnPointerExit(PointerEventData data)

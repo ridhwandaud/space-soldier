@@ -11,6 +11,8 @@ public class InventoryManager : MonoBehaviour {
     private GameObject genericInventoryTile;
     [SerializeField]
     private List<Transform> slotTransforms;
+    [SerializeField]
+    private Tooltip tooltip;
 
     private List<RectTransform> slotRects;
     private Vector2 tileSize = new Vector2(50, 50);
@@ -65,7 +67,7 @@ public class InventoryManager : MonoBehaviour {
         newTile.transform.localScale = new Vector2(1, 1);
 
         newTile.GetComponent<RectTransform>().sizeDelta = tileSize;
-        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, info.Weapon);
+        newTile.GetComponent<InventoryTile>().Init(slotTransform, slotRects, info.Weapon, tooltip);
         inventorySlot.SetTile(newTile.GetComponent<InventoryTile>());
         Player.PlayerWeaponControl.ReconfigureWeapons();
     }
