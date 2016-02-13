@@ -49,7 +49,7 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 //playerWeaponControl.AddWeaponIfAble(weapon);
                 InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon));
-                if (GameState.TutorialMode && weapon.GetName() == "machineGun")
+                if (GameState.TutorialMode && weapon.GetName() == "Machine Gun")
                 {
                     TutorialEngine.Instance.Trigger(TutorialTrigger.MachineGunAcquired);
                 }
