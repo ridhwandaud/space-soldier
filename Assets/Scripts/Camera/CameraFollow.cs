@@ -8,13 +8,9 @@ public class CameraFollow : MonoBehaviour {
     public float dampTime = 0.15f;
     private Vector3 velocity = Vector3.zero;
 
-    void Awake()
-    {
-        rb = GameObject.Find("Soldier").GetComponent<Rigidbody2D>();
-    }
-
     void Start()
     {
+        rb = GameObject.Find("Soldier").GetComponent<Rigidbody2D>();
         transform.position = rb.position;
     }
 
