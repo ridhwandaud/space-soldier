@@ -2,6 +2,13 @@
 
 public class MouseMovement : MonoBehaviour {
 
+    private Animator animator;
+
+    void Awake ()
+    {
+        animator = GetComponent<Animator>();
+    }
+
 	void Update () {
         if (GameState.Paused)
         {
@@ -10,6 +17,8 @@ public class MouseMovement : MonoBehaviour {
 
         Vector2 offset = VectorUtil.DirectionToMousePointer(transform);
         var angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg - 90;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
+        // Do this with the weapon
+        // transform.rotation = Quaternion.Euler(0, 0, angle);
+        animator.SetFloat("MouseOffsetX", offset.x);
 	}
 }

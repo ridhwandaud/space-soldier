@@ -4,6 +4,7 @@ using SpriteTile;
 public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private Animator animator;
 
     public float speed = 8;
     public float collisionDistance;
@@ -12,6 +13,7 @@ public class PlayerMovement : MonoBehaviour {
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
 	}
 
     void Update()
@@ -65,5 +67,7 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         rb.velocity = newVelocity;
+        animator.SetInteger("HorizontalAxis", (int)newVelocity.x);
+        animator.SetInteger("VerticalAxis", (int)newVelocity.y);
     }
 }

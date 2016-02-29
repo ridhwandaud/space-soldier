@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 48189ba3c7496d141af76283c05fccc4
-timeCreated: 1456684140
+timeCreated: 1456764771
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -12,6 +12,18 @@ TextureImporter:
     21300010: mainchar 1_5
     21300012: mainchar 1_6
     21300014: mainchar 1_7
+    21300016: mainchar_0
+    21300018: mainchar_1
+    21300020: mainchar_2
+    21300022: mainchar_3
+    21300024: mainchar_4
+    21300026: mainchar_5
+    21300028: mainchar_6
+    21300030: mainchar_7
+    21300032: mainchar_8
+    21300034: mainchar_9
+    21300036: mainchar_10
+    21300038: mainchar_11
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -58,7 +70,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: mainchar 1_0
+    - name: mainchar_0
       rect:
         serializedVersion: 2
         x: 0
@@ -69,7 +81,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_1
+    - name: mainchar_1
       rect:
         serializedVersion: 2
         x: 18
@@ -80,7 +92,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_2
+    - name: mainchar_2
       rect:
         serializedVersion: 2
         x: 36
@@ -91,7 +103,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_3
+    - name: mainchar_3
       rect:
         serializedVersion: 2
         x: 54
@@ -102,7 +114,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_4
+    - name: mainchar_4
       rect:
         serializedVersion: 2
         x: 72
@@ -113,7 +125,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_5
+    - name: mainchar_5
       rect:
         serializedVersion: 2
         x: 90
@@ -124,7 +136,7 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_6
+    - name: mainchar_6
       rect:
         serializedVersion: 2
         x: 108
@@ -135,10 +147,54 @@ TextureImporter:
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-    - name: mainchar 1_7
+    - name: mainchar_7
       rect:
         serializedVersion: 2
         x: 126
+        y: 0
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: mainchar_8
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: mainchar_9
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 0
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: mainchar_10
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 0
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: mainchar_11
+      rect:
+        serializedVersion: 2
+        x: 198
         y: 0
         width: 18
         height: 24
