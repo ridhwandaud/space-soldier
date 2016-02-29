@@ -14,7 +14,12 @@ public class CameraFollow : MonoBehaviour {
         transform.position = rb.position;
     }
 
-	void FixedUpdate () {
+    void Update()
+    {
+        Camera.main.orthographicSize = Screen.height / (24f * 3f * 2f);
+    }
+
+    void FixedUpdate () {
         Vector3 targetPosition = rb.position;
         targetPosition.z = DEFAULT_Z;
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, dampTime);
