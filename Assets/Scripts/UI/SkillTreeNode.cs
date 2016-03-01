@@ -41,13 +41,10 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             return;
         }
 
-        //tooltip.Render(transform.position, weapon);
-
         if (Unlocked && Player.PlayerExperience.AvailableSkillPoints > 0)
         {
             if (Points == 0)
             {
-                //playerWeaponControl.AddWeaponIfAble(weapon);
                 InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon));
                 if (GameState.TutorialMode && weapon.GetName() == "Machine Gun")
                 {

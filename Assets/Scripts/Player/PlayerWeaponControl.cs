@@ -16,6 +16,8 @@ public class PlayerWeaponControl : MonoBehaviour {
     private InventorySlot[] rightWeapons;
     [SerializeField]
     private Weapon defaultStartingWeapon;
+    [SerializeField]
+    private Animator playerAnimator;
 
     private Weapon leftGun;
     private Weapon rightGun;
@@ -155,6 +157,14 @@ public class PlayerWeaponControl : MonoBehaviour {
         else if (!rightGun)
         {
             rightGun = rightWeapons[currentRightWeaponIndex].GetWeaponIfExists();
+        }
+
+        if (!leftGun && !rightGun)
+        {
+            playerAnimator.SetBool("Armed", false);
+        } else
+        {
+            playerAnimator.SetBool("Armed", true);
         }
     }
 
