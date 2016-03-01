@@ -22,4 +22,10 @@ public class VectorUtil {
         Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.position);
         return new Vector2(mouse.x - screenPoint.x, mouse.y - screenPoint.y).normalized;
     }
+
+    public static float AngleToMousePointer(Transform transform)
+    {
+        Vector2 offset = VectorUtil.DirectionToMousePointer(transform);
+        return Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+    }
 }

@@ -18,6 +18,8 @@ public class PlayerWeaponControl : MonoBehaviour {
     private Weapon defaultStartingWeapon;
     [SerializeField]
     private Animator playerAnimator;
+    [SerializeField]
+    private Transform weaponTransform;
 
     private Weapon leftGun;
     private Weapon rightGun;
@@ -60,13 +62,13 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(0) && leftGun != null && Player.PlayerEnergy.HasEnoughEnergy(leftGun.GetEnergyRequirement()))
         {
             leftMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= leftGun.Click(transform);
+            Player.PlayerEnergy.energy -= leftGun.Click(weaponTransform);
         }
 
         if (leftMouseButtonClicked && !Input.GetMouseButton(0) && leftGun != null)
         {
             leftMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= leftGun.Release(transform);
+            Player.PlayerEnergy.energy -= leftGun.Release(weaponTransform);
         }
 
         // My original idea of doing the energy management here in a generic way is just not playing nicely at all with the
@@ -77,7 +79,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(1) && rightGun != null && Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
         {
             rightMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= rightGun.Click(transform);
+            Player.PlayerEnergy.energy -= rightGun.Click(weaponTransform);
             
             if (GameState.TutorialMode)
             {
@@ -107,7 +109,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (rightMouseButtonClicked && !Input.GetMouseButton(1) && rightGun != null)
         {
             rightMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= rightGun.Release(transform);
+            Player.PlayerEnergy.energy -= rightGun.Release(weaponTransform);
         }
 	}
 
@@ -123,7 +125,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (originalWeaponIndex != weaponIndex && currentWeapon != null && mouseButtonClicked)
         {
-            Player.PlayerEnergy.energy -= currentWeapon.Release(transform);
+            Player.PlayerEnergy.energy -= currentWeapon.Release(weaponTransform);
             mouseButtonClicked = false;
         }
 
@@ -165,6 +167,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         } else
         {
             playerAnimator.SetBool("Armed", true);
+            weaponTransform = leftGun.transform;
         }
     }
 
@@ -181,6 +184,38 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 
         return false;
+    }
+
+    public void RotateWeapon(float angle)
+    {
+        if (leftGun)
+        {
+            leftGun.transform.rotation = Quaternion.Euler(0, leftGun.transform.eulerAngles.y, leftGun.FacingLeft ? -angle - 180 : angle);
+        }
+    }
+
+    public void HideWeapon()
+    {
+        if (leftGun)
+        {
+            leftGun.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    public void ShowWeaponOnRight()
+    {
+        if (leftGun && leftGun.FacingLeft)
+        {
+            leftGun.SetToRightSide();
+        }
+    }
+
+    public void ShowWeaponOnLeft ()
+    {
+        if (leftGun && !leftGun.FacingLeft)
+        {
+            leftGun.SetToLeftSide();
+        }
     }
 
     public enum WeaponSide { Left, Right };
