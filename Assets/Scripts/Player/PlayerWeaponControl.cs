@@ -144,7 +144,6 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     public void ReconfigureWeapons()
     {
-        Debug.Log("Configurin dat b");
         if (!leftWeapons[currentLeftWeaponIndex].Occupied)
         {
             ToggleLeftWeapon();

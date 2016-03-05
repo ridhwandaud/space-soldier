@@ -52,12 +52,14 @@ public class LoadLevel : MonoBehaviour {
 
         BasicLevelGenerator generator = new BasicLevelGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
-        setTiles(generatedLevel, playerSpawn, player);
+        setTiles(generatedLevel);
+        StartCoroutine(ConfigureColliders());
+        player.GetComponent<Rigidbody2D>().position = playerSpawn;
 
         AStar.world = generatedLevel;
     }
 
-    void setTiles(int[,] generatedLevel, Vector3 playerSpawn, GameObject player)
+    void setTiles(int[,] generatedLevel)
     {
         Int2 mapDimensions = new Int2(generatedLevel.GetLength(1), generatedLevel.GetLength(0));
 
@@ -89,9 +91,8 @@ public class LoadLevel : MonoBehaviour {
                 }
             }
         }
-
-        StartCoroutine(ConfigureColliders());
-        player.GetComponent<Rigidbody2D>().position = playerSpawn;
+        //StartCoroutine(ConfigureColliders());
+        //player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 
     public static IEnumerator ConfigureColliders()

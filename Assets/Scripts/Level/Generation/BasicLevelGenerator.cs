@@ -52,7 +52,7 @@ public class BasicLevelGenerator : ILevelGenerator
 
     private BasicLevelSize getLevelSize()
     {
-        return BasicLevelSize.Small;
+        return BasicLevelSize.Large;
         int rand = Random.Range(0, 2);
 
         if (rand == 1)
