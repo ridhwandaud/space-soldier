@@ -185,7 +185,7 @@ public class BasicLevelGenerator : ILevelGenerator
         {211, 13}, // TopLeftElevated
         {221, 12}, // TopThinElevated
         {202, 0}, // SingleElevated
-        {212, 1}, // LowerLeftElevated
+        {212, 4}, // LeftThinElevated
         {201, 12}, // TopThinElevated
         {1220, 10}, // MiddleWall
         {21, 12}, // TopThinElevated
