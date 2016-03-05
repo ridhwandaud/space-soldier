@@ -10,7 +10,7 @@ public class TutorialLoader : MonoBehaviour {
     {
         Tile.SetCamera();
         Tile.LoadLevel(tutorialLevel);
-        Tile.SetColliderLayer(LoadLevel.WallLayer);
+        Tile.SetColliderLayer(GameSettings.WallLayerNumber);
 
         GameState.TutorialMode = true;
         GameState.SpaceLocked = true;

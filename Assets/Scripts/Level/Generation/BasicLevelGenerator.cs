@@ -6,6 +6,7 @@ public class BasicLevelGenerator : ILevelGenerator
 {
     private BasicLevelAlgorithm algorithm = new BasicLevelAlgorithm();
     private BasicLevelPopulator populator = new BasicLevelPopulator();
+    private BasicLevelDecorator decorator = new BasicLevelDecorator();
 
     GameObject basicEnemyPrefab;
     GameObject footSoldierPrefab;
@@ -15,7 +16,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject knightPrefab;
     GameObject kirbyPrefab;
 
-    enum BasicLevelSize { Small = 80, Medium = 100, Large = 200 };
+    enum BasicLevelSize { Small = 80, Medium = 100, Large = 500 };
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 4;
@@ -44,8 +45,8 @@ public class BasicLevelGenerator : ILevelGenerator
         List<Vector2> openPositions;
         BasicLevelSize size = getLevelSize();
         int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn);
-        Debug.Log(level);
         populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
+        decorator.CreateTilemap(level, barrierTileDictionary);
 
         return level;
     }
@@ -142,5 +143,64 @@ public class BasicLevelGenerator : ILevelGenerator
         new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7), new Int2(1, 2)),
         new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9), new Int2(1, 2)),
         new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4), new Int2(1, 2))
+    };
+
+    private static Dictionary<int, int> barrierTileDictionary = new Dictionary<int, int>
+    {
+        {2, 0}, // SingleElevated
+        {1012, 1}, // LowerLeftElevated
+        {1112, 2}, // LowerElevated
+        {1102, 3}, // LowerRightElevated
+        {12, 4}, // LeftThinElevated
+        {112, 5}, // HorizontalThinElevated
+        {102, 6}, // RightThinElevated
+        {1000, 8}, // SingleWall
+        {1010, 9}, // MiddleWall
+        {1110, 10}, // MiddleWall
+        {1100, 11}, // MiddleWall
+        {1, 12}, // TopThinElevated
+        {11, 13}, // TopLeftElevated
+        {1101, 14}, // RightEdgeElevated
+        {1011, 16}, // LeftEdgeElevated
+        {1111, 17}, // Elevated
+        {1001, 20}, // VerticalThinElevated
+        {1002, 21}, // BottomThinElevated
+        {111, 22}, // TopEdgeElevated
+        {101, 27}, // TopRightElevated
+        {1212, 1}, // LowerLeftElevated
+        {1122, 3}, // LowerRightElevated
+        {1222, 21}, // BottomThinElevated
+        {1221, 20}, // VerticalThinElevated
+        {1211, 16}, // LeftEdgeElevated
+        {1121, 14}, // RightEdgeElevated
+        {1020, 9}, // LeftWall
+        {1021, 20}, // VerticalThinElevated
+        {1022, 21}, // BottomThinElevated
+        {1200, 11}, // RightWall
+        {1201, 20}, // VerticalThinElevated
+        {1202, 21}, // BottomThinElevated
+        {1120, 10}, // MiddleWall
+        {1210, 10}, // MiddleWall
+        {121, 27}, // TopRightElevated
+        {211, 13}, // TopLeftElevated
+        {221, 12}, // TopThinElevated
+        {202, 0}, // SingleElevated
+        {212, 1}, // LowerLeftElevated
+        {201, 12}, // TopThinElevated
+        {1220, 10}, // MiddleWall
+        {21, 12}, // TopThinElevated
+        {22, 0}, // SingleElevated
+        {122, 6}, // RightThinElevated
+
+        // TODO: These next ones are lone blocks. Make them into rocks or other obstacles.
+        {0, 10},
+        {10, 10},
+        {100, 10},
+        {110, 10},
+        {120, 10},
+        {200, 10},
+        {20, 10},
+        {210, 10},
+        {220, 10}
     };
 }

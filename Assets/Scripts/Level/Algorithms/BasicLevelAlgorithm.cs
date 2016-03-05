@@ -44,7 +44,7 @@ public class BasicLevelAlgorithm {
             current += getRandomDirection(new int[] { 25, 25, 25, 25 });
         }
 
-        playerSpawn = new Vector3((startingY - bottomY + 1) * LoadLevel.TileSize, (startingX - leftX + 1) * LoadLevel.TileSize, 0);
+        playerSpawn = new Vector3((startingY - bottomY + 1) * GameSettings.TileSize, (startingX - leftX + 1) * GameSettings.TileSize, 0);
 
         return cropLevel(level, leftX, rightX, topY, bottomY, openPositions);
     }

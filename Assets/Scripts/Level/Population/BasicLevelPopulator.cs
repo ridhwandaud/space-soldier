@@ -29,7 +29,7 @@ public class BasicLevelPopulator
                 if (farEnoughFromPlayer(spawnPosition, playerPosition))
                 {
                     GameObject obj = MonoBehaviour.Instantiate(enemyPrefab, new Vector3(
-                        spawnPosition.x * LoadLevel.TileSize, spawnPosition.y * LoadLevel.TileSize, 0),
+                        spawnPosition.x * GameSettings.TileSize, spawnPosition.y * GameSettings.TileSize, 0),
                         Quaternion.identity) as GameObject;
                     obj.transform.SetParent(enemyContainer);
 

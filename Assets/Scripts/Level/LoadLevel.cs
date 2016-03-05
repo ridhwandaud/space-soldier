@@ -6,10 +6,8 @@ using SpriteTile;
 public class LoadLevel : MonoBehaviour {
     public static HashSet<int> WallIndices = new HashSet<int>() {2};
     public static HashSet<int> FloorIndices = new HashSet<int>() {0, 1};
-    public static int WallLayer = 8;
     public static bool IsFirstLoad = true;
 
-    public static float TileSize = 2f;
     public static LoadLevel instance = null;
 
     void Awake ()
@@ -52,47 +50,10 @@ public class LoadLevel : MonoBehaviour {
 
         BasicLevelGenerator generator = new BasicLevelGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
-        setTiles(generatedLevel);
         StartCoroutine(ConfigureColliders());
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
 
         AStar.world = generatedLevel;
-    }
-
-    void setTiles(int[,] generatedLevel)
-    {
-        Int2 mapDimensions = new Int2(generatedLevel.GetLength(1), generatedLevel.GetLength(0));
-
-        // create level
-        Tile.NewLevel(mapDimensions, 0, TileSize, 0, LayerLock.None);
-        Tile.AddLayer(mapDimensions, 0, TileSize, 0, LayerLock.None);
-
-        // set sorting layers
-        Tile.SetLayerSorting(0, 0);
-        Tile.SetLayerSorting(1, 1);
-
-        // set collider layer so that walls can be detected by raycasting
-        Tile.SetColliderLayer(WallLayer);
-
-        for (int row = 0; row < generatedLevel.GetLength(0); row++)
-        {
-            for (int col = 0; col < generatedLevel.GetLength(1); col++)
-            {
-                Int2 tileLocation = new Int2(col, row);
-                bool isWall = WallIndices.Contains(generatedLevel[row, col]);
-                int tileIndex = generatedLevel[row, col];
-                int spriteTileLayerIndex = isWall ? 1 : 0;
-
-                Tile.SetTile(tileLocation, spriteTileLayerIndex, 0, tileIndex, false);
-
-                if (isWall && hasAdjacentFloor(generatedLevel, row, col))
-                {
-                    Tile.SetCollider(tileLocation, 1, true);
-                }
-            }
-        }
-        //StartCoroutine(ConfigureColliders());
-        //player.GetComponent<Rigidbody2D>().position = playerSpawn;
     }
 
     public static IEnumerator ConfigureColliders()
