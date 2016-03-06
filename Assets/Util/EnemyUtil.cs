@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class EnemyUtil {
     private static int squaredGuidedWanderDistance = 200;
-    private static float nearbyEnemyRadius = .3f;
+    private static float nearbyEnemyRadius = .35f;
     private static float centerDistanceThreshold = .3f;
     private static float cornerAvoidanceDotProductThreshold = -.1f;
 

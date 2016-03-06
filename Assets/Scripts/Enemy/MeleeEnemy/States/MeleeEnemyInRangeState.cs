@@ -67,7 +67,6 @@ public class MeleeEnemyInRangeState : State<MeleeEnemyAI> {
     {
         if (Vector3.Distance(enemy.transform.position, enemy.target) <= .2)
         {
-            //enemy.attackInProgress = true;
             enemy.animator.SetBool("Attacking", true);
             enemy.StopMovement();
         }

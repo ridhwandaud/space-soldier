@@ -16,7 +16,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject knightPrefab;
     GameObject kirbyPrefab;
 
-    enum BasicLevelSize { Small = 80, Medium = 100, Large = 500 };
+    enum BasicLevelSize { Small = 200, Medium = 350, Large = 500 };
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 4;
@@ -53,7 +53,6 @@ public class BasicLevelGenerator : ILevelGenerator
 
     private BasicLevelSize getLevelSize()
     {
-        return BasicLevelSize.Large;
         int rand = Random.Range(0, 2);
 
         if (rand == 1)

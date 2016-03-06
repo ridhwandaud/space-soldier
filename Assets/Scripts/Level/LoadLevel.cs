@@ -30,6 +30,7 @@ public class LoadLevel : MonoBehaviour {
 
     void Start()
     {
+        Debug.Log("start");
         IsFirstLoad = false;
     }
 
@@ -37,6 +38,7 @@ public class LoadLevel : MonoBehaviour {
     {
         if (!IsFirstLoad)
         {
+            Debug.Log("Init level from OnLevelWasLoaded");
             InitLevel();
         }
     }
@@ -52,6 +54,7 @@ public class LoadLevel : MonoBehaviour {
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
         StartCoroutine(ConfigureColliders());
         player.GetComponent<Rigidbody2D>().position = playerSpawn;
+        Debug.Log("playaspawn be " + playerSpawn);
 
         AStar.world = generatedLevel;
     }

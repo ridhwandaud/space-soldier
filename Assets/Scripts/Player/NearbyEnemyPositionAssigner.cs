@@ -20,7 +20,7 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
     private HashSet<MeleeEnemyAI> lastEnemies = new HashSet<MeleeEnemyAI>();
 
     // Temporary hack.
-    private Vector2 gordoSize = new Vector2(0.8133333f, .84f);
+    private Vector2 gordoSize = new Vector2(.6f, .6f);
 
     private float lastAssignmentTime;
 
@@ -50,7 +50,7 @@ public class NearbyEnemyPositionAssigner : MonoBehaviour {
             nearbyMeleeEnemies = MeleeEnemyAI.meleeEnemies.Where(
                 enemy => Vector3.SqrMagnitude(transform.position - enemy.transform.position) < enemy.squaredAttackDistance).ToList();
 
-            if (lastPosition.Equals(transform.position) && lastEnemies.SetEquals(nearbyMeleeEnemies))
+            if (nearbyMeleeEnemies.Count == 0 || (lastPosition.Equals(transform.position) && lastEnemies.SetEquals(nearbyMeleeEnemies)))
             {
                 return;
             }
