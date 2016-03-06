@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using SpriteTile;
 using System.Collections.Generic;
 
 public class EnemyUtil {
     private static int squaredGuidedWanderDistance = 200;
-    private static float nearbyEnemyRadius = .5f;
+    private static float nearbyEnemyRadius = .3f;
+    private static float centerDistanceThreshold = .3f;
+    private static float cornerAvoidanceDotProductThreshold = -.1f;
 
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
@@ -23,7 +26,7 @@ public class EnemyUtil {
     }
 
     public static void ExecuteAStar(Transform enemyTransform, Vector2 target, Rigidbody2D rb2d, ref float lastPathfindTime,
-        float pathFindingRate, float speed, bool debug = false)
+        float pathFindingRate, float speed, bool debug = false, bool useCornerAvoidance = false)
     {
         Vector2 enemyPosition = enemyTransform.position;
 
@@ -35,11 +38,15 @@ public class EnemyUtil {
 
             if (list.Count > 1)
             {
+                Int2 targetGridCoordinates = useCornerAvoidance && (enemyPosition - list[0].point.ToVector2()).magnitude > centerDistanceThreshold 
+                    && Vector2.Dot(list[1].point.ToVector2() - enemyPosition, list[0].point.ToVector2() - enemyPosition) > cornerAvoidanceDotProductThreshold
+                    ? list[0].point : list[1].point;
+
                 if(debug)
                 {
-                    Debug.DrawLine(enemyTransform.position, AStar.arrayIndicesToPosition(list[1].point), Color.red, 1f);
+                    Debug.DrawLine(enemyTransform.position, AStar.arrayIndicesToPosition(targetGridCoordinates), Color.red, 1f);
                 }
-                rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(list[1].point), speed);
+                rb2d.velocity = CalculateVelocity(enemyTransform, AStar.arrayIndicesToPosition(targetGridCoordinates), speed);
             }
         }
     }

@@ -104,7 +104,7 @@ public class BasicEnemyAI : EnemyAI {
 
     void ExecuteAStar(Vector2 enemyPosition, Vector2 playerPosition)
     {
-        EnemyUtil.ExecuteAStar(transform, playerPosition, rb2d, ref lastPathfindTime, pathFindingRate, speed);
+        EnemyUtil.ExecuteAStar(transform, playerPosition, rb2d, ref lastPathfindTime, pathFindingRate, speed, false, true);
     }
 
     public Vector2 CalculateVelocity(Vector2 target)
