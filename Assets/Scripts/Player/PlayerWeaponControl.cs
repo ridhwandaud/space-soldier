@@ -144,6 +144,8 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     public void ReconfigureWeapons()
     {
+        HideWeapon();
+
         if (!leftWeapons[currentLeftWeaponIndex].Occupied)
         {
             ToggleLeftWeapon();
@@ -161,7 +163,7 @@ public class PlayerWeaponControl : MonoBehaviour {
             rightGun = rightWeapons[currentRightWeaponIndex].GetWeaponIfExists();
         }
 
-        if (!leftGun && !rightGun)
+        if (!leftGun)
         {
             playerAnimator.SetBool("Armed", false);
         } else
@@ -211,7 +213,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
     }
 
-    public void HideWeapon()
+    void HideWeapon()
     {
         if (leftGun)
         {
