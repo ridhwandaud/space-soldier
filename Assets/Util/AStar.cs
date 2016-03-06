@@ -195,16 +195,17 @@ public class AStar : MonoBehaviour {
 
     public static Int2 positionToArrayIndices(Vector2 position)
     {
-        return new Int2((int)(position.x + 1) / 2, (int)(position.y + 1) / 2);
+        // Need to add half of the tile size because the map origin is at the center of tile 0, 0.
+        return new Int2((int)(position.x + GameSettings.TileSize / 2f), (int)(position.y + GameSettings.TileSize / 2f));
     }
 
     public static Vector2 positionToArrayIndicesVector(Vector2 position)
     {
-        return new Vector2((int)(position.x + 1) / 2, (int)(position.y + 1) / 2);
+        return new Vector2((int)(position.x + GameSettings.TileSize / 2f), (int)(position.y + GameSettings.TileSize / 2f));
     }
 
     public static Vector2 arrayIndicesToPosition(Int2 point)
     {
-        return new Vector2(point.x * 2f, point.y * 2f);
+        return new Vector2(point.x, point.y);
     }
 }
