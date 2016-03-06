@@ -167,7 +167,24 @@ public class PlayerWeaponControl : MonoBehaviour {
         } else
         {
             playerAnimator.SetBool("Armed", true);
-            weaponTransform = leftGun.transform;
+            setUpWeapon(leftGun);
+        }
+    }
+
+    void setUpWeapon(Weapon weapon)
+    {
+        weaponTransform = weapon.transform;
+        leftGun.GetComponent<SpriteRenderer>().enabled = true;
+        Vector2 offset = VectorUtil.DirectionToMousePointer(transform);
+        float angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+        RotateWeapon(angle);
+
+        if (offset.x > 0)
+        {
+            leftGun.SetToRightSide();
+        } if (offset.x < 0)
+        {
+            leftGun.SetToLeftSide();
         }
     }
 
