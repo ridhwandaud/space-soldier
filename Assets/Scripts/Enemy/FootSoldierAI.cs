@@ -6,10 +6,10 @@ public class FootSoldierAI : EnemyAI {
     public int firingDistance;
     public int attackingDistance;
     public float timeBetweenMoves;
-    public int bounceVariationDegrees;
     public int movementVariationTime;
     public int shotsFiredPerMovement;
     public float attackDuration;
+    public float bounceDisplacement;
 
     private Rigidbody2D rb2d;
     private float nextMoveTime = 0;
@@ -79,8 +79,8 @@ public class FootSoldierAI : EnemyAI {
     {
         if (other.collider.tag == "Wall")
         {
-            rb2d.velocity = VectorUtil.RotateVector(new Vector2(-previousVelocity.x, -previousVelocity.y),
-                Random.Range(-bounceVariationDegrees, bounceVariationDegrees) * Mathf.Deg2Rad).normalized * speed;
+            transform.Translate(-rb2d.velocity.normalized * bounceDisplacement);
+            rb2d.velocity = Vector2.zero;
             nextMoveTime = Time.time + .1f;
         }
     }

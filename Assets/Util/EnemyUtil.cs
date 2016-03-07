@@ -7,6 +7,7 @@ public class EnemyUtil {
     private static float nearbyEnemyRadius = .35f;
     private static float centerDistanceThreshold = .3f;
     private static float cornerAvoidanceDotProductThreshold = -.1f;
+    private static Vector2[] directionVectors = new Vector2[] {Vector2.up, Vector2.down, Vector2.left, Vector2.right};
 
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
@@ -102,18 +103,19 @@ public class EnemyUtil {
             }
         }
 
-        int rotation = Random.Range(0, 360);
         Vector2 possibleDir = Vector2.zero;
-        int seekIncrement = Random.Range(0, 1) < 1 ? 20 : -20;
-        for (int addend = 0; Mathf.Abs(addend) < 360; addend += seekIncrement)
+        int seekIncrement = 15;
+        Vector2 vectorToRotate = VectorUtil.RotateVector(directionVectors[Random.Range(0, 4)],
+            seekIncrement * Random.Range(0, 25) * Mathf.Deg2Rad);
+        for (int rotation = 0; Mathf.Abs(rotation) < 360; rotation += seekIncrement)
         {
-            Vector2 vectorTowardsPlayer = (Vector2)Player.PlayerTransform.position - pos;
-            possibleDir = VectorUtil.RotateVector(vectorTowardsPlayer, (rotation + addend) * Mathf.Deg2Rad).normalized;
+            possibleDir = VectorUtil.RotateVector(vectorToRotate, rotation * Mathf.Deg2Rad).normalized;
             if (Physics2D.BoxCast(pos, colliderSize, 0f, possibleDir,
                 2f, LayerMasks.WallLayerMask).collider == null)
             {
                 break;
             }
+            // TODO: If no direction found, decrease the movement distance.
         }
 
         return possibleDir;
