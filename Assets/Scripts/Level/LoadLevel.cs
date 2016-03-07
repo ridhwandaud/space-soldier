@@ -53,7 +53,7 @@ public class LoadLevel : MonoBehaviour {
         BasicLevelGenerator generator = new BasicLevelGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
         StartCoroutine(ConfigureColliders());
-        player.GetComponent<Rigidbody2D>().position = playerSpawn;
+        player.transform.position = playerSpawn;
         Debug.Log("playaspawn: " + playerSpawn);
 
         AStar.world = generatedLevel;

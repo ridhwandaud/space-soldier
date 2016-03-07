@@ -8,7 +8,10 @@ public class Singleton : MonoBehaviour {
         if (Instance == null)
         {
             Instance = gameObject;
-            DontDestroyOnLoad(gameObject);
+            if (!GameState.TutorialMode)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
         }
         else
         {

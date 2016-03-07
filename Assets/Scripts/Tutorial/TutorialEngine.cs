@@ -46,6 +46,13 @@ public class TutorialEngine : MonoBehaviour {
         currentState.Initialize();
     }
 
+    public void EndTutorial ()
+    {
+        Application.LoadLevel(0);
+        TutorialEngine.SkillNodesDisabled = false;
+        GameState.TutorialMode = false;
+    }
+
     public void RenderText (string textToRender)
     {
         tutorialConsoleText.text = textToRender;
