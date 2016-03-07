@@ -90,8 +90,8 @@ public class BasicLevelGenerator : ILevelGenerator
             new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
             new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
             new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
-            new SpawnData(1, 2, sniperPrefab),
-            new SpawnData(1, 2, kirbyPrefab)
+            new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
+            new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)
         };
     }
 
@@ -101,14 +101,18 @@ public class BasicLevelGenerator : ILevelGenerator
         public Int2 footSoldierMinMax;
         public Int2 gordoMinMax;
         public Int2 gordoTrapMinMax;
+        public Int2 sniperMinMax;
+        public Int2 kirbyMinMax;
 
         public EnemySpawnConfig(Int2 basicEnemyMinMax, Int2 footSoldierMinMax, Int2 gordoMinMax,
-            Int2 gordoTrapMinMax)
+            Int2 gordoTrapMinMax, Int2 sniperMinMax, Int2 kirbyMinMax)
         {
             this.basicEnemyMinMax = basicEnemyMinMax;
             this.footSoldierMinMax = footSoldierMinMax;
             this.gordoMinMax = gordoMinMax;
             this.gordoTrapMinMax = gordoTrapMinMax;
+            this.sniperMinMax = sniperMinMax;
+            this.kirbyMinMax = kirbyMinMax;
         }
 
         public void printConfig()
@@ -117,6 +121,8 @@ public class BasicLevelGenerator : ILevelGenerator
             Debug.Log("foot soldier min and max: " + footSoldierMinMax.x + ", " + footSoldierMinMax.y);
             Debug.Log("gordo min and max: " + gordoMinMax.x + ", " + gordoMinMax.y);
             Debug.Log("gordoTrap min and max: " + gordoTrapMinMax.x + ", " + gordoTrapMinMax.y);
+            Debug.Log("kirby min and max: " + kirbyMinMax.x + ", " + kirbyMinMax.y);
+            Debug.Log("sniper min and max: " + sniperMinMax.x + ", " + sniperMinMax.y);
         }
     }
 
@@ -127,21 +133,21 @@ public class BasicLevelGenerator : ILevelGenerator
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> LargeLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
     private List<EnemySpawnConfig> smallEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(3, 4), new Int2(3, 4), new Int2(3, 4), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(5, 6), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(2, 3), new Int2(1, 3), new Int2(2, 3), new Int2(1, 1), new Int2(0, 0), new Int2(0, 1)),
+        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(0, 1)),
+        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(0, 1)),
     };
     private List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5), new Int2(1, 2))
+        new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1)),
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1)),
+        new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1))
     };
     private List<EnemySpawnConfig> largeEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9), new Int2(1, 2)),
-        new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4), new Int2(1, 2))
+        new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7), new Int2(1, 2), new Int2(1, 2), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9), new Int2(1, 2), new Int2(1, 2), new Int2(1, 2)),
+        new EnemySpawnConfig(new Int2(3, 4), new Int2(8, 9), new Int2(3, 4), new Int2(1, 2), new Int2(1, 2), new Int2(1, 2))
     };
 
     private static Dictionary<int, int> barrierTileDictionary = new Dictionary<int, int>

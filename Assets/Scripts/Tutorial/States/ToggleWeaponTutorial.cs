@@ -60,11 +60,16 @@ public class ToggleWeaponTutorial : TutorialState
     {
         LoadBlockingSteps(new List<TutFunc>()
         {
-            () => RenderText("Good work. You can also toggle your right-hand weapon with the e key, though you won't be " + 
+            () => RenderText("Good work. You can also toggle your right-hand weapon with the e key, though you won't be " +
                 "able to do that right now since both of your weapons are assigned to your left side."),
             () => RenderText("If you ever forget any of the controls, press the esc key and navigate to the Controls page."),
             () => RenderText("The goal of the game is to destroy as many enemies and clear as many levels as you can without dying."),
-            () => RenderText("Happy Hunting!")
+            () => RenderText("Happy Hunting!"),
+            () => {
+                Application.LoadLevel(0);
+                // TODO: Do this in a less hacky way. This thing shouldn't be a persistent singleton.
+                Destroy(GameObject.Find("TutorialConsole"));
+            } 
         });
     }
 }
