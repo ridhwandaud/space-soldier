@@ -17,19 +17,12 @@ public class WalkingTutorial : TutorialState
         if (trigger.Equals(TutorialTrigger.Walk) && !walkingMissionCompleted)
         {
             walkingMissionCompleted = true;
-            Invoke("TeachMouseMovement", 3f);
+            CompleteMission();
         }
-    }
-
-    void TeachMouseMovement()
-    {
-        RenderText("Move the mouse to change the direction that you're facing.");
-        Invoke("CompleteMission", 3f);
     }
 
     void CompleteMission()
     {
-        RenderText("Nice work.");
         Invoke("GoToNextState", 3f);
     }
 }

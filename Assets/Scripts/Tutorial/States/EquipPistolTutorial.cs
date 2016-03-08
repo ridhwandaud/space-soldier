@@ -10,7 +10,7 @@ public class EquipPistolTutorial : TutorialState
 
     public override void Initialize ()
     {
-        RenderText("Now you'll need a weapon. Press the shift key to open up your inventory.");
+        RenderText("Good. Now you'll need a weapon. Press the shift key to open up your inventory.");
     }
 
     public override void Trigger (TutorialTrigger trigger)
@@ -36,10 +36,21 @@ public class EquipPistolTutorial : TutorialState
             case TutorialTrigger.CloseInventory:
                 if (pistolEquipped)
                 {
-                    GoToNextState();
+                    TeachMouseMovement();
                 }
                 break;
         }
+    }
+
+    void TeachMouseMovement ()
+    {
+        RenderText("Use the mouse to aim your gun.");
+        Invoke("CompleteMission", 2f);
+    }
+
+    void CompleteMission ()
+    {
+        Invoke("GoToNextState", 3f);
     }
 
     void CongratulatePlayer()
