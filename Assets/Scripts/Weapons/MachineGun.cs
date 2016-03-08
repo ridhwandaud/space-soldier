@@ -14,15 +14,7 @@ public class MachineGun : Weapon
             nextFiringTime = Time.time + FiringDelay;
             GameObject bullet = StackPool.Pop();
             bullet.transform.position = transform.position;
-            bullet.transform.rotation = transform.rotation;
-            // Interface for projectiles?
-            bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
-
-            Vector2 direction = VectorUtil.DirectionToMousePointer(transform);
-
-            // this has to be done before setting velocity or it won't work.
-            bullet.SetActive(true);
-            bullet.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
+            FireStandardProjectile(bullet);
 
             return energyCost;
         }
