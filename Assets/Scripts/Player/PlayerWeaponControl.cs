@@ -117,6 +117,7 @@ public class PlayerWeaponControl : MonoBehaviour {
     {
         int weaponsExamined = 0;
         int originalWeaponIndex = weaponIndex;
+        HideWeapon();
         do
         {
             weaponIndex = weaponIndex == weapons.Length - 1 ? 0 : ++weaponIndex;
@@ -130,6 +131,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 
         currentWeapon = weapons[weaponIndex].GetWeaponIfExists();
+        RevealWeapon();
     }
 
     void ToggleRightWeapon()
@@ -218,6 +220,14 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (leftGun)
         {
             leftGun.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void RevealWeapon()
+    {
+        if (leftGun)
+        {
+            leftGun.GetComponent<SpriteRenderer>().enabled = true;
         }
     }
 

@@ -17,8 +17,7 @@ public class Pistol : Weapon
         {
             nextFiringTime = Time.time + FiringDelay;
             GameObject bullet = StackPool.Pop();
-            Vector2 addend = VectorUtil.RotateVector(new Vector2(activeProjectileOffset.x, activeProjectileOffset.y), 
-                (FacingLeft ? -transform.rotation.eulerAngles.z : transform.rotation.eulerAngles.z) * Mathf.Deg2Rad);
+            Vector2 addend = GetStandardOffset();
             bullet.transform.position = new Vector2(transform.position.x + addend.x, transform.position.y + addend.y);
             bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
             FireStandardProjectile(bullet);

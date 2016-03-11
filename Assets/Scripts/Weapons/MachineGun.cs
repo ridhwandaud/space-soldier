@@ -13,7 +13,8 @@ public class MachineGun : Weapon
         {
             nextFiringTime = Time.time + FiringDelay;
             GameObject bullet = StackPool.Pop();
-            bullet.transform.position = transform.position;
+            Vector2 addend = GetStandardOffset();
+            bullet.transform.position = new Vector2(transform.position.x + addend.x, transform.position.y + addend.y);
             FireStandardProjectile(bullet);
 
             return energyCost;

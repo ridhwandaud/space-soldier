@@ -68,4 +68,10 @@ public abstract class Weapon : MonoBehaviour
         projectile.transform.rotation = Quaternion.Euler(0, 0, angle);
         projectile.GetComponent<Rigidbody2D>().velocity = direction * ProjectileSpeed;
     }
+
+    protected Vector2 GetStandardOffset()
+    {
+        return VectorUtil.RotateVector(new Vector2(activeProjectileOffset.x, activeProjectileOffset.y),
+                (FacingLeft ? -transform.rotation.eulerAngles.z : transform.rotation.eulerAngles.z) * Mathf.Deg2Rad);
+    }
 }
