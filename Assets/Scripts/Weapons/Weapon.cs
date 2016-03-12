@@ -18,12 +18,12 @@ public abstract class Weapon : MonoBehaviour
     protected Vector2 activeProjectileOffset;
 
     public abstract float GetEnergyRequirement();
-    public abstract float Click(Transform transform);
+    public abstract float Click();
     public abstract string GetName();
     public abstract string GetDescription ();
     public abstract Dictionary<string, object> GetProperties ();
 
-    public virtual float Release(Transform transform)
+    public virtual float Release()
     {
         return 0;
     }

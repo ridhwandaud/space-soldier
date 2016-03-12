@@ -7,7 +7,7 @@ public class MachineGun : Weapon
     [SerializeField]
     private int damage;
 
-    public override float Click(Transform transform)
+    public override float Click()
     {
         if (CanFire())
         {

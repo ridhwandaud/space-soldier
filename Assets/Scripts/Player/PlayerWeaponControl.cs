@@ -60,13 +60,13 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(0) && leftGun != null && Player.PlayerEnergy.HasEnoughEnergy(leftGun.GetEnergyRequirement()))
         {
             leftMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= leftGun.Click(leftGun.transform);
+            Player.PlayerEnergy.energy -= leftGun.Click();
         }
 
         if (leftMouseButtonClicked && !Input.GetMouseButton(0) && leftGun != null)
         {
             leftMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= leftGun.Release(leftGun.transform);
+            Player.PlayerEnergy.energy -= leftGun.Release();
         }
 
         // My original idea of doing the energy management here in a generic way is just not playing nicely at all with the
@@ -77,7 +77,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(1) && rightGun != null && Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
         {
             rightMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= rightGun.Click(rightGun.transform);
+            Player.PlayerEnergy.energy -= rightGun.Click();
             
             if (GameState.TutorialMode)
             {
@@ -107,7 +107,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (rightMouseButtonClicked && !Input.GetMouseButton(1) && rightGun != null)
         {
             rightMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= rightGun.Release(rightGun.transform);
+            Player.PlayerEnergy.energy -= rightGun.Release();
         }
 	}
 
@@ -124,7 +124,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (originalWeaponIndex != weaponIndex && currentWeapon != null && mouseButtonClicked)
         {
-            Player.PlayerEnergy.energy -= currentWeapon.Release(currentWeapon.transform);
+            Player.PlayerEnergy.energy -= currentWeapon.Release();
             mouseButtonClicked = false;
         }
 

@@ -20,7 +20,7 @@ public class ChargeGun : Weapon
 
     private Vector3 chargeShotRelativePosition = new Vector3(.18f, 1.082f, 0);
 
-    public override float Click(Transform transform)
+    public override float Click()
     {
         if (Player.PlayerEnergy.energy < minEnergyCost && !charging)
         {
@@ -64,7 +64,7 @@ public class ChargeGun : Weapon
         return 0;
     }
 
-    public override float Release(Transform transform)
+    public override float Release()
     {
         float chargeDuration = Time.time - chargeStartTime;
         
