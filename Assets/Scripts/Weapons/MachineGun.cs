@@ -15,6 +15,7 @@ public class MachineGun : Weapon
             GameObject bullet = StackPool.Pop();
             Vector2 addend = GetStandardOffset();
             bullet.transform.position = new Vector2(transform.position.x + addend.x, transform.position.y + addend.y);
+            bullet.GetComponent<BasicPlayerProjectile>().Damage = damage;
             FireStandardProjectile(bullet);
 
             return energyCost;

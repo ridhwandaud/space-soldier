@@ -18,8 +18,6 @@ public class PlayerWeaponControl : MonoBehaviour {
     private Weapon defaultStartingWeapon;
     [SerializeField]
     private Animator playerAnimator;
-    [SerializeField]
-    private Transform weaponTransform;
 
     private Weapon leftGun;
     private Weapon rightGun;
@@ -62,13 +60,13 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(0) && leftGun != null && Player.PlayerEnergy.HasEnoughEnergy(leftGun.GetEnergyRequirement()))
         {
             leftMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= leftGun.Click(weaponTransform);
+            Player.PlayerEnergy.energy -= leftGun.Click(leftGun.transform);
         }
 
         if (leftMouseButtonClicked && !Input.GetMouseButton(0) && leftGun != null)
         {
             leftMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= leftGun.Release(weaponTransform);
+            Player.PlayerEnergy.energy -= leftGun.Release(leftGun.transform);
         }
 
         // My original idea of doing the energy management here in a generic way is just not playing nicely at all with the
@@ -79,7 +77,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (Input.GetMouseButton(1) && rightGun != null && Player.PlayerEnergy.HasEnoughEnergy(rightGun.GetEnergyRequirement()))
         {
             rightMouseButtonClicked = true;
-            Player.PlayerEnergy.energy -= rightGun.Click(weaponTransform);
+            Player.PlayerEnergy.energy -= rightGun.Click(rightGun.transform);
             
             if (GameState.TutorialMode)
             {
@@ -109,7 +107,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         if (rightMouseButtonClicked && !Input.GetMouseButton(1) && rightGun != null)
         {
             rightMouseButtonClicked = false;
-            Player.PlayerEnergy.energy -= rightGun.Release(weaponTransform);
+            Player.PlayerEnergy.energy -= rightGun.Release(rightGun.transform);
         }
 	}
 
@@ -126,7 +124,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (originalWeaponIndex != weaponIndex && currentWeapon != null && mouseButtonClicked)
         {
-            Player.PlayerEnergy.energy -= currentWeapon.Release(weaponTransform);
+            Player.PlayerEnergy.energy -= currentWeapon.Release(currentWeapon.transform);
             mouseButtonClicked = false;
         }
 
@@ -177,7 +175,6 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     void setUpWeapon(Weapon weapon)
     {
-        weaponTransform = weapon.transform;
         leftGun.GetComponent<SpriteRenderer>().enabled = true;
         Vector2 offset = VectorUtil.DirectionToMousePointer(transform);
         float angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
@@ -227,7 +224,13 @@ public class PlayerWeaponControl : MonoBehaviour {
     {
         if (leftGun)
         {
-            leftGun.GetComponent<SpriteRenderer>().enabled = true;
+            if (leftGun.FacingLeft)
+            {
+                leftGun.SetToLeftSide();
+            } else
+            {
+                leftGun.SetToRightSide();
+            }
         }
     }
 

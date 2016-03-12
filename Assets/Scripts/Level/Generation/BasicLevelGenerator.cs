@@ -82,7 +82,7 @@ public class BasicLevelGenerator : ILevelGenerator
         config.printConfig();
 
         //return new List<SpawnData> {
-        //    new SpawnData(3, 3, footSoldierPrefab)
+        //    new SpawnData(0, 0, footSoldierPrefab)
         //};
 
         return new List<SpawnData> {
