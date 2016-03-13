@@ -3,6 +3,13 @@ using System.Collections;
 
 public class BasicPlayerProjectile : MonoBehaviour
 {
+    private Rigidbody2D rb2d;
+
+    void Awake()
+    {
+        rb2d = GetComponent<Rigidbody2D>();
+    }
+
     public int Damage
     {
         get; set;
@@ -13,6 +20,7 @@ public class BasicPlayerProjectile : MonoBehaviour
         if (isEnemy(other))
         {
             other.GetComponent<EnemyHealth>().InflictDamage(Damage);
+            other.GetComponent<Knockback>().KnockBack(rb2d.velocity);
         }
         if (isObstacle(other))
         {

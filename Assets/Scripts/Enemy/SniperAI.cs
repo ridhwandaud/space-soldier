@@ -25,7 +25,13 @@ public class SniperAI : EnemyAI {
         rb2d = GetComponent<Rigidbody2D>();
     }
 	
-	void Update () {
+	void Update ()
+    {
+        if (!GameState.WallCollidersInitialized || Time.time < KnockbackEndTime)
+        {
+            return;
+        }
+
         Vector2 enemyPosition = transform.position;
         Vector2 playerPosition = Player.PlayerTransform.position;
 

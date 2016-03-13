@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour {
     public float chaseCheckCooldown;
     public float speed;
     public bool chasing = false;
+    public float KnockbackEndTime = 0;
 
     //TODO: Add jitter so everyone isn't checking at the same time.
     private float nextChaseCheckTime = 0;
