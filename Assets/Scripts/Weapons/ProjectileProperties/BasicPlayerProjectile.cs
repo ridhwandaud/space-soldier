@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BasicPlayerProjectile : MonoBehaviour
 {
-    private Rigidbody2D rb2d;
+    protected Rigidbody2D rb2d;
 
     void Awake()
     {

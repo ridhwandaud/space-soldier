@@ -27,7 +27,7 @@ public class KnightAI : EnemyAI {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!GameState.WallCollidersInitialized || Time.time < KnockbackEndTime)
+        if (!GameState.WallCollidersInitialized || KnockbackInProgress)
         {
             return;
         }

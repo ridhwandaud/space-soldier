@@ -9,13 +9,7 @@ public class HomingMissile : BasicPlayerProjectile
     public float speed;
     public float neighborhoodRadius;
 
-    private Rigidbody2D rb2d;
     private int separationDamper = 3; // prevent separation force from being too strong and causing jitters
-
-    void Awake ()
-    {
-        rb2d = GetComponent<Rigidbody2D>();
-    }
 
 	void FixedUpdate () {
         Vector3 playerOffset = Player.PlayerTransform.position - transform.position;
