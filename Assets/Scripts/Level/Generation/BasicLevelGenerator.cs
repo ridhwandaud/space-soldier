@@ -17,10 +17,11 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject kirbyPrefab;
     GameObject troopaPrefab;
 
-    enum BasicLevelSize { Small = 200, Medium = 350, Large = 500 };
+    enum BasicLevelSize { Small = 200, Medium = 350, Large = 600 };
     enum BasicLevelDifficulty { Easy, Hard};
 
-    private static int HardLevelThreshold = 4;
+    private static int HardLevelThreshold = 10;
+    private static int LevelOneBossThreshold = 0;
 
     public BasicLevelGenerator()
     {
@@ -44,19 +45,24 @@ public class BasicLevelGenerator : ILevelGenerator
 
     public int[,] GenerateLevel(int levelIndex, out Vector3 playerSpawn)
     {
+        bool isBossLevel = levelIndex >= LevelOneBossThreshold;
         List<Vector2> openPositions;
-        BasicLevelSize size = getLevelSize();
-        int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn);
+        BasicLevelSize size = getLevelSize(isBossLevel);
+        int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel);
         populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
         decorator.CreateTilemap(level, barrierTileDictionary);
 
         return level;
     }
 
-    private BasicLevelSize getLevelSize()
+    private BasicLevelSize getLevelSize(bool isBossLevel)
     {
+        if (isBossLevel)
+        {
+            return BasicLevelSize.Large;
+        }
+
         int rand = Random.Range(0, 2);
-        rand = 1;
 
         if (rand == 1)
         {
@@ -136,9 +142,9 @@ public class BasicLevelGenerator : ILevelGenerator
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> LargeLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
     private List<EnemySpawnConfig> smallEasyLevelConfigs = new List<EnemySpawnConfig>
     {
-        new EnemySpawnConfig(new Int2(2, 3), new Int2(1, 3), new Int2(2, 3), new Int2(1, 1), new Int2(0, 0), new Int2(0, 1)),
-        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(0, 1)),
-        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(0, 1)),
+        new EnemySpawnConfig(new Int2(2, 3), new Int2(1, 3), new Int2(2, 3), new Int2(1, 1), new Int2(0, 0), new Int2(1, 1)),
+        new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(1, 1)),
+        new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(1, 1)),
     };
     private List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
     {

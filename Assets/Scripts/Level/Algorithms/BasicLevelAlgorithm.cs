@@ -1,14 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using SpriteTile;
 
 public class BasicLevelAlgorithm {
     public float noiseThreshold = .5f;
 
-    private static float NOISE_CONSTANT = .15f;
+    private static float NoiseConstant = .15f;
+    private static int BossRoomStampSize = 15;
+    private static int BossLevelCorridorTiles = 120;
+    private static int BossCorridorStampSize = 2;
+    private static int NormalStampSize = 1;
 
-    public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn)
+    private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
+        Direction.Up, Direction.Down };
+
+    public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn, bool isBossLevel)
     {
         openPositions = new List<Vector2>();
 
@@ -20,7 +26,14 @@ public class BasicLevelAlgorithm {
 
         Int2 current = new Int2(startingX, startingY);
         Int2 directionLastMoved = new Int2(0, 0);
+        Int2 mostRecentDir = new Int2(0, 0);
         int numTilesPlaced = 0;
+        Direction directionBias = Direction.None;
+
+        if (isBossLevel)
+        {
+            directionBias = CorridorDirections[Random.Range(0, CorridorDirections.Count)];
+        }
 
         // For resizing the level
         int leftX = current.x;
@@ -35,13 +48,26 @@ public class BasicLevelAlgorithm {
             topY = current.y > topY ? current.y : topY;
             bottomY = current.y < bottomY ? current.y : bottomY;
 
-            if (level[current.x, current.y] == 2)
+            int maxRowOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
+            int maxColOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
+
+            for (int rowOffset = 0; rowOffset < maxRowOffset; rowOffset++)
             {
-                level[current.x, current.y] = 1;
-                numTilesPlaced++;
+                for (int colOffset = 0; colOffset < maxColOffset; colOffset++)
+                {
+                    numTilesPlaced += level[current.x + rowOffset, current.y + colOffset] == 2 ? 1 : 0;
+                    level[current.x + rowOffset, current.y + colOffset] = 1;
+                }
             }
 
-            current += getRandomDirection(new int[] { 25, 25, 25, 25 });
+            bool creatingBossCorridor = isBossLevel && numTilesPlaced < BossLevelCorridorTiles;
+
+            current += getRandomDirection(new int[] {
+                creatingBossCorridor && directionBias == Direction.Right ? 75 : 25,
+                creatingBossCorridor && directionBias == Direction.Left ? 75 : 25,
+                creatingBossCorridor && directionBias == Direction.Up ? 75 : 25,
+                creatingBossCorridor && directionBias == Direction.Down ? 75 : 25
+            });
         }
 
         playerSpawn = new Vector3((startingY - bottomY + 1) * GameSettings.TileSize, (startingX - leftX + 1) * GameSettings.TileSize, 0);
@@ -51,7 +77,7 @@ public class BasicLevelAlgorithm {
 
     private int getFloorTile(float x, float y, int width, int height)
     {
-        float noise = Mathf.PerlinNoise(x * NOISE_CONSTANT, y * NOISE_CONSTANT);
+        float noise = Mathf.PerlinNoise(x * NoiseConstant, y * NoiseConstant);
         if (noise < noiseThreshold)
         {
             return 1;
@@ -116,5 +142,10 @@ public class BasicLevelAlgorithm {
             return Int2.left;
         else
             return Int2.right;
+    }
+
+    private enum Direction
+    {
+        None, Left, Right, Up, Down
     }
 }
