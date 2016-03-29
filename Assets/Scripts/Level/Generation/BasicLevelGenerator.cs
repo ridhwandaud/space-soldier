@@ -17,11 +17,11 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject kirbyPrefab;
     GameObject troopaPrefab;
 
-    enum BasicLevelSize { Small = 200, Medium = 350, Large = 600 };
+    enum BasicLevelSize { Small = 200, Medium = 350, Large = 600};
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 10;
-    private static int LevelOneBossThreshold = 0;
+    private static int LevelOneBossThreshold = 1;
 
     public BasicLevelGenerator()
     {
@@ -49,7 +49,11 @@ public class BasicLevelGenerator : ILevelGenerator
         List<Vector2> openPositions;
         BasicLevelSize size = getLevelSize(isBossLevel);
         int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel);
-        populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
+        if (!isBossLevel)
+        {
+            populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
+        }
+
         decorator.CreateTilemap(level, barrierTileDictionary);
 
         return level;
@@ -59,7 +63,7 @@ public class BasicLevelGenerator : ILevelGenerator
     {
         if (isBossLevel)
         {
-            return BasicLevelSize.Large;
+            return BasicLevelSize.Medium;
         }
 
         int rand = Random.Range(0, 2);

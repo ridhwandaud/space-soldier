@@ -43,20 +43,23 @@ public class BasicLevelAlgorithm {
 
         while (numTilesPlaced < numTiles)
         {
-            leftX = current.x < leftX ? current.x : leftX;
-            rightX = current.x > rightX ? current.x : rightX;
-            topY = current.y > topY ? current.y : topY;
-            bottomY = current.y < bottomY ? current.y : bottomY;
 
             int maxRowOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
             int maxColOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
+            int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Right ? -1 : 1;
+            int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Up ? -1 : 1;
 
-            for (int rowOffset = 0; rowOffset < maxRowOffset; rowOffset++)
+            for (int rowOffset = 0; Mathf.Abs(rowOffset) < maxRowOffset; rowOffset += rowIncrement)
             {
-                for (int colOffset = 0; colOffset < maxColOffset; colOffset++)
+                for (int colOffset = 0; Mathf.Abs(colOffset) < maxColOffset; colOffset += colIncrement)
                 {
                     numTilesPlaced += level[current.x + rowOffset, current.y + colOffset] == 2 ? 1 : 0;
                     level[current.x + rowOffset, current.y + colOffset] = 1;
+
+                    leftX = current.x + rowOffset < leftX ? current.x + rowOffset : leftX;
+                    rightX = current.x + rowOffset > rightX ? current.x + rowOffset : rightX;
+                    topY = current.y + colOffset > topY ? current.y + colOffset : topY;
+                    bottomY = current.y + colOffset < bottomY ? current.y + colOffset : bottomY;
                 }
             }
 
