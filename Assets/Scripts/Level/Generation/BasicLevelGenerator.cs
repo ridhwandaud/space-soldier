@@ -21,7 +21,7 @@ public class BasicLevelGenerator : ILevelGenerator
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 10;
-    private static int LevelOneBossThreshold = 1;
+    private static int LevelOneBossThreshold = 0;
 
     public BasicLevelGenerator()
     {
@@ -46,12 +46,17 @@ public class BasicLevelGenerator : ILevelGenerator
     public int[,] GenerateLevel(int levelIndex, out Vector3 playerSpawn)
     {
         bool isBossLevel = levelIndex >= LevelOneBossThreshold;
+        Vector3 bossSpawn;
+
         List<Vector2> openPositions;
         BasicLevelSize size = getLevelSize(isBossLevel);
-        int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel);
+        int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel, out bossSpawn);
         if (!isBossLevel)
         {
             populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
+        } else
+        {
+            GameObject obj = MonoBehaviour.Instantiate(knightPrefab, bossSpawn, Quaternion.identity) as GameObject;
         }
 
         decorator.CreateTilemap(level, barrierTileDictionary);

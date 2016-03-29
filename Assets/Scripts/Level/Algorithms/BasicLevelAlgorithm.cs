@@ -14,8 +14,9 @@ public class BasicLevelAlgorithm {
     private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
         Direction.Up, Direction.Down };
 
-    public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn, bool isBossLevel)
+    public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn, bool isBossLevel, out Vector3 bossSpawn)
     {
+        Vector3 bossSpawnGridPos = Vector3.zero;
         openPositions = new List<Vector2>();
 
         int[,] level = new int[numTiles * 2, numTiles * 2];
@@ -49,6 +50,12 @@ public class BasicLevelAlgorithm {
             int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Right ? -1 : 1;
             int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Up ? -1 : 1;
 
+            if (isBossLevel && numTilesPlaced >= BossLevelCorridorTiles)
+            {
+                bossSpawnGridPos = new Vector3((current.x + rowIncrement * (BossRoomStampSize / 2)),
+                    (current.y + colIncrement * (BossRoomStampSize / 2)));
+            }
+
             for (int rowOffset = 0; Mathf.Abs(rowOffset) < maxRowOffset; rowOffset += rowIncrement)
             {
                 for (int colOffset = 0; Mathf.Abs(colOffset) < maxColOffset; colOffset += colIncrement)
@@ -74,6 +81,7 @@ public class BasicLevelAlgorithm {
         }
 
         playerSpawn = new Vector3((startingY - bottomY + 1) * GameSettings.TileSize, (startingX - leftX + 1) * GameSettings.TileSize, 0);
+        bossSpawn = new Vector3((bossSpawnGridPos.y - bottomY + 1) * GameSettings.TileSize, (bossSpawnGridPos.x - leftX + 1) * GameSettings.TileSize, 0);
 
         return cropLevel(level, leftX, rightX, topY, bottomY, openPositions);
     }
