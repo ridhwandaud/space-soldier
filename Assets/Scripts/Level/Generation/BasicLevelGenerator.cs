@@ -21,7 +21,7 @@ public class BasicLevelGenerator : ILevelGenerator
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 10;
-    private static int LevelOneBossThreshold = 0;
+    private static int LevelOneBossThreshold = 1;
 
     public BasicLevelGenerator()
     {

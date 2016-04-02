@@ -2,6 +2,11 @@
 using System.Collections;
 
 public class CameraControl : MonoBehaviour {
+    [SerializeField]
+    private Material sporeEffectMaterial;
+    [SerializeField]
+    private bool isHallucinating;
+
     private Rigidbody2D rb;
 
     private static float DEFAULT_Z = -10;
@@ -42,5 +47,18 @@ public class CameraControl : MonoBehaviour {
         Vector3 targetPosition = rb.position;
         targetPosition.z = DEFAULT_Z;
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, dampTime);
+    }
+
+    void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        if (isHallucinating)
+        {
+            float camWidth = Camera.main.orthographicSize * Camera.main.aspect * 2;
+            sporeEffectMaterial.SetFloat("_CameraWidth", camWidth);
+            Graphics.Blit(source, destination, sporeEffectMaterial);
+        } else
+        {
+            Graphics.Blit(source, destination);
+        }
     }
 }
