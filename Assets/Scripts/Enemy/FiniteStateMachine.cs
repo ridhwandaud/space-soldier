@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class FiniteStateMachine<T> {
+﻿public class FiniteStateMachine<T> {
     public T entity;
     public State<T> currentState;
 
