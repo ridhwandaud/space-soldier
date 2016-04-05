@@ -32,6 +32,7 @@
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
+				float4 color : COLOR;
 			};
 
 			v2f vert (appdata v)
@@ -52,7 +53,14 @@
 			{
 				float2 yOffset = cos((i.uv.x * _CameraWidth + _WorldSpaceCameraPos.x + _Time * _TimeMultiplier) * _WaveCountMultiplier) * _Amplitude;
 				i.uv.y += yOffset;
-				return tex2D(_MainTex, i.uv);
+				float num1 = (sin(_Time * 7) + 1) / 2 + .3;
+				float num2 = (cos(_Time * 10) + 1) / 2 + .3;
+				float num3 = (sin(_Time * 7 - 2.5) + 1) / 2 + .3;
+				float4 col = tex2D(_MainTex, i.uv);
+				col.r *= num1;
+				col.g *= num2;
+				col.b *= num3;
+				return col;
 			}
 			ENDCG
 		}
