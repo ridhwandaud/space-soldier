@@ -5,22 +5,36 @@ using System.Collections.Generic;
 public class PlantBossAI : MonoBehaviour {
 
     public FiniteStateMachine<PlantBossAI> fsm;
+    public bool firing = false;
 
-    private List<Vector2> BulletOffsets = new List<Vector2>() { new Vector2(1f, 0)};
-    private float BulletDistanceFromCenter;
-    private float RotationAmount = Mathf.PI * 5 / 180;
-    private int NumShotsPerVolley;
-    private float SecondsBetweenShots;
+    private List<Vector2> BulletOffsets = new List<Vector2>() {
+        new Vector2(1f, 0),
+        new Vector2(0, 1f),
+        new Vector2(-1f, 0),
+        new Vector2(0, -1f)};
+    [SerializeField]
+    private float bulletDistanceFromCenter;
+    [SerializeField]
+    private float degreesBetweenShots;
+    [SerializeField]
+    private float timeBetweenVolleys;
 
-    public StackPool ProjectilePool;
+    [SerializeField]
+    private int numShotsPerVolley;
+    [SerializeField]
+    private float secondsBetweenShots;
+    [SerializeField]
+    private float projectileSpeed;
+    [SerializeField]
+    private string projectilePoolName;
 
+    private StackPool projectilePool;
     private Rigidbody2D rb2d;
-    private CircleCollider2D circleCollider;
 
 	void Awake () {
         rb2d = GetComponent<Rigidbody2D>();
-        circleCollider = GetComponent<CircleCollider2D>();
-        fsm = new FiniteStateMachine<PlantBossAI>(this, null);
+        projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
+        fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossAttackState.Instance);
 	}
 	
 	void Update () {
@@ -31,29 +45,40 @@ public class PlantBossAI : MonoBehaviour {
     {
 
         int numShotsFired = 0;
-        while (numShotsFired < NumShotsPerVolley)
+        int rotationCoefficient = Random.Range(0, 2) == 0 ? 1 : -1;
+        while (numShotsFired < numShotsPerVolley)
         {
             // fire shot
             for (int i = 0; i < BulletOffsets.Count; i++)
             {
                 Vector2 currOffset = BulletOffsets[i];
-                float newX = BulletDistanceFromCenter * Mathf.Cos(Mathf.Atan2(currOffset.y, currOffset.x) + RotationAmount);
-                float newY = BulletDistanceFromCenter * Mathf.Sin(Mathf.Atan2(currOffset.y, currOffset.x) + RotationAmount);
+                float rotationRadians = rotationCoefficient * Mathf.PI * degreesBetweenShots / 180;
+                float newX = bulletDistanceFromCenter * Mathf.Cos(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
+                float newY = bulletDistanceFromCenter * Mathf.Sin(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
                 BulletOffsets[i] = new Vector2(newX, newY);
-
+                FireShot(transform.position, new Vector2(transform.position.x + BulletOffsets[i].x, transform.position.y + BulletOffsets[i].y));
             }
 
             numShotsFired++;
-            yield return new WaitForSeconds(SecondsBetweenShots);
+            yield return new WaitForSeconds(secondsBetweenShots);
         }
+        Invoke("EndVolley", timeBetweenVolleys);
     }
 
-    // Refactor
+    void EndVolley()
+    {
+        firing = false;
+    }
+
     void FireShot(Vector2 shotOrigin, Vector2 target)
     {
-        GameObject projectile = ProjectilePool.Pop();
+        GameObject projectile = projectilePool.Pop();
         projectile.transform.position = shotOrigin;
+        Vector3 offset = target - shotOrigin;
+        float rotation = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+        projectile.transform.rotation = Quaternion.Euler(new Vector3(0, 0, rotation - 90));
+        projectile.SetActive(true);
 
-
+        projectile.GetComponent<Rigidbody2D>().velocity = projectileSpeed * offset.normalized;
     }
 }

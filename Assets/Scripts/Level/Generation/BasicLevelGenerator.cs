@@ -16,8 +16,9 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject knightPrefab;
     GameObject kirbyPrefab;
     GameObject troopaPrefab;
+    GameObject plantBossPrefab;
 
-    enum BasicLevelSize { Small = 200, Medium = 350, Large = 600};
+    enum BasicLevelSize { Small = 200, Medium = 350, Large = 450};
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 10;
@@ -33,6 +34,7 @@ public class BasicLevelGenerator : ILevelGenerator
         knightPrefab = Resources.Load("Knight") as GameObject;
         kirbyPrefab = Resources.Load("Kirby") as GameObject;
         troopaPrefab = Resources.Load("Troopa") as GameObject;
+        plantBossPrefab = Resources.Load("PlantBoss") as GameObject;
 
         configsBySize[BasicLevelSize.Small] = smallLevelConfig;
         configsBySize[BasicLevelSize.Medium] = mediumLevelConfig;
@@ -56,7 +58,7 @@ public class BasicLevelGenerator : ILevelGenerator
             populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
         } else
         {
-            GameObject obj = MonoBehaviour.Instantiate(knightPrefab, bossSpawn, Quaternion.identity) as GameObject;
+            GameObject obj = MonoBehaviour.Instantiate(plantBossPrefab, bossSpawn, Quaternion.identity) as GameObject;
         }
 
         decorator.CreateTilemap(level, barrierTileDictionary);
