@@ -26,6 +26,8 @@ public class PlayerHealth : MonoBehaviour {
             gameObject.SetActive(false);
             ShowGameOverScreen();
         }
+
+        Camera.main.GetComponent<SporeEffect>().ProcessSpore() ;
     }
 
     void ShowGameOverScreen()

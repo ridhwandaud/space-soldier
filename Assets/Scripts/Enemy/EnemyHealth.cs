@@ -23,7 +23,10 @@ public class EnemyHealth : MonoBehaviour {
         }
 
         health -= damagePoints;
-        enemyAI.chasing = true;
+        if (enemyAI)
+        {
+            enemyAI.chasing = true;
+        }
 
         if (health <= 0)
         {

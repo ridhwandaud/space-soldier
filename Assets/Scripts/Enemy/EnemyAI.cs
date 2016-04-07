@@ -25,7 +25,8 @@ public class EnemyAI : MonoBehaviour {
             Collider2D[] otherEnemies = Physics2D.OverlapCircleAll(transform.position, chaseActivationRadius, LayerMasks.EnemyLayerMask);
             for (int x = 0; x < otherEnemies.Length; x++)
             {
-                if (otherEnemies[x].GetComponent<EnemyAI>().chasing)
+                EnemyAI enemyAI = otherEnemies[x].GetComponent<EnemyAI>();
+                if (enemyAI && enemyAI.chasing)
                 {
                     chasing = true;
                     break;

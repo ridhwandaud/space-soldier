@@ -6,6 +6,8 @@ public class PlantBossAI : MonoBehaviour {
 
     public FiniteStateMachine<PlantBossAI> fsm;
     public bool firing = false;
+    public List<Seed> seeds = new List<Seed>();
+    public float initialSeedSpeed;
 
     private List<Vector2> BulletOffsets = new List<Vector2>() {
         new Vector2(1f, 0),
@@ -18,7 +20,6 @@ public class PlantBossAI : MonoBehaviour {
     private float degreesBetweenShots;
     [SerializeField]
     private float timeBetweenVolleys;
-
     [SerializeField]
     private int numShotsPerVolley;
     [SerializeField]
@@ -30,11 +31,20 @@ public class PlantBossAI : MonoBehaviour {
 
     private StackPool projectilePool;
     private Rigidbody2D rb2d;
+    private GameObject seedPrefab;
 
 	void Awake () {
+        seedPrefab = Resources.Load("Seed") as GameObject;
         rb2d = GetComponent<Rigidbody2D>();
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
         fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossAttackState.Instance);
+
+        for (int x = 0; x < 4; x++)
+        {
+            GameObject seed = Instantiate(seedPrefab, transform.position, Quaternion.identity) as GameObject;
+            seed.SetActive(false);
+            seeds.Add(seed.GetComponent<Seed>());
+        }
 	}
 	
 	void Update () {
@@ -53,6 +63,8 @@ public class PlantBossAI : MonoBehaviour {
             {
                 Vector2 currOffset = BulletOffsets[i];
                 float rotationRadians = rotationCoefficient * Mathf.PI * degreesBetweenShots / 180;
+
+                // This is a bit of overkill if I decide to stick with a single origin point.
                 float newX = bulletDistanceFromCenter * Mathf.Cos(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
                 float newY = bulletDistanceFromCenter * Mathf.Sin(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
                 BulletOffsets[i] = new Vector2(newX, newY);
@@ -68,8 +80,10 @@ public class PlantBossAI : MonoBehaviour {
     void EndVolley()
     {
         firing = false;
+        fsm.ChangeState(PlantBossSeedState.Instance);
     }
 
+    // Refactor forrealsies.
     void FireShot(Vector2 shotOrigin, Vector2 target)
     {
         GameObject projectile = projectilePool.Pop();
