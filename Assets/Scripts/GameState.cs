@@ -5,6 +5,7 @@ public class GameState : MonoBehaviour {
     public static bool Paused = false;
     public static bool TutorialMode = false;
     public static bool WallCollidersInitialized = false;
+    public static bool IsBossFight = false;
 
     // These are for score tracking (to display at the end of the game)
     public static int NumEnemiesKilled = 0;

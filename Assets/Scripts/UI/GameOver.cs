@@ -11,6 +11,7 @@ public class GameOver : MonoBehaviour {
     {
         GameState.ResetGameState();
         Destroy(GameObject.Find("Singletons"));
+        StopAllCoroutines();
         Application.LoadLevel(Application.loadedLevel);
     }
 

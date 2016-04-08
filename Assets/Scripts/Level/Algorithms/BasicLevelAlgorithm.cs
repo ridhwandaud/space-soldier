@@ -34,6 +34,7 @@ public class BasicLevelAlgorithm {
         if (isBossLevel)
         {
             directionBias = CorridorDirections[Random.Range(0, CorridorDirections.Count)];
+            Debug.Log(directionBias.ToString());
         }
 
         // For resizing the level

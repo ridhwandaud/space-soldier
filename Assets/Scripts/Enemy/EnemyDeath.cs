@@ -22,7 +22,7 @@ public class EnemyDeath : MonoBehaviour {
                 TutorialEngine.Instance.Trigger(TutorialTrigger.EnemyKilled);
             }
 
-            if (GameState.NumEnemiesRemaining == 0)
+            if (GameState.NumEnemiesRemaining == 0 && !GameState.IsBossFight)
             {
                 createPortal();
             }

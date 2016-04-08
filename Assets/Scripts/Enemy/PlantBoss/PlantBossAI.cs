@@ -28,6 +28,8 @@ public class PlantBossAI : MonoBehaviour {
     private float projectileSpeed;
     [SerializeField]
     private string projectilePoolName;
+    [SerializeField]
+    private int seedCount;
 
     private StackPool projectilePool;
     private Rigidbody2D rb2d;
@@ -37,9 +39,9 @@ public class PlantBossAI : MonoBehaviour {
         seedPrefab = Resources.Load("Seed") as GameObject;
         rb2d = GetComponent<Rigidbody2D>();
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
-        fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossAttackState.Instance);
+        fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossSeedState.Instance);
 
-        for (int x = 0; x < 4; x++)
+        for (int x = 0; x < seedCount; x++)
         {
             GameObject seed = Instantiate(seedPrefab, transform.position, Quaternion.identity) as GameObject;
             seed.SetActive(false);
@@ -53,6 +55,13 @@ public class PlantBossAI : MonoBehaviour {
 
     public IEnumerator FireVolley()
     {
+        yield return new WaitForSeconds(timeBetweenVolleys);
+
+        if (GameState.NumEnemiesRemaining == 0)
+        {
+            EndVolley();
+            yield break;
+        }
 
         int numShotsFired = 0;
         int rotationCoefficient = Random.Range(0, 2) == 0 ? 1 : -1;
@@ -74,14 +83,18 @@ public class PlantBossAI : MonoBehaviour {
             numShotsFired++;
             yield return new WaitForSeconds(secondsBetweenShots);
         }
-        Invoke("EndVolley", timeBetweenVolleys);
+
+
+        StartCoroutine(FireVolley());
     }
 
     void EndVolley()
     {
         firing = false;
         fsm.ChangeState(PlantBossSeedState.Instance);
+        StopCoroutine(FireVolley());
     }
+
 
     // Refactor forrealsies.
     void FireShot(Vector2 shotOrigin, Vector2 target)

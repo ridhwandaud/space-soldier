@@ -58,6 +58,7 @@ public class BasicLevelGenerator : ILevelGenerator
             populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
         } else
         {
+            GameState.IsBossFight = true;
             GameObject obj = MonoBehaviour.Instantiate(plantBossPrefab, bossSpawn, Quaternion.identity) as GameObject;
         }
 
