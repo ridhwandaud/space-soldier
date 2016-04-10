@@ -17,6 +17,9 @@ public class BasicLevelDecorator {
             for (int col = 0; col < level.GetLength(1); col++)
             {
                 int index = level[row, col];
+
+                // In internal grid array, first dimension is row and second is col. When placing objects in game, first dimension
+                // is x (col) and second is y (row). So they are flipped.
                 Int2 tileLocation = new Int2(col, row);
                 int tile = 0;
                 bool isCollider = false;

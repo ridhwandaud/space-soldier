@@ -14,6 +14,7 @@ public class BasicLevelAlgorithm {
     private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
         Direction.Up, Direction.Down };
 
+    // When dealing with tiles, x is always row and y is always column. Think of it as dimension 0 and dimension 1 instead of x and y.
     public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn, bool isBossLevel, out Vector3 bossSpawn)
     {
         Vector3 bossSpawnGridPos = Vector3.zero;
@@ -23,11 +24,11 @@ public class BasicLevelAlgorithm {
 
         set2DArrayDefaults(level, 2);
 
-        int startingX = numTiles, startingY = numTiles;
-
-        Int2 current = new Int2(startingX, startingY);
-        Int2 directionLastMoved = new Int2(0, 0);
+        Int2 current = new Int2(numTiles, numTiles);
         Int2 mostRecentDir = new Int2(0, 0);
+        // Consider refactoring the boss room logic into a separate method entirely since it is starting
+        // to deviate more and more.
+        Int2 bossRoomWallEntrance = new Int2(0, 0);
         int numTilesPlaced = 0;
         Direction directionBias = Direction.None;
 
@@ -38,18 +39,17 @@ public class BasicLevelAlgorithm {
         }
 
         // For resizing the level
-        int leftX = current.x;
-        int rightX = current.x;
-        int topY = current.y;
-        int bottomY = current.y;
+        int leftCol = current.x;
+        int rightCol = current.x;
+        int topRow = current.y;
+        int bottomRow = current.y;
 
         while (numTilesPlaced < numTiles)
         {
-
             int maxRowOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
             int maxColOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
-            int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Down ? -1 : 1;
-            int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Left ? -1 : 1;
+            int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Up ? 1 : -1;
+            int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Right ? 1 : -1;
 
             if (isBossLevel && numTilesPlaced >= BossLevelCorridorTiles)
             {
@@ -64,10 +64,15 @@ public class BasicLevelAlgorithm {
                     numTilesPlaced += level[current.x + rowOffset, current.y + colOffset] == 2 ? 1 : 0;
                     level[current.x + rowOffset, current.y + colOffset] = 1;
 
-                    leftX = current.x + rowOffset < leftX ? current.x + rowOffset : leftX;
-                    rightX = current.x + rowOffset > rightX ? current.x + rowOffset : rightX;
-                    topY = current.y + colOffset > topY ? current.y + colOffset : topY;
-                    bottomY = current.y + colOffset < bottomY ? current.y + colOffset : bottomY;
+                    if (isBossLevel && numTilesPlaced == BossLevelCorridorTiles)
+                    {
+                        bossRoomWallEntrance = new Int2(current.x + rowOffset, current.y + colOffset);
+                    }
+
+                    leftCol = current.y + colOffset < leftCol ? current.y + colOffset : leftCol;
+                    rightCol = current.y + colOffset > rightCol ? current.y + colOffset : rightCol;
+                    topRow = current.x + rowOffset > topRow ? current.x + rowOffset : topRow;
+                    bottomRow = current.x + rowOffset < bottomRow ? current.x + rowOffset : bottomRow;
                 }
             }
 
@@ -81,15 +86,22 @@ public class BasicLevelAlgorithm {
             });
         }
 
-        playerSpawn = new Vector3((startingY - bottomY + 1) * GameSettings.TileSize, (startingX - leftX + 1) * GameSettings.TileSize, 0);
-        bossSpawn = new Vector3((bossSpawnGridPos.y - bottomY + 1) * GameSettings.TileSize, (bossSpawnGridPos.x - leftX + 1) * GameSettings.TileSize, 0);
+        playerSpawn = new Vector3((numTiles - leftCol + 1) * GameSettings.TileSize, (numTiles - bottomRow + 1) * GameSettings.TileSize, 0);
+        bossSpawn = new Vector3((bossSpawnGridPos.y - leftCol + 1) * GameSettings.TileSize, (bossSpawnGridPos.x - bottomRow + 1) * GameSettings.TileSize, 0);
+        bossRoomWallEntrance.x = bossRoomWallEntrance.x - bottomRow + 1;
+        bossRoomWallEntrance.y = bossRoomWallEntrance.y - leftCol + 1;
+        int[,] croppedLevel = cropLevel(level, leftCol, rightCol, topRow, bottomRow, openPositions);
 
-        return cropLevel(level, leftX, rightX, topY, bottomY, openPositions);
+        if (isBossLevel)
+        {
+            BossLevelWallBuilder.Initialize(bossRoomWallEntrance, croppedLevel, directionBias);
+        }
+
+        return croppedLevel;
     }
 
     private List<Vector2> getBlockedTiles(Direction dir, int[,] level)
     {
-
         return null;
     }
 
@@ -106,20 +118,23 @@ public class BasicLevelAlgorithm {
         }
     }
 
-    private int[,] cropLevel(int[,] levelToResize, int leftX, int rightX, int topY, int bottomY, List<Vector2> openPositions)
+    private int[,] cropLevel(int[,] levelToResize, int leftCol, int rightCol, int topRow, int bottomRow, List<Vector2> openPositions)
     {
         // Add an outer wall.
-        int newWidth = rightX - leftX + 3;
-        int newHeight = topY - bottomY + 3;
+        int newWidth = rightCol - leftCol + 3;
+        int newHeight = topRow - bottomRow + 3;
 
-        int[,] result = new int[newWidth, newHeight];
+        //Debug.Log("new Width: " + newWidth + ", new height: " + newHeight);
+
+        int[,] result = new int[newHeight, newWidth];
         set2DArrayDefaults(result, 2);
 
-        for (int x = 0; x < newWidth - 1; x++)
+        for (int x = 0; x < newHeight - 1; x++)
         {
-            for (int y = 0; y < newHeight - 1; y++)
+            for (int y = 0; y < newWidth - 1; y++)
             {
-                result[x, y] = levelToResize[x + leftX - 1, y + bottomY - 1];
+                //Debug.Log("x, y = " + "(" + x + ", " + y + ")");
+                result[x, y] = levelToResize[x + bottomRow - 1, y + leftCol - 1];
                 if (result[x, y] != 2)
                 {
                     openPositions.Add(new Vector2(y, x));
@@ -162,7 +177,7 @@ public class BasicLevelAlgorithm {
             return Int2.left;
     }
 
-    private enum Direction
+    public enum Direction
     {
         None, Left, Right, Up, Down
     }
