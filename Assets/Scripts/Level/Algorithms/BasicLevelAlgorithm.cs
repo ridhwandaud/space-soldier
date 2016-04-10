@@ -7,7 +7,7 @@ public class BasicLevelAlgorithm {
 
     private static float NoiseConstant = .15f;
     private static int BossRoomStampSize = 15;
-    private static int BossLevelCorridorTiles = 120;
+    private static int BossLevelCorridorTiles = 100;
     private static int BossCorridorStampSize = 2;
     private static int NormalStampSize = 1;
 
@@ -48,8 +48,8 @@ public class BasicLevelAlgorithm {
 
             int maxRowOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
             int maxColOffset = isBossLevel ? (numTilesPlaced >= BossLevelCorridorTiles ? BossRoomStampSize : BossCorridorStampSize) : NormalStampSize;
-            int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Right ? -1 : 1;
-            int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Up ? -1 : 1;
+            int rowIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Down ? -1 : 1;
+            int colIncrement = isBossLevel && numTilesPlaced >= BossLevelCorridorTiles && directionBias == Direction.Left ? -1 : 1;
 
             if (isBossLevel && numTilesPlaced >= BossLevelCorridorTiles)
             {
@@ -85,6 +85,12 @@ public class BasicLevelAlgorithm {
         bossSpawn = new Vector3((bossSpawnGridPos.y - bottomY + 1) * GameSettings.TileSize, (bossSpawnGridPos.x - leftX + 1) * GameSettings.TileSize, 0);
 
         return cropLevel(level, leftX, rightX, topY, bottomY, openPositions);
+    }
+
+    private List<Vector2> getBlockedTiles(Direction dir, int[,] level)
+    {
+
+        return null;
     }
 
     private int getFloorTile(float x, float y, int width, int height)
@@ -151,9 +157,9 @@ public class BasicLevelAlgorithm {
         else if (random < directionWeights[0] + directionWeights[1])
             return Int2.down;
         else if (random < directionWeights[0] + directionWeights[1] + directionWeights[2])
-            return Int2.left;
-        else
             return Int2.right;
+        else
+            return Int2.left;
     }
 
     private enum Direction
