@@ -15,9 +15,9 @@ public class PlantBossAttackState : State<PlantBossAI>
 
     public override void Execute (PlantBossAI enemy)
     {
-        if (!enemy.firing)
+        if (!enemy.Firing)
         {
-            enemy.firing = true;
+            enemy.Firing = true;
             enemy.StartCoroutine(enemy.FireVolley());
         }
     }

@@ -78,11 +78,17 @@ public class BasicLevelAlgorithm {
 
             bool creatingBossCorridor = isBossLevel && numTilesPlaced < BossLevelCorridorTiles;
 
+            if (isBossLevel && !creatingBossCorridor && directionBias == Direction.Right) { }
+
             current += getRandomDirection(new int[] {
-                creatingBossCorridor && directionBias == Direction.Right ? 75 : 25,
-                creatingBossCorridor && directionBias == Direction.Left ? 75 : 25,
-                creatingBossCorridor && directionBias == Direction.Up ? 75 : 25,
-                creatingBossCorridor && directionBias == Direction.Down ? 75 : 25
+                isBossLevel ? (directionBias == Direction.Right && creatingBossCorridor ? 75
+                    : (!creatingBossCorridor && directionBias == Direction.Left ? 0 : 25)) : 25,
+                isBossLevel ? (directionBias == Direction.Left && creatingBossCorridor ? 75
+                    : (!creatingBossCorridor && directionBias == Direction.Right ? 0 : 25)) : 25,
+                isBossLevel ? (directionBias == Direction.Up && creatingBossCorridor ? 75
+                    : (!creatingBossCorridor && directionBias == Direction.Down ? 0 : 25)) : 25,
+                isBossLevel ? (directionBias == Direction.Down && creatingBossCorridor ? 75
+                    : (!creatingBossCorridor && directionBias == Direction.Down ? 0 : 25)) : 25
             });
         }
 

@@ -7,18 +7,30 @@ public class BossLevelWallBuilder : MonoBehaviour {
 
     private static float SecondsBetweenPlacements = .3f;
     private static int BackupSteps = 3;
+    private static int TriggerDistanceSquared = 40;
+    private static float CameraEventPauseSeconds = 1;
 
     private List<Int2> DoorPositions { get; set; }
+    private Transform BossTransform;
+    private bool EventTriggered = false;
 
     public IEnumerator BuildWall()
     {
-        // Disable inputs
-        foreach(Int2 position in DoorPositions) {
-            Tile.SetTile(position, new TileInfo());
+        yield return new WaitForSeconds(CameraEventPauseSeconds);
+
+        foreach (Int2 pos in DoorPositions)
+        {
+            Tile.SetTile(new Int2(pos.y, pos.x), 0, 2, 3, true);
 
             yield return new WaitForSeconds(SecondsBetweenPlacements);
         }
-        // Re-enable inputs
+
+        yield return new WaitForSeconds(CameraEventPauseSeconds);
+
+        // Make this generic for all bosses.
+        BossTransform.GetComponent<PlantBossAI>().Awakened = true;
+
+        Camera.main.GetComponent<CameraControl>().UnloadCameraEvent();
     }
 
     public static void Initialize (Int2 startingPoint, int[,] world, BasicLevelAlgorithm.Direction dir)
@@ -63,9 +75,18 @@ public class BossLevelWallBuilder : MonoBehaviour {
 
     void Start()
     {
-        foreach(Int2 pos in DoorPositions)
+        BossTransform = (GameObject.FindGameObjectWithTag("Boss") as GameObject).transform;
+    }
+
+    void Update ()
+    {
+        if (!EventTriggered && (BossTransform.position - Player.PlayerTransform.position).sqrMagnitude < TriggerDistanceSquared)
         {
-            Tile.SetTile(new Int2(pos.y, pos.x), 0, 2, 3, false);
+            EventTriggered = true;
+            CameraControl.CameraFunction func = () => StartCoroutine(BuildWall());
+            Int2 centerWallTile = DoorPositions[DoorPositions.Count / 2];
+            Camera.main.GetComponent<CameraControl>().LoadCameraEvent(func, new Vector2(centerWallTile.y * GameSettings.TileSize,
+                centerWallTile.x * GameSettings.TileSize));
         }
     }
 }

@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 public class PlantBossAI : MonoBehaviour {
 
-    public FiniteStateMachine<PlantBossAI> fsm;
-    public bool firing = false;
-    public List<Seed> seeds = new List<Seed>();
+    public FiniteStateMachine<PlantBossAI> Fsm;
+    public bool Firing = false;
+    public List<Seed> Seeds = new List<Seed>();
     public float initialSeedSpeed;
+    public bool Awakened = false;
 
     private List<Vector2> BulletOffsets = new List<Vector2>() {
         new Vector2(1f, 0),
@@ -39,18 +40,18 @@ public class PlantBossAI : MonoBehaviour {
         seedPrefab = Resources.Load("Seed") as GameObject;
         rb2d = GetComponent<Rigidbody2D>();
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
-        fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossSeedState.Instance);
+        Fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossSleepState.Instance);
 
         for (int x = 0; x < seedCount; x++)
         {
             GameObject seed = Instantiate(seedPrefab, transform.position, Quaternion.identity) as GameObject;
             seed.SetActive(false);
-            seeds.Add(seed.GetComponent<Seed>());
+            Seeds.Add(seed.GetComponent<Seed>());
         }
 	}
 	
 	void Update () {
-        fsm.Update();
+        Fsm.Update();
 	}
 
     public IEnumerator FireVolley()
@@ -90,8 +91,8 @@ public class PlantBossAI : MonoBehaviour {
 
     void EndVolley()
     {
-        firing = false;
-        fsm.ChangeState(PlantBossSeedState.Instance);
+        Firing = false;
+        Fsm.ChangeState(PlantBossSeedState.Instance);
         StopCoroutine(FireVolley());
     }
 

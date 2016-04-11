@@ -15,14 +15,14 @@ public class PlantBossSeedState : State<PlantBossAI> {
     public override void Execute (PlantBossAI enemy)
     {
         float angle = Random.Range(0, 360);
-        for (int i = 0; i < enemy.seeds.Count; i++)
+        for (int i = 0; i < enemy.Seeds.Count; i++)
         {
             angle += Random.Range(40, 100);
-            enemy.seeds[i].Launch(enemy.transform.position, VectorUtil.RotateVector(Vector2.right, angle * Mathf.Deg2Rad),
+            enemy.Seeds[i].Launch(enemy.transform.position, VectorUtil.RotateVector(Vector2.right, angle * Mathf.Deg2Rad),
                 enemy.initialSeedSpeed);
             GameState.NumEnemiesRemaining++;
         }
 
-        enemy.fsm.ChangeState(PlantBossAttackState.Instance);
+        enemy.Fsm.ChangeState(PlantBossAttackState.Instance);
     }
 }

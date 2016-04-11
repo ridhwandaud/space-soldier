@@ -39,11 +39,11 @@ public class BasicPlayerProjectile : MonoBehaviour
 
     protected bool isEnemy(Collider2D other)
     {
-        return other.tag == "Enemy";
+        return other.tag == "Enemy" || other.tag == "Boss";
     }
 
     protected bool isObstacle(Collider2D other)
     {
-        return other.tag == "Enemy" || other.tag == "Wall" || other.tag == "Obstacle";
+        return other.tag == "Enemy" || other.tag == "Wall" || other.tag == "Obstacle" || other.tag == "Boss";
     }
 }
