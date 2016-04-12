@@ -18,6 +18,11 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
+        if (GameState.Paused || GameState.InputLocked)
+        {
+            return;
+        }
+
         float inputX = Input.GetAxisRaw("Horizontal");
         float inputY = Input.GetAxisRaw("Vertical");
         float halfCollisionDistance = collisionDistance / 2;

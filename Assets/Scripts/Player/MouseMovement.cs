@@ -10,7 +10,7 @@ public class MouseMovement : MonoBehaviour {
     }
 
 	void Update () {
-        if (GameState.Paused)
+        if (GameState.Paused || GameState.InputLocked)
         {
             return;
         }

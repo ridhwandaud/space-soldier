@@ -7,8 +7,13 @@ public class BossLevelWallBuilder : MonoBehaviour {
 
     private static float SecondsBetweenPlacements = .3f;
     private static int BackupSteps = 3;
-    private static int TriggerDistanceSquared = 40;
+    private static int TriggerDistanceSquared = 60;
     private static float CameraEventPauseSeconds = 1;
+    private static float StartWaitTime = .2f;
+    private static float EndWaitTime = 1;
+    private static float DampTime = .2f;
+    private static float FocusHeadWindow = .6f;
+    private static float FocusTailWindow = .5f;
 
     private List<Int2> DoorPositions { get; set; }
     private Transform BossTransform;
@@ -16,19 +21,16 @@ public class BossLevelWallBuilder : MonoBehaviour {
 
     public IEnumerator BuildWall()
     {
-        yield return new WaitForSeconds(CameraEventPauseSeconds);
-
-        foreach (Int2 pos in DoorPositions)
+        for (int x = 0; x < DoorPositions.Count; x++)
         {
+            Int2 pos = DoorPositions[x];
             Tile.SetTile(new Int2(pos.y, pos.x), 0, 2, 3, true);
 
-            yield return new WaitForSeconds(SecondsBetweenPlacements);
+            if (x < DoorPositions.Count - 1)
+            {
+                yield return new WaitForSeconds(SecondsBetweenPlacements);
+            }
         }
-
-        yield return new WaitForSeconds(CameraEventPauseSeconds);
-
-        // Make this generic for all bosses.
-        BossTransform.GetComponent<PlantBossAI>().Awakened = true;
 
         Camera.main.GetComponent<CameraControl>().UnloadCameraEvent();
     }
@@ -83,10 +85,17 @@ public class BossLevelWallBuilder : MonoBehaviour {
         if (!EventTriggered && (BossTransform.position - Player.PlayerTransform.position).sqrMagnitude < TriggerDistanceSquared)
         {
             EventTriggered = true;
-            CameraControl.CameraFunction func = () => StartCoroutine(BuildWall());
             Int2 centerWallTile = DoorPositions[DoorPositions.Count / 2];
-            Camera.main.GetComponent<CameraControl>().LoadCameraEvent(func, new Vector2(centerWallTile.y * GameSettings.TileSize,
-                centerWallTile.x * GameSettings.TileSize));
+            Camera.main.GetComponent<CameraControl>().LoadCameraEvent(
+                () => StartCoroutine(BuildWall()), 
+                () => BossTransform.GetComponent<PlantBossAI>().Awakened = true,
+                StartWaitTime,
+                EndWaitTime,
+                new Vector2(centerWallTile.y * GameSettings.TileSize,
+                    centerWallTile.x * GameSettings.TileSize),
+                DampTime,
+                FocusHeadWindow,
+                FocusTailWindow);
         }
     }
 }

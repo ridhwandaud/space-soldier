@@ -10,6 +10,11 @@ public class MenuInitializer : MonoBehaviour {
     private static bool MenuLocked = false;
 
 	void Update () {
+        if (GameState.InputLocked)
+        {
+            return;
+        }
+
 	    if (Input.GetButtonDown("SkillTree") && !MenuLocked)
         {
             if (!GameState.Paused)

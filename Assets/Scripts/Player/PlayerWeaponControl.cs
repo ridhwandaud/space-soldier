@@ -51,7 +51,7 @@ public class PlayerWeaponControl : MonoBehaviour {
     }
 	
 	void Update () {
-        if (GameState.Paused)
+        if (GameState.Paused || GameState.InputLocked)
         {
             return;
         }

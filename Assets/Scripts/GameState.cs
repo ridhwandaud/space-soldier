@@ -3,6 +3,7 @@
 public class GameState : MonoBehaviour {
     public static int NumEnemiesRemaining = 0;
     public static bool Paused = false;
+    public static bool InputLocked = false;
     public static bool TutorialMode = false;
     public static bool WallCollidersInitialized = false;
     public static bool IsBossFight = false;
@@ -33,6 +34,18 @@ public class GameState : MonoBehaviour {
     {
         Paused = false;
         Time.timeScale = 1;
+    }
 
+    public static void LockInputs()
+    {
+        InputLocked = true;
+        Player.PlayerTransform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        Player.PlayerTransform.GetComponent<Animator>().enabled = false;
+    }
+
+    public static void UnlockInputs()
+    {
+        Player.PlayerTransform.GetComponent<Animator>().enabled = true;
+        InputLocked = false;
     }
 }
