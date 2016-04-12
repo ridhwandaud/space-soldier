@@ -10,7 +10,7 @@ public class PlantBossAI : MonoBehaviour {
     public float initialSeedSpeed;
     public bool Awakened = false;
 
-    private List<Vector2> BulletOffsets = new List<Vector2>() {
+    private List<Vector2> SeedOffsets = new List<Vector2>() {
         new Vector2(1f, 0),
         new Vector2(0, 1f),
         new Vector2(-1f, 0),
@@ -18,13 +18,18 @@ public class PlantBossAI : MonoBehaviour {
     [SerializeField]
     private float bulletDistanceFromCenter;
     [SerializeField]
-    private float degreesBetweenShots;
+    private float degreesBetweenSpores;
+    // Make sure degreesBetweenMissiles is a factor of 360
+    [SerializeField]
+    private float degreesBetweenMissiles;
     [SerializeField]
     private float timeBetweenVolleys;
     [SerializeField]
     private int numShotsPerVolley;
     [SerializeField]
-    private float secondsBetweenShots;
+    private float secondsBetweenSporeShots;
+    [SerializeField]
+    private float secondsBetweenCircleAttacks;
     [SerializeField]
     private float projectileSpeed;
     [SerializeField]
@@ -54,13 +59,13 @@ public class PlantBossAI : MonoBehaviour {
         Fsm.Update();
 	}
 
-    public IEnumerator FireVolley()
+    public IEnumerator FireSporeVolley()
     {
         yield return new WaitForSeconds(timeBetweenVolleys);
 
         if (GameState.NumEnemiesRemaining == 0)
         {
-            EndVolley();
+            EndSporeVolley();
             yield break;
         }
 
@@ -69,33 +74,46 @@ public class PlantBossAI : MonoBehaviour {
         while (numShotsFired < numShotsPerVolley)
         {
             // fire shot
-            for (int i = 0; i < BulletOffsets.Count; i++)
+            for (int i = 0; i < SeedOffsets.Count; i++)
             {
-                Vector2 currOffset = BulletOffsets[i];
-                float rotationRadians = rotationCoefficient * Mathf.PI * degreesBetweenShots / 180;
+                Vector2 currOffset = SeedOffsets[i];
+                float rotationRadians = rotationCoefficient * Mathf.PI * degreesBetweenSpores / 180;
 
                 // This is a bit of overkill if I decide to stick with a single origin point.
                 float newX = bulletDistanceFromCenter * Mathf.Cos(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
                 float newY = bulletDistanceFromCenter * Mathf.Sin(Mathf.Atan2(currOffset.y, currOffset.x) + rotationRadians);
-                BulletOffsets[i] = new Vector2(newX, newY);
-                FireShot(transform.position, new Vector2(transform.position.x + BulletOffsets[i].x, transform.position.y + BulletOffsets[i].y));
+                SeedOffsets[i] = new Vector2(newX, newY);
+                FireShot(transform.position, new Vector2(transform.position.x + SeedOffsets[i].x, transform.position.y + SeedOffsets[i].y));
             }
 
             numShotsFired++;
-            yield return new WaitForSeconds(secondsBetweenShots);
+            yield return new WaitForSeconds(secondsBetweenCircleAttacks);
         }
 
 
-        StartCoroutine(FireVolley());
+        StartCoroutine(FireSporeVolley());
     }
 
-    void EndVolley()
+    void EndSporeVolley()
     {
         Firing = false;
         Fsm.ChangeState(PlantBossSeedState.Instance);
-        StopCoroutine(FireVolley());
+        StopCoroutine(FireSporeVolley());
     }
 
+    public IEnumerator CircleAttack()
+    {
+        float initialOffset = Random.Range(0, 360);
+        for (float x = 0; x < 360; x += degreesBetweenMissiles)
+        {
+            float rotationRadians = Mathf.PI * x / 180;
+            Vector2 offset = bulletDistanceFromCenter * new Vector2(Mathf.Cos(rotationRadians), Mathf.Sin(rotationRadians));
+            FireShot((Vector2)transform.position + offset, (Vector2)transform.position + 2 * offset);
+        }
+        yield return new WaitForSeconds(timeBetweenVolleys);
+
+        StartCoroutine(CircleAttack());
+    }
 
     // Refactor forrealsies.
     void FireShot(Vector2 shotOrigin, Vector2 target)

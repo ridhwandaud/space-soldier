@@ -23,6 +23,6 @@ public class PlantBossSeedState : State<PlantBossAI> {
             GameState.NumEnemiesRemaining++;
         }
 
-        enemy.Fsm.ChangeState(PlantBossAttackState.Instance);
+        enemy.Fsm.ChangeState(PlantBossSporeState.Instance);
     }
 }

@@ -17,8 +17,8 @@ public class PlantBossAttackState : State<PlantBossAI>
     {
         if (!enemy.Firing)
         {
-            enemy.Firing = true;
-            enemy.StartCoroutine(enemy.FireVolley());
+            //enemy.Firing = true;
+            //enemy.StartCoroutine(enemy.FireSporeVolley());
         }
     }
 }
