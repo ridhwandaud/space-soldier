@@ -31,6 +31,10 @@ public class PlantBossAI : MonoBehaviour {
     [SerializeField]
     private float secondsBetweenCircleAttacks;
     [SerializeField]
+    private float circleAttackPaddingTime;
+    [SerializeField]
+    private float numCircleAttacksPerWave;
+    [SerializeField]
     private float projectileSpeed;
     [SerializeField]
     private string projectilePoolName;
@@ -87,9 +91,8 @@ public class PlantBossAI : MonoBehaviour {
             }
 
             numShotsFired++;
-            yield return new WaitForSeconds(secondsBetweenCircleAttacks);
+            yield return new WaitForSeconds(secondsBetweenSporeShots);
         }
-
 
         StartCoroutine(FireSporeVolley());
     }
@@ -97,22 +100,36 @@ public class PlantBossAI : MonoBehaviour {
     void EndSporeVolley()
     {
         Firing = false;
-        Fsm.ChangeState(PlantBossSeedState.Instance);
+        Fsm.ChangeState(PlantBossAttackState.Instance);
         StopCoroutine(FireSporeVolley());
     }
 
     public IEnumerator CircleAttack()
     {
-        float initialOffset = Random.Range(0, 360);
-        for (float x = 0; x < 360; x += degreesBetweenMissiles)
-        {
-            float rotationRadians = Mathf.PI * x / 180;
-            Vector2 offset = bulletDistanceFromCenter * new Vector2(Mathf.Cos(rotationRadians), Mathf.Sin(rotationRadians));
-            FireShot((Vector2)transform.position + offset, (Vector2)transform.position + 2 * offset);
-        }
-        yield return new WaitForSeconds(timeBetweenVolleys);
+        yield return new WaitForSeconds(circleAttackPaddingTime);
 
-        StartCoroutine(CircleAttack());
+        for (int i = 0; i < numCircleAttacksPerWave; i++)
+        {
+            float initialOffset = Random.Range(0, 360);
+            for (float x = 0; x < 360; x += degreesBetweenMissiles)
+            {
+                float rotationRadians = Mathf.PI * (x + initialOffset) / 180;
+                Vector2 offset = bulletDistanceFromCenter * new Vector2(Mathf.Cos(rotationRadians), Mathf.Sin(rotationRadians));
+                FireShot((Vector2)transform.position + offset, (Vector2)transform.position + 2 * offset);
+            }
+            yield return new WaitForSeconds(secondsBetweenCircleAttacks);
+        }
+
+        yield return new WaitForSeconds(circleAttackPaddingTime);
+
+        EndCircleAttack();
+    }
+
+    void EndCircleAttack()
+    {
+        Firing = false;
+        Fsm.ChangeState(PlantBossSeedState.Instance);
+        StopCoroutine(CircleAttack());
     }
 
     // Refactor forrealsies.
