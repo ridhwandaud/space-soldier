@@ -35,6 +35,8 @@ public class PlantBossAI : MonoBehaviour {
     [SerializeField]
     private float numCircleAttacksPerWave;
     [SerializeField]
+    private float numCircleAttackWaves;
+    [SerializeField]
     private float projectileSpeed;
     [SerializeField]
     private string projectilePoolName;
@@ -44,12 +46,15 @@ public class PlantBossAI : MonoBehaviour {
     private StackPool projectilePool;
     private Rigidbody2D rb2d;
     private GameObject seedPrefab;
+    private EnemyHealth enemyHealth;
 
 	void Awake () {
         seedPrefab = Resources.Load("Seed") as GameObject;
         rb2d = GetComponent<Rigidbody2D>();
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
         Fsm = new FiniteStateMachine<PlantBossAI>(this, PlantBossSleepState.Instance);
+        enemyHealth = GetComponent<EnemyHealth>();
+        enemyHealth.guarded = true;
 
         for (int x = 0; x < seedCount; x++)
         {
@@ -101,32 +106,37 @@ public class PlantBossAI : MonoBehaviour {
     {
         Firing = false;
         Fsm.ChangeState(PlantBossAttackState.Instance);
+        enemyHealth.guarded = false;
         StopCoroutine(FireSporeVolley());
     }
 
     public IEnumerator CircleAttack()
     {
-        yield return new WaitForSeconds(circleAttackPaddingTime);
-
-        for (int i = 0; i < numCircleAttacksPerWave; i++)
+        for (int num = 0; num < numCircleAttackWaves; num++)
         {
-            float initialOffset = Random.Range(0, 360);
-            for (float x = 0; x < 360; x += degreesBetweenMissiles)
-            {
-                float rotationRadians = Mathf.PI * (x + initialOffset) / 180;
-                Vector2 offset = bulletDistanceFromCenter * new Vector2(Mathf.Cos(rotationRadians), Mathf.Sin(rotationRadians));
-                FireShot((Vector2)transform.position + offset, (Vector2)transform.position + 2 * offset);
-            }
-            yield return new WaitForSeconds(secondsBetweenCircleAttacks);
-        }
+            yield return new WaitForSeconds(circleAttackPaddingTime);
 
-        yield return new WaitForSeconds(circleAttackPaddingTime);
+            for (int i = 0; i < numCircleAttacksPerWave; i++)
+            {
+                float initialOffset = Random.Range(0, 360);
+                for (float x = 0; x < 360; x += degreesBetweenMissiles)
+                {
+                    float rotationRadians = Mathf.PI * (x + initialOffset) / 180;
+                    Vector2 offset = bulletDistanceFromCenter * new Vector2(Mathf.Cos(rotationRadians), Mathf.Sin(rotationRadians));
+                    FireShot((Vector2)transform.position + offset, (Vector2)transform.position + 2 * offset);
+                }
+                yield return new WaitForSeconds(secondsBetweenCircleAttacks);
+            }
+
+            yield return new WaitForSeconds(circleAttackPaddingTime);
+        }
 
         EndCircleAttack();
     }
 
     void EndCircleAttack()
     {
+        enemyHealth.guarded = true;
         Firing = false;
         Fsm.ChangeState(PlantBossSeedState.Instance);
         StopCoroutine(CircleAttack());
