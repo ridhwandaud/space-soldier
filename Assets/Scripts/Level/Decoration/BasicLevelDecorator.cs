@@ -7,6 +7,7 @@ public class BasicLevelDecorator {
 
     // TODO: parameterize
     private static int Ground = 0, Flowers = 1;
+    public static int BaseLayer = 0, CliffLayer = 1;
 
 	public void CreateTilemap(int[,] level, Dictionary<int, int> barrierTileDictionary)
     {
@@ -21,22 +22,20 @@ public class BasicLevelDecorator {
                 // In internal grid array, first dimension is row and second is col. When placing objects in game, first dimension
                 // is x (col) and second is y (row). So they are flipped.
                 Int2 tileLocation = new Int2(col, row);
-                int tile = 0;
-                bool isCollider = false;
 
                 if (index == 0)
                 {
-                    tile = Ground;
+                    Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Ground, false);
                 } else if (index == 1)
                 {
-                    tile = Flowers;
+                    Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Flowers, false);
                 } else
                 {
-                    tile = CalculateBarrierTile(col, row, level, barrierTileDictionary);
-                    isCollider = true;
-                }
+                    Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Ground, true);
 
-                Tile.SetTile(tileLocation, 0, TilesetIndex, tile, isCollider);
+                    int cliffTile = CalculateBarrierTile(col, row, level, barrierTileDictionary);
+                    Tile.SetTile(tileLocation, CliffLayer, TilesetIndex, cliffTile, true);
+                }
             }
         }
     }

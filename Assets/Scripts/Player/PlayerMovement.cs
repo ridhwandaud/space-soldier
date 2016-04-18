@@ -6,9 +6,9 @@ public class PlayerMovement : MonoBehaviour {
     private BoxCollider2D boxCollider;
     private Animator animator;
 
-    public float speed = 8;
+    public float speed;
     public float collisionDistance;
-    public int wallSpriteTileLayer = 1;
+    public int wallSpriteTileLayer;
 
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
@@ -34,36 +34,36 @@ public class PlayerMovement : MonoBehaviour {
 
         Vector2 newVelocity = new Vector2(inputX, inputY).normalized * speed;
 
-        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y + collisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y + collisionDistance), wallSpriteTileLayer)
+        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.up, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputY > 0)
         {
             newVelocity.y = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y - collisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y - collisionDistance), wallSpriteTileLayer)
+        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.down, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputY < 0)
         {
             newVelocity.y = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y - halfCollisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y + halfCollisionDistance), wallSpriteTileLayer)
+        if ((Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y - halfCollisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y + halfCollisionDistance), BasicLevelDecorator.CliffLayer)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.right, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputX > 0)
         {
             newVelocity.x = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y - halfCollisionDistance), wallSpriteTileLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y + halfCollisionDistance), wallSpriteTileLayer)
+        if ((Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y - halfCollisionDistance), BasicLevelDecorator.CliffLayer)
+            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y + halfCollisionDistance), BasicLevelDecorator.CliffLayer)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.left, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputX < 0)
