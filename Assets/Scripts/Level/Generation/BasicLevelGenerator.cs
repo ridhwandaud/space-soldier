@@ -173,61 +173,61 @@ public class BasicLevelGenerator : ILevelGenerator
 
     private static Dictionary<int, int> barrierTileDictionary = new Dictionary<int, int>
     {
-        {2, 0}, // SingleElevated
-        {1012, 1}, // LowerLeftElevated
-        {1112, 2}, // LowerElevated
-        {1102, 3}, // LowerRightElevated
-        {12, 4}, // LeftThinElevated
-        {112, 5}, // HorizontalThinElevated
-        {102, 6}, // RightThinElevated
-        {1000, 8}, // SingleWall
-        {1010, 9}, // MiddleWall
-        {1110, 10}, // MiddleWall
-        {1100, 11}, // MiddleWall
-        {1, 12}, // TopThinElevated
-        {11, 13}, // TopLeftElevated
-        {1101, 14}, // RightEdgeElevated
-        {1011, 16}, // LeftEdgeElevated
-        {1111, 17}, // Elevated
-        {1001, 20}, // VerticalThinElevated
-        {1002, 21}, // BottomThinElevated
-        {111, 22}, // TopEdgeElevated
-        {101, 27}, // TopRightElevated
-        {1212, 1}, // LowerLeftElevated
-        {1122, 3}, // LowerRightElevated
-        {1222, 21}, // BottomThinElevated
-        {1221, 20}, // VerticalThinElevated
-        {1211, 16}, // LeftEdgeElevated
-        {1121, 14}, // RightEdgeElevated
-        {1020, 9}, // LeftWall
-        {1021, 20}, // VerticalThinElevated
-        {1022, 21}, // BottomThinElevated
-        {1200, 11}, // RightWall
-        {1201, 20}, // VerticalThinElevated
-        {1202, 21}, // BottomThinElevated
-        {1120, 10}, // MiddleWall
-        {1210, 10}, // MiddleWall
-        {121, 27}, // TopRightElevated
-        {211, 13}, // TopLeftElevated
-        {221, 12}, // TopThinElevated
-        {222, 0}, // SingleElevated
-        {202, 0}, // SingleElevated
-        {212, 4}, // LeftThinElevated
-        {201, 12}, // TopThinElevated
-        {1220, 10}, // MiddleWall
-        {21, 12}, // TopThinElevated
-        {22, 0}, // SingleElevated
-        {122, 6}, // RightThinElevated
+        {2, 26}, // SingleElevated
+        {1012, 31}, // LowerLeftElevated
+        {1112, 0}, // LowerElevated
+        {1102, 34}, // LowerRightElevated
+        {12, 22}, // LeftThinElevated
+        {112, 23}, // HorizontalThinElevated
+        {102, 24}, // RightThinElevated
+        {1000, 33}, // SingleWall
+        {1010, 36}, // LeftWall
+        {1110, 37}, // MiddleWall
+        {1100, 38}, // RightWall
+        {1, 26}, // TopThinElevated
+        {11, 22}, // TopLeftElevated
+        {1101, 32}, // RightEdgeElevated
+        {1011, 31}, // LeftEdgeElevated
+        {1111, 0}, // Elevated
+        {1001, 25}, // VerticalThinElevated - there are now different types for when it joins with stuff (35 vs. 37) - account for this later.
+        {1002, 25}, // BottomThinElevated
+        {111, 23}, // TopEdgeElevated
+        {101, 24}, // TopRightElevated
+        {1212, 51}, // LowerLeftElevatedNextToWall
+        {1122, 50}, // RightEdgeElevatedNextToWall
+        {1222, 25}, // BottomThinElevated
+        {1221, 25}, // VerticalThinElevated
+        {1211, 51}, // LowerLeftElevatedNextToWall
+        {1121, 50}, // RightEdgeElevatedNextToWall
+        {1020, 36}, // LeftWall
+        {1021, 25}, // VerticalThinElevated
+        {1022, 25}, // BottomThinElevated
+        {1200, 38}, // RightWall
+        {1201, 25}, // VerticalThinElevated
+        {1202, 25}, // BottomThinElevated
+        {1120, 37}, // MiddleWall
+        {1210, 37}, // MiddleWall
+        {121, 24}, // TopRightElevated
+        {211, 22}, // TopLeftElevated
+        {221, 25}, // TopThinElevated
+        {222, 26}, // SingleElevated
+        {202, 26}, // SingleElevated
+        {212, 22}, // LeftThinElevated
+        {201, 25}, // TopThinElevated
+        {1220, 37}, // MiddleWall
+        {21, 25}, // TopThinElevated
+        {22, 26}, // SingleElevated
+        {122, 24}, // RightThinElevated
 
         // TODO: These next ones are lone blocks. Make them into rocks or other obstacles.
-        {0, 10},
-        {10, 10},
-        {100, 10},
-        {110, 10},
-        {120, 10},
-        {200, 10},
-        {20, 10},
-        {210, 10},
-        {220, 10}
+        {0, 33},
+        {10, 33},
+        {100, 33},
+        {110, 33},
+        {120, 33},
+        {200, 33},
+        {20, 33},
+        {210, 33},
+        {220, 33}
     };
 }

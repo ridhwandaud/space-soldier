@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using SpriteTile;
 
 public class BasicLevelDecorator {
-    private static int TilesetIndex = 2;
+    private static int TilesetIndex = 3;
 
     // TODO: parameterize
-    private static int Ground = 7, Flowers = 18;
+    private static int Ground = 0, Flowers = 1;
 
 	public void CreateTilemap(int[,] level, Dictionary<int, int> barrierTileDictionary)
     {

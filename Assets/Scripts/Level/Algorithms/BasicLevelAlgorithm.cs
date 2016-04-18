@@ -9,7 +9,7 @@ public class BasicLevelAlgorithm {
     private static int BossRoomStampSize = 15;
     private static int BossLevelCorridorTiles = 100;
     private static int BossCorridorStampSize = 2;
-    private static int NormalStampSize = 1;
+    private static int NormalStampSize = 2;
 
     private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
         Direction.Up, Direction.Down };
