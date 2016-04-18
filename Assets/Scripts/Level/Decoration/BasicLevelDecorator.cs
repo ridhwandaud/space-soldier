@@ -23,16 +23,16 @@ public class BasicLevelDecorator {
                 // is x (col) and second is y (row). So they are flipped.
                 Int2 tileLocation = new Int2(col, row);
 
-                if (index == 0)
+                if (index == 0 || index == 2)
                 {
                     Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Ground, false);
-                } else if (index == 1)
+                } else if (index == 1 || index == 3)
                 {
                     Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Flowers, false);
-                } else
+                }
+                
+                if (index > 1)
                 {
-                    Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Ground, true);
-
                     int cliffTile = CalculateBarrierTile(col, row, level, barrierTileDictionary);
                     Tile.SetTile(tileLocation, CliffLayer, TilesetIndex, cliffTile, true);
                 }

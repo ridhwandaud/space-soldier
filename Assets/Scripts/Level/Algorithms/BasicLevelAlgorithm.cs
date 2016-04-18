@@ -10,6 +10,8 @@ public class BasicLevelAlgorithm {
     private static int BossLevelCorridorTiles = 100;
     private static int BossCorridorStampSize = 2;
     private static int NormalStampSize = 2;
+    private static int LevelPadding = 10;
+    private static int DefaultArrayValue = 2; // Elevated
 
     private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
         Direction.Up, Direction.Down };
@@ -22,7 +24,7 @@ public class BasicLevelAlgorithm {
 
         int[,] level = new int[numTiles * 2, numTiles * 2];
 
-        set2DArrayDefaults(level, 2);
+        set2DArrayDefaults(level);
 
         Int2 current = new Int2(numTiles, numTiles);
         Int2 mostRecentDir = new Int2(0, 0);
@@ -92,8 +94,10 @@ public class BasicLevelAlgorithm {
             });
         }
 
-        playerSpawn = new Vector3((numTiles - leftCol + 1) * GameSettings.TileSize, (numTiles - bottomRow + 1) * GameSettings.TileSize, 0);
-        bossSpawn = new Vector3((bossSpawnGridPos.y - leftCol + 1) * GameSettings.TileSize, (bossSpawnGridPos.x - bottomRow + 1) * GameSettings.TileSize, 0);
+        playerSpawn = new Vector3((numTiles + LevelPadding - leftCol + 1) * GameSettings.TileSize, (numTiles + LevelPadding - bottomRow + 1)
+            * GameSettings.TileSize, 0);
+        bossSpawn = new Vector3((bossSpawnGridPos.y + LevelPadding - leftCol + 1) * GameSettings.TileSize,
+            (bossSpawnGridPos.x + LevelPadding - bottomRow + 1) * GameSettings.TileSize, 0);
         bossRoomWallEntrance.x = bossRoomWallEntrance.x - bottomRow + 1;
         bossRoomWallEntrance.y = bossRoomWallEntrance.y - leftCol + 1;
         int[,] croppedLevel = cropLevel(level, leftCol, rightCol, topRow, bottomRow, openPositions);
@@ -124,24 +128,38 @@ public class BasicLevelAlgorithm {
         }
     }
 
+    // Elevated tile index contains information on what the underlying floor tile is.
+    private int getElevatedTile(float x, float y, int width, int height)
+    {
+        float noise = Mathf.PerlinNoise(x * NoiseConstant, y * NoiseConstant);
+        if (noise < noiseThreshold)
+        {
+            return 3;
+        }
+        else
+        {
+            return 2;
+        }
+    }
+
     private int[,] cropLevel(int[,] levelToResize, int leftCol, int rightCol, int topRow, int bottomRow, List<Vector2> openPositions)
     {
         // Add an outer wall.
-        int newWidth = rightCol - leftCol + 3;
-        int newHeight = topRow - bottomRow + 3;
-
-        //Debug.Log("new Width: " + newWidth + ", new height: " + newHeight);
+        int newWidth = rightCol - leftCol + LevelPadding * 2;
+        int newHeight = topRow - bottomRow + LevelPadding * 2;
 
         int[,] result = new int[newHeight, newWidth];
-        set2DArrayDefaults(result, 2);
+        set2DArrayDefaults(result);
 
         for (int x = 0; x < newHeight - 1; x++)
         {
             for (int y = 0; y < newWidth - 1; y++)
             {
-                //Debug.Log("x, y = " + "(" + x + ", " + y + ")");
-                result[x, y] = levelToResize[x + bottomRow - 1, y + leftCol - 1];
-                if (result[x, y] != 2)
+                result[x, y] = levelToResize[x - LevelPadding + bottomRow - 1, y - LevelPadding + leftCol - 1];
+                if (x < LevelPadding || y < LevelPadding || result[x, y] == DefaultArrayValue)
+                {
+                    result[x, y] = getElevatedTile(x, y, newWidth, newHeight);
+                } else
                 {
                     openPositions.Add(new Vector2(y, x));
                     result[x, y] = getFloorTile(x, y, newWidth, newHeight);
@@ -152,13 +170,13 @@ public class BasicLevelAlgorithm {
         return result;
     }
 
-    private void set2DArrayDefaults(int[,] arr, int defaultValue)
+    private void set2DArrayDefaults(int[,] arr)
     {
         for (int x = 0; x < arr.GetLength(0); x++)
         {
             for (int y = 0; y < arr.GetLength(1); y++)
             {
-                arr[x, y] = defaultValue;
+                arr[x, y] = DefaultArrayValue;
             }
         }
     }
