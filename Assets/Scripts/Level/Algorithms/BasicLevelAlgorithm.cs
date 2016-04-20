@@ -5,11 +5,11 @@ using SpriteTile;
 public class BasicLevelAlgorithm {
     public float noiseThreshold = .5f;
 
-    private static float NoiseConstant = .15f;
+    private static float NoiseConstant = .2f;
     private static int BossRoomStampSize = 15;
     private static int BossLevelCorridorTiles = 100;
     private static int BossCorridorStampSize = 2;
-    private static int NormalStampSize = 2;
+    private static int NormalStampSize = 1;
     private static int LevelPadding = 10;
     private static int DefaultArrayValue = 2; // Elevated
 
@@ -98,8 +98,8 @@ public class BasicLevelAlgorithm {
             * GameSettings.TileSize, 0);
         bossSpawn = new Vector3((bossSpawnGridPos.y + LevelPadding - leftCol + 1) * GameSettings.TileSize,
             (bossSpawnGridPos.x + LevelPadding - bottomRow + 1) * GameSettings.TileSize, 0);
-        bossRoomWallEntrance.x = bossRoomWallEntrance.x - bottomRow + 1;
-        bossRoomWallEntrance.y = bossRoomWallEntrance.y - leftCol + 1;
+        bossRoomWallEntrance.x = bossRoomWallEntrance.x + LevelPadding - bottomRow + 1;
+        bossRoomWallEntrance.y = bossRoomWallEntrance.y + LevelPadding - leftCol + 1;
         int[,] croppedLevel = cropLevel(level, leftCol, rightCol, topRow, bottomRow, openPositions);
 
         if (isBossLevel)

@@ -66,7 +66,7 @@ public class BossLevelWallBuilder : MonoBehaviour {
         {
             Int2 pos = verticalWall ? new Int2(startingPoint.x + offset, startingPoint.y)
                 : new Int2(startingPoint.x, startingPoint.y + offset);
-            if (world[pos.x, pos.y] != 2)
+            if (world[pos.x, pos.y] < 2)
             {
                 instance.DoorPositions.Add(pos);
             }
