@@ -12,6 +12,7 @@ public class BasicLevelAlgorithm {
     private static int NormalStampSize = 1;
     private static int LevelPadding = 10;
     private static int DefaultArrayValue = 2; // Elevated
+    private Vector2 NoiseOffset;
 
     private static List<Direction> CorridorDirections = new List<Direction> { Direction.Left, Direction.Right,
         Direction.Up, Direction.Down };
@@ -19,6 +20,7 @@ public class BasicLevelAlgorithm {
     // When dealing with tiles, x is always row and y is always column. Think of it as dimension 0 and dimension 1 instead of x and y.
     public int[,] ExecuteAlgorithm(int numTiles, out List<Vector2> openPositions, out Vector3 playerSpawn, bool isBossLevel, out Vector3 bossSpawn)
     {
+        NoiseOffset = new Vector2(Random.Range(0, 100), Random.Range(0, 100));
         Vector3 bossSpawnGridPos = Vector3.zero;
         openPositions = new List<Vector2>();
 
@@ -117,7 +119,7 @@ public class BasicLevelAlgorithm {
 
     private int getFloorTile(float x, float y, int width, int height)
     {
-        float noise = Mathf.PerlinNoise(x * NoiseConstant, y * NoiseConstant);
+        float noise = Mathf.PerlinNoise(x * NoiseConstant + NoiseOffset.x, y * NoiseConstant + NoiseOffset.y);
         if (noise < noiseThreshold)
         {
             return 1;
@@ -131,7 +133,7 @@ public class BasicLevelAlgorithm {
     // Elevated tile index contains information on what the underlying floor tile is.
     private int getElevatedTile(float x, float y, int width, int height)
     {
-        float noise = Mathf.PerlinNoise(x * NoiseConstant, y * NoiseConstant);
+        float noise = Mathf.PerlinNoise(x * NoiseConstant + NoiseOffset.x, y * NoiseConstant + NoiseOffset.y);
         if (noise < noiseThreshold)
         {
             return 3;

@@ -5,8 +5,7 @@ using SpriteTile;
 public class BasicLevelDecorator {
     private static int TilesetIndex = 3;
 
-    // TODO: parameterize
-    private static int Ground = 0, Flowers = 1;
+    private static int LightGrass = 0;
     public static int BaseLayer = 0, CliffLayer = 1;
 
 	public void CreateTilemap(int[,] level)
@@ -23,10 +22,7 @@ public class BasicLevelDecorator {
                 // is x (col) and second is y (row). So they are flipped.
                 Int2 tileLocation = new Int2(col, row);
 
-                if (index == 0 || index == 2)
-                {
-                    Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, Ground, false);
-                } else if (index == 1 || index == 3)
+                if (index == 1 || index == 3)
                 {
                     Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, CalculateGrassTile(col, row, level, darkGrassDictionary), false);
                 }
@@ -76,15 +72,19 @@ public class BasicLevelDecorator {
         return GetTypeForBarrier(x, y - 1, level) == 1 ? 1 : 2;
     }
 
-    int CalculateGrassTile(int x, int y, int[,] level, Dictionary<int, int> grassDictionary)
+    int CalculateGrassTile(int x, int y, int[,] level, Dictionary<int, GrassObj[]> grassDictionary)
     {
         int top = GetTypeForGrassTile(x, y, 0, 1, level),
             left = GetTypeForGrassTile(x, y, -1, 0, level),
             right = GetTypeForGrassTile(x, y, 1, 0, level),
             bottom = GetTypeForGrassTile(x, y, 0, -1, level);
         int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
-        SetSurroundingGrass(x, y, level);
-        return grassDictionary[lookupIndex];
+        GrassObj grassObject = grassDictionary[lookupIndex][Random.Range(0, grassDictionary[lookupIndex].Length)];
+        if (grassObject.DecorateEdges)
+        {
+            SetSurroundingGrass(x, y, level);
+        }
+        return grassObject.Index;
     }
 
     int GetTypeForGrassTile(int x, int y, int xOffset, int yOffset, int[,] level)
@@ -100,22 +100,22 @@ public class BasicLevelDecorator {
 
     void SetSurroundingGrass(int x, int y, int[,] level)
     {
-        if (x + 1 < level.GetLength(1) && level[y, x + 1] % 2 == 0)
+        if (x + 1 < level.GetLength(1) && !IsDarkGrass(level[y, x + 1]))
         {
             Tile.SetTile(new Int2(x + 1, y), BaseLayer, TilesetIndex, 94, false);
         }
 
-        if (x - 1 > 0 && level[y, x - 1] % 2 == 0)
+        if (x - 1 > 0 && !IsDarkGrass(level[y, x - 1]))
         {
             Tile.SetTile(new Int2(x - 1, y), BaseLayer, TilesetIndex, 93, false);
         }
 
-        if (y + 1 < level.GetLength(0) && level[y + 1, x] % 2 == 0)
+        if (y + 1 < level.GetLength(0) && !IsDarkGrass(level[y + 1, x]))
         {
             Tile.SetTile(new Int2(x, y + 1), BaseLayer, TilesetIndex, 92, false);
         }
 
-        if (y - 1 > 0 && level[y - 1, x] % 2 == 0)
+        if (y - 1 > 0 && !IsDarkGrass(level[y - 1, x]))
         {
             Tile.SetTile(new Int2(x, y - 1), BaseLayer, TilesetIndex, 95, false);
         }
@@ -123,7 +123,12 @@ public class BasicLevelDecorator {
 
     int GrassIndexType(int index)
     {
-        return index % 2 == 0 ? 0 : 1;
+        return IsDarkGrass(index) ? 1 : 0;
+    }
+
+    bool IsDarkGrass(int index)
+    {
+        return index % 2 == 1;
     }
 
     void SetUpMap(int[,] level)
@@ -136,6 +141,14 @@ public class BasicLevelDecorator {
 
         // set collider layer so that walls can be detected by raycasting
         Tile.SetColliderLayer(GameSettings.WallLayerNumber);
+
+        for (int row = 0; row < level.GetLength(0); row++)
+        {
+            for (int col = 0; col < level.GetLength(1); col++)
+            {
+                Tile.SetTile(new Int2(col, row), BaseLayer, TilesetIndex, LightGrass, false);
+            }
+        }
     }
 
     private static Dictionary<int, int> barrierTileDictionary = new Dictionary<int, int>
@@ -198,43 +211,37 @@ public class BasicLevelDecorator {
         {220, 33}
     };
 
-    private static Dictionary<int, int> darkGrassDictionary = new Dictionary<int, int>
+    private static GrassObj DefaultDark = new GrassObj(1, true);
+
+    private static Dictionary<int, GrassObj[]> darkGrassDictionary = new Dictionary<int, GrassObj[]>
     {
-        {0000, 1}, // eventually change to circle
-        {0001, 1}, // was 92
-        {0010, 1}, // was 93
-        {0011, 3}, 
-        {0100, 1}, // was 94
-        {0101, 5},
-        {0110, 1}, // eventually change surrounding blox
-        {0111, 4},
-        {1000, 1}, // was 95
-        {1001, 1}, // eventually change surrounding blox
-        {1010, 15},
-        {1011, 11},
-        {1100, 16},
-        {1101, 10},
-        {1110, 2},
-        {1111, 1},
+        {0000, new GrassObj[] { new GrassObj(1, false) }},
+        {0001, new GrassObj[] { DefaultDark }},
+        {0010, new GrassObj[] { DefaultDark }},
+        {0011, new GrassObj[] { new GrassObj (3, false) }}, 
+        {0100, new GrassObj[] { new GrassObj(1, true) }},
+        {0101, new GrassObj[] { new GrassObj (5, false) }},
+        {0110, new GrassObj[] { DefaultDark }},
+        {0111, new GrassObj[] { new GrassObj (4, false), DefaultDark }},
+        {1000, new GrassObj[] { DefaultDark }},
+        {1001, new GrassObj[] { DefaultDark }},
+        {1010, new GrassObj[] { new GrassObj(15, false) }},
+        {1011, new GrassObj[] { new GrassObj (11, false), DefaultDark }},
+        {1100, new GrassObj[] { new GrassObj(16, false) }},
+        {1101, new GrassObj[] { new GrassObj (10, false), DefaultDark }},
+        {1110, new GrassObj[] { new GrassObj (2, false), DefaultDark }},
+        {1111, new GrassObj[] { new GrassObj(1, false) }},
     };
 
-    private static Dictionary<int, int> lightGrassDictionary = new Dictionary<int, int>
+    struct GrassObj
     {
-        {0000, 0},
-        {0001, 0},
-        {0010, 0},
-        {0011, 0},
-        {0100, 0},
-        {0101, 0},
-        {0110, 0},
-        {0111, 0}, // was 4
-        {1000, 0},
-        {1001, 0}, // eventually change surrounding blox
-        {1010, 0},
-        {1011, 0}, // was 11
-        {1100, 0},
-        {1101, 0}, // was 10
-        {1110, 0}, // was 2
-        {1111, 0}, // eventually change to circle
-    };
+        public int Index;
+        public bool DecorateEdges;
+
+        public GrassObj(int index, bool decorateEdges)
+        {
+            Index = index;
+            DecorateEdges = decorateEdges;
+        }
+    }
 }
