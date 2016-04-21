@@ -6,7 +6,7 @@ public class BasicLevelDecorator {
     private static int TilesetIndex = 3;
 
     private static int LightGrass = 0;
-    public static int BaseLayer = 0, CliffLayer = 1;
+    public static int BaseLayer = 0, CliffLayer = 5;
 
 	public void CreateTilemap(int[,] level)
     {
@@ -84,6 +84,7 @@ public class BasicLevelDecorator {
         {
             SetSurroundingGrass(x, y, level);
         }
+
         return grassObject.Index;
     }
 
@@ -102,22 +103,22 @@ public class BasicLevelDecorator {
     {
         if (x + 1 < level.GetLength(1) && !IsDarkGrass(level[y, x + 1]))
         {
-            Tile.SetTile(new Int2(x + 1, y), BaseLayer, TilesetIndex, 94, false);
+            Tile.SetTile(new Int2(x + 1, y), 1, TilesetIndex, 94, false);
         }
 
         if (x - 1 > 0 && !IsDarkGrass(level[y, x - 1]))
         {
-            Tile.SetTile(new Int2(x - 1, y), BaseLayer, TilesetIndex, 93, false);
+            Tile.SetTile(new Int2(x - 1, y), 2, TilesetIndex, 93, false);
         }
 
         if (y + 1 < level.GetLength(0) && !IsDarkGrass(level[y + 1, x]))
         {
-            Tile.SetTile(new Int2(x, y + 1), BaseLayer, TilesetIndex, 92, false);
+            Tile.SetTile(new Int2(x, y + 1), 3, TilesetIndex, 92, false);
         }
 
         if (y - 1 > 0 && !IsDarkGrass(level[y - 1, x]))
         {
-            Tile.SetTile(new Int2(x, y - 1), BaseLayer, TilesetIndex, 95, false);
+            Tile.SetTile(new Int2(x, y - 1), 4, TilesetIndex, 95, false);
         }
     }
 
@@ -137,6 +138,10 @@ public class BasicLevelDecorator {
 
         // create level
         Tile.NewLevel(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
+        Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
         Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
 
         // set collider layer so that walls can be detected by raycasting
@@ -193,7 +198,7 @@ public class BasicLevelDecorator {
         {222, 26}, // SingleElevated
         {202, 26}, // SingleElevated
         {212, 22}, // LeftThinElevated
-        {201, 25}, // TopThinElevated
+        {201, 26}, // TopThinElevated
         {1220, 37}, // MiddleWall
         {21, 25}, // TopThinElevated
         {22, 26}, // SingleElevated
@@ -211,25 +216,23 @@ public class BasicLevelDecorator {
         {220, 33}
     };
 
-    private static GrassObj DefaultDark = new GrassObj(1, true);
-
     private static Dictionary<int, GrassObj[]> darkGrassDictionary = new Dictionary<int, GrassObj[]>
     {
         {0000, new GrassObj[] { new GrassObj(1, false) }},
-        {0001, new GrassObj[] { DefaultDark }},
-        {0010, new GrassObj[] { DefaultDark }},
+        {0001, new GrassObj[] { new GrassObj(96, false) }},
+        {0010, new GrassObj[] { new GrassObj(97, false) }},
         {0011, new GrassObj[] { new GrassObj (3, false) }}, 
-        {0100, new GrassObj[] { new GrassObj(1, true) }},
+        {0100, new GrassObj[] { new GrassObj(99, false) }},
         {0101, new GrassObj[] { new GrassObj (5, false) }},
-        {0110, new GrassObj[] { DefaultDark }},
-        {0111, new GrassObj[] { new GrassObj (4, false), DefaultDark }},
-        {1000, new GrassObj[] { DefaultDark }},
-        {1001, new GrassObj[] { DefaultDark }},
+        {0110, new GrassObj[] { new GrassObj(1, true) }},
+        {0111, new GrassObj[] { new GrassObj (4, false), new GrassObj(1, true) }},
+        {1000, new GrassObj[] { new GrassObj(98, false) }},
+        {1001, new GrassObj[] { new GrassObj(1, true) }},
         {1010, new GrassObj[] { new GrassObj(15, false) }},
-        {1011, new GrassObj[] { new GrassObj (11, false), DefaultDark }},
+        {1011, new GrassObj[] { new GrassObj (11, false), new GrassObj(1, true) }},
         {1100, new GrassObj[] { new GrassObj(16, false) }},
-        {1101, new GrassObj[] { new GrassObj (10, false), DefaultDark }},
-        {1110, new GrassObj[] { new GrassObj (2, false), DefaultDark }},
+        {1101, new GrassObj[] { new GrassObj (10, false), new GrassObj(1, true) }},
+        {1110, new GrassObj[] { new GrassObj (2, false), new GrassObj(1, true) }},
         {1111, new GrassObj[] { new GrassObj(1, false) }},
     };
 
@@ -244,4 +247,5 @@ public class BasicLevelDecorator {
             DecorateEdges = decorateEdges;
         }
     }
+
 }
