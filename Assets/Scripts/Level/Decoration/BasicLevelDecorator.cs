@@ -11,6 +11,7 @@ public class BasicLevelDecorator {
 	public void CreateTilemap(int[,] level)
     {
         SetUpMap(level);
+        IdentifyIslands(level);
 
         for (int row = 0; row < level.GetLength(0); row++)
         {
@@ -27,11 +28,89 @@ public class BasicLevelDecorator {
                     Tile.SetTile(tileLocation, BaseLayer, TilesetIndex, CalculateGrassTile(col, row, level, darkGrassDictionary), false);
                 }
                 
-                if (index > 1)
+                if (index == 2 || index == 3)
                 {
                     int cliffTile = CalculateBarrierTile(col, row, level);
                     Tile.SetTile(tileLocation, CliffLayer, TilesetIndex, cliffTile, true);
                 }
+            }
+        }
+    }
+
+    void IdentifyIslands(int[,] level)
+    {
+        int[,] tracker = new int[level.GetLength(0), level.GetLength(1)];
+
+        for (int row = 0; row < level.GetLength(0); row++)
+        {
+            for (int col = 0; col < level.GetLength(1); col++)
+            {
+                if ((level[row, col] == 2 || level[row, col] == 3) && tracker[row, col] == 0)
+                {
+                    IdentifyIsland(row, col, level, tracker);
+                }
+            }
+        }
+    }
+
+    void IdentifyIsland(int x, int y, int[,] level, int[,] tracker)
+    {
+        List<Int2> islandMembers = new List<Int2>();
+        bool[,] seenThisIteration = new bool[level.GetLength(0), level.GetLength(1)];
+        bool touchingEdge = false;
+
+        Queue<Int2> queue = new Queue<Int2>();
+        queue.Enqueue(new Int2(x, y));
+        int count = 0;
+        tracker[x, y] = 1;
+        
+
+        while (queue.Count > 0)
+        {
+            Int2 pos = queue.Dequeue();
+            islandMembers.Add(pos);
+            seenThisIteration[pos.x, pos.y] = true;
+
+            if (pos.x - 1 < 0 || pos.x + 1 >= level.GetLength(0) || pos.y - 1 < 0 || pos.y + 1 >= level.GetLength(1))
+            {
+                touchingEdge = true;
+            }
+
+            // Extract out logic for identifying an elevated tile.
+            if (pos.x - 1 > 0 && level[pos.x - 1, pos.y] > 1 && tracker[pos.x - 1, pos.y] == 0)
+            {
+                count++;
+                queue.Enqueue(new Int2(pos.x - 1, pos.y));
+                tracker[pos.x - 1, pos.y] = 1; // have to set this here if you ever want the damn thing to end
+            }
+            if (pos.x + 1 < level.GetLength(0) && level[pos.x + 1, pos.y] > 1 && tracker[pos.x + 1, pos.y] == 0)
+            {
+                count++;
+                queue.Enqueue(new Int2(pos.x + 1, pos.y));
+                tracker[pos.x + 1, pos.y] = 1;
+            }
+            if (pos.y - 1 > 0 && level[pos.x, pos.y - 1] > 1 && tracker[pos.x, pos.y - 1] == 0)
+            {
+                count++;
+                queue.Enqueue(new Int2(pos.x, pos.y - 1));
+                tracker[pos.x, pos.y - 1] = 1;
+            }
+            if (pos.y + 1 < level.GetLength(1) && level[pos.x, pos.y + 1] > 1 && tracker[pos.x, pos.y + 1] == 0)
+            {
+                count++;
+                queue.Enqueue(new Int2(pos.x, pos.y + 1));
+                tracker[pos.x, pos.y + 1] = 1;
+            }
+              
+        }
+
+        if (!touchingEdge && Random.Range(0, 3) < 2)
+        {
+            foreach (Int2 islandSquare in islandMembers)
+            {
+                level[islandSquare.x, islandSquare.y] = 5;
+                int waterIndex = islandSquare.x + 1 < level.GetLength(0) && !seenThisIteration[islandSquare.x + 1, islandSquare.y] ? 53 : 42;
+                Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex, waterIndex, true);
             }
         }
     }
