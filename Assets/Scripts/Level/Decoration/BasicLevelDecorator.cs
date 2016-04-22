@@ -35,6 +35,26 @@ public class BasicLevelDecorator {
                 }
             }
         }
+
+        DecorateShores(level);
+    }
+
+    void DecorateShores(int[,] level)
+    {
+        for (int row = 0; row < level.GetLength(0); row++)
+        {
+            for (int col = 0; col < level.GetLength(1); col++)
+            {
+                if (level[row, col] == 0 || level[row, col] == 1)
+                {
+                    int shoreTile = CalculateShoreTile(col, row, level);
+                    if (shoreTile != -1)
+                    {
+                        Tile.SetTile(new Int2(col, row), CliffLayer, TilesetIndex, shoreTile, false);
+                    }
+                }
+            }
+        }
     }
 
     void IdentifyIslands(int[,] level)
@@ -108,7 +128,7 @@ public class BasicLevelDecorator {
         {
             foreach (Int2 islandSquare in islandMembers)
             {
-                level[islandSquare.x, islandSquare.y] = 5;
+                level[islandSquare.x, islandSquare.y] = 5; // extract
                 int waterIndex = islandSquare.x + 1 < level.GetLength(0) && !seenThisIteration[islandSquare.x + 1, islandSquare.y] ? 53 : 42;
                 Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex, waterIndex, true);
             }
@@ -123,6 +143,56 @@ public class BasicLevelDecorator {
             bottom = GetTypeForNonTopBarrier(x, y - 1, level);
         int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
         return barrierTileDictionary[lookupIndex];
+    }
+
+    int CalculateShoreTile(int x, int y, int[,] level)
+    {
+        int top = GetTypeForTileAboveShore(x, y + 1, level),
+            left = GetTypeForTileAdjacentToShore(x - 1, y, level),
+            right = GetTypeForTileAdjacentToShore(x + 1, y, level),
+            bottom = GetTypeForTileAdjacentToShore(x, y - 1, level);
+        int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
+        if (shoreDictionary.ContainsKey(lookupIndex))
+        {
+            return shoreDictionary[lookupIndex];
+        }
+
+        return -1;
+    }
+
+    int GetTypeForTileAboveShore(int x, int y, int[,] level)
+    {
+        if (y >= level.GetLength(0) || level[y, x] == 5)
+        {
+            return 0;
+        }
+
+        bool leftWater = x + 1 >= level.GetLength(1) || level[y, x + 1] == 5;
+        bool rightWater = x - 1 < 0 || level[y, x - 1] == 5;
+
+        if (!leftWater && !rightWater)
+        {
+            return 1;
+        }
+        if (leftWater && !rightWater)
+        {
+            return 2;
+        }
+        if (!leftWater && rightWater)
+        {
+            return 3;
+        }
+        if (leftWater && rightWater)
+        {
+            return 4;
+        }
+
+        return -1; //you done fucked up
+    }
+
+    int GetTypeForTileAdjacentToShore(int x, int y, int[,] level)
+    {
+        return x < 0 || x >= level.GetLength(1) || y < 0 || y >= level.GetLength(0) || level[y, x] == 5 ? 0 : 1;
     }
 
     int GetTypeForBarrier(int x, int y, int[,] level)
@@ -313,6 +383,41 @@ public class BasicLevelDecorator {
         {1101, new GrassObj[] { new GrassObj (10, false), new GrassObj(1, true) }},
         {1110, new GrassObj[] { new GrassObj (2, false), new GrassObj(1, true) }},
         {1111, new GrassObj[] { new GrassObj(1, false) }},
+    };
+
+    private static Dictionary<int, int> shoreDictionary = new Dictionary<int, int>
+    {
+        {0001, 100},
+        {0010, 43},
+        {0011, 43},
+        {0100, 45},
+        {0101, 45},
+        {0110, 44},
+        {0111, 44},
+        {1000, 102},
+        {2000, 104},
+        {3000, 101},
+        {4000, 103},
+        {1001, 102},
+        {2001, 104},
+        {3001, 101},
+        {4001, 103},
+        {1010, 54},
+        {2010, 54},
+        {3010, 55},
+        {4010, 55},
+        {1011, 54},
+        {2011, 54},
+        {3011, 55},
+        {4011, 55},
+        {1100, 52},
+        {2100, 56},
+        {3100, 52},
+        {4100, 56},
+        {1101, 52},
+        {2101, 56},
+        {3101, 52},
+        {4101, 56}
     };
 
     struct GrassObj

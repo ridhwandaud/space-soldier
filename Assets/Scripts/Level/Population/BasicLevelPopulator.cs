@@ -8,7 +8,7 @@ public class BasicLevelPopulator
     public void spawnEnemies(List<SpawnData> spawnData, List<Vector2> potentialSpawnPositions,
         Vector2 playerSpawn)
     {
-        //return;
+        return;
         // This is no longer semantically correct, since the populator can now lay traps in addition
         // to enemies. Consider renaming, or creating a separate container for traps.
         Transform enemyContainer = GameObject.Find("Enemies").transform;
