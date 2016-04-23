@@ -62,7 +62,7 @@ public class BasicLevelGenerator : ILevelGenerator
             GameObject obj = MonoBehaviour.Instantiate(plantBossPrefab, bossSpawn, Quaternion.identity) as GameObject;
         }
 
-        decorator.CreateTilemap(level);
+        decorator.DecorateWorld(level);
 
         return level;
     }

@@ -122,11 +122,11 @@ public class BasicLevelAlgorithm {
         float noise = Mathf.PerlinNoise(x * NoiseConstant + NoiseOffset.x, y * NoiseConstant + NoiseOffset.y);
         if (noise < noiseThreshold)
         {
-            return 1;
+            return BasicLevelDecorator.BaseDark;
         }
         else
         {
-            return 0;
+            return BasicLevelDecorator.BaseLight;
         }
     }
 
@@ -136,11 +136,11 @@ public class BasicLevelAlgorithm {
         float noise = Mathf.PerlinNoise(x * NoiseConstant + NoiseOffset.x, y * NoiseConstant + NoiseOffset.y);
         if (noise < noiseThreshold)
         {
-            return 3;
+            return BasicLevelDecorator.BaseDarkElevated;
         }
         else
         {
-            return 2;
+            return BasicLevelDecorator.BaseLightElevated;
         }
     }
 
