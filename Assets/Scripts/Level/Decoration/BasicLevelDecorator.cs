@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using SpriteTile;
 
 public class BasicLevelDecorator {
-    private static int TilesetIndex = 3;
-    private static int NumLayers = 6;
+    public static int TilesetIndex = 3;
+    private static int NumLayers = 7;
 
     // SpriteTile layers/sorting layers.
     public static int FloorLayer = 0,
@@ -12,14 +12,18 @@ public class BasicLevelDecorator {
                       AdditionalGrassLayer2 = 2,
                       AdditionalGrassLayer3 = 3,
                       AdditionalGrassLayer4 = 4,
-                      CliffLayer = 5;
+                      ShoreLayer = 5,
+                      CliffLayer = 6;
 
     private static int LightGrass = 0;
     private static int TreeTopLeft = 8, TreeTopRight = 9, TreeBottomLeft = 13, TreeBottomRight = 14;
+    private static int WaterWallLeft = 72, WaterWallCenter = 81, WaterWallRight = 67,
+        WaterWallSingle = 105, WaterVariation = 57;
     private static int NumTilesInTree = 4;
 
-    public static int BaseLight = 0, BaseDark = 1, BaseLightElevated = 2, BaseDarkElevated = 3, BaseWater = 5, BaseTree = 6;
+    public static int BaseDark = 0, BaseLight = 1, BaseDarkElevated = 2, BaseLightElevated = 3, BaseWater = 5, BaseDarkTree = 6, BaseLightTree = 7;
     public static int ElevationIndexDiff = 2;
+    public static int TreeIndexDiff = 6;
 
     private int[,] level;
 
@@ -33,6 +37,16 @@ public class BasicLevelDecorator {
         PlaceTrees();
         SetGrassAndCliffs();
         DecorateShores();
+        AnimateWater();
+    }
+
+    void AnimateWater()
+    {
+        Tile.AnimateTile(new TileInfo(TilesetIndex, WaterWallLeft), 3, 3f, AnimType.Reverse);
+        Tile.AnimateTile(new TileInfo(TilesetIndex, WaterWallCenter), 3, 3f, AnimType.Reverse);
+        Tile.AnimateTile(new TileInfo(TilesetIndex, WaterWallRight), 3, 3f, AnimType.Reverse);
+        Tile.AnimateTile(new TileInfo(TilesetIndex, WaterWallSingle), 3, 3f, AnimType.Reverse);
+        Tile.AnimateTile(new TileInfo(TilesetIndex, WaterVariation), 4, 4f);
     }
 
     void SetGrassAndCliffs()
@@ -80,7 +94,7 @@ public class BasicLevelDecorator {
 
     bool IsLightGrass (int index)
     {
-        return index == 1 || index == 3;
+        return index == BaseLight || index == BaseLightElevated || index == BaseLightTree;
     }
 
     bool IsFloor(int index)
@@ -88,9 +102,14 @@ public class BasicLevelDecorator {
         return index == BaseDark || index == BaseLight;
     }
 
+    bool IsTree(int index)
+    {
+        return index == BaseLightTree || index == BaseDarkTree;
+    }
+
     bool IsElevated(int index)
     {
-        return index == 2 || index == 3;
+        return index == BaseLightElevated || index == BaseDarkElevated;
     }
 
     void DecorateShores()
@@ -99,12 +118,12 @@ public class BasicLevelDecorator {
         {
             for (int col = 0; col < level.GetLength(1); col++)
             {
-                if (IsFloor(level[row, col]))
+                if (IsFloor(level[row, col]) || IsTree(level[row, col]))
                 {
                     int shoreTile = CalculateShoreTile(col, row, level);
                     if (shoreTile != -1)
                     {
-                        Tile.SetTile(new Int2(col, row), CliffLayer, TilesetIndex, shoreTile, false);
+                        Tile.SetTile(new Int2(col, row), ShoreLayer, TilesetIndex, shoreTile, false);
                     }
                 }
             }
@@ -158,10 +177,10 @@ public class BasicLevelDecorator {
         int prevBottomLeft = level[row, col], prevBottomRight = level[row, col + 1], prevTopLeft = level[row + 1, col],
             prevTopRight = level[row + 1, col + 1];
 
-        level[row, col] = BaseTree;
-        level[row, col + 1] = BaseTree;
-        level[row + 1, col] = BaseTree;
-        level[row + 1, col + 1] = BaseTree;
+        level[row, col] += TreeIndexDiff;
+        level[row, col + 1] += TreeIndexDiff;
+        level[row + 1, col] += TreeIndexDiff;
+        level[row + 1, col + 1] += TreeIndexDiff;
 
         Queue<Int2> queue = new Queue<Int2>();
         int newNumWalkableTiles = 0;
@@ -244,13 +263,13 @@ public class BasicLevelDecorator {
             {
                 if (IsElevated(level[row, col]) && tracker[row, col] == 0)
                 {
-                    IdentifyIsland(row, col, tracker);
+                    AttemptLakeCreation(row, col, tracker);
                 }
             }
         }
     }
 
-    void IdentifyIsland(int x, int y, int[,] tracker)
+    void AttemptLakeCreation(int x, int y, int[,] tracker)
     {
         List<Int2> islandMembers = new List<Int2>();
         bool[,] seenThisIteration = new bool[level.GetLength(0), level.GetLength(1)];
@@ -260,7 +279,6 @@ public class BasicLevelDecorator {
         queue.Enqueue(new Int2(x, y));
         int count = 0;
         tracker[x, y] = 1;
-        
 
         while (queue.Count > 0)
         {
@@ -300,14 +318,26 @@ public class BasicLevelDecorator {
               
         }
 
-        if (!touchingEdge && Random.Range(0, 3) < 2)
+        if (!touchingEdge && Random.Range(0, 3) < 2 && count > 0)
         {
             foreach (Int2 islandSquare in islandMembers)
             {
                 level[islandSquare.x, islandSquare.y] = BaseWater;
-                int waterIndex = islandSquare.x + 1 < level.GetLength(0) && !seenThisIteration[islandSquare.x + 1, islandSquare.y] ? 53 : 42;
-                Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex, waterIndex, true);
+                Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex,
+                    CalculateWaterTile(islandSquare.x, islandSquare.y, seenThisIteration), true);
             }
+        }
+    }
+
+    int CalculateWaterTile(int row, int col, bool[,] seenThisIteration)
+    {
+        if (seenThisIteration[row + 1, col])
+        {
+            return TileDictionaries.WaterCenterTiles[Random.Range(0, TileDictionaries.WaterCenterTiles.Count)];
+        } else
+        {
+            int lookupIndex = 10 * (seenThisIteration[row + 1, col - 1] ? 0 : 1) + (seenThisIteration[row + 1, col + 1] ? 0 : 1);
+            return TileDictionaries.WaterTopDictionary[lookupIndex];
         }
     }
 
@@ -379,7 +409,7 @@ public class BasicLevelDecorator {
         }
 
         int index = level[y, x];
-        return IsFloor(index) || index == BaseTree ? 0 : 1;
+        return IsFloor(index) || IsTree(index) ? 0 : 1;
     }
 
     int GetTypeForNonTopBarrier(int x, int y)

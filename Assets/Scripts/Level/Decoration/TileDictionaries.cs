@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SpriteTile;
 
 public class TileDictionaries {
 
@@ -115,5 +116,18 @@ public class TileDictionaries {
         {2101, 56},
         {3101, 52},
         {4101, 56}
+    };
+
+    public static Dictionary<int, int> WaterTopDictionary = new Dictionary<int, int>()
+    {
+        {00, 105},
+        {01, 72},
+        {10, 67},
+        {11, 81}
+    };
+
+    public static List<int> WaterCenterTiles = new List<int>()
+    {
+        42, 42, 42, 42, 57
     };
 }
