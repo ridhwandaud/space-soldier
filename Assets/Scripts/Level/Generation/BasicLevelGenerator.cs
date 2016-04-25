@@ -18,7 +18,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject troopaPrefab;
     GameObject plantBossPrefab;
 
-    enum BasicLevelSize { Small = 200, Medium = 350, Large = 450};
+    enum BasicLevelSize { Small = 250, Medium = 350, Large = 450};
     enum BasicLevelDifficulty { Easy, Hard};
 
     private static int HardLevelThreshold = 10;
@@ -75,7 +75,7 @@ public class BasicLevelGenerator : ILevelGenerator
         }
 
         int rand = Random.Range(0, 2);
-        rand = 2;
+        rand = 1;
 
         if (rand == 1)
         {

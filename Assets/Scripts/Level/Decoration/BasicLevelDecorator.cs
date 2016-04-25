@@ -4,7 +4,7 @@ using SpriteTile;
 
 public class BasicLevelDecorator {
     public static int TilesetIndex = 3;
-    private static int NumLayers = 7;
+    private static int NumLayers = 8;
 
     // SpriteTile layers/sorting layers.
     public static int FloorLayer = 0,
@@ -13,7 +13,9 @@ public class BasicLevelDecorator {
                       AdditionalGrassLayer3 = 3,
                       AdditionalGrassLayer4 = 4,
                       ShoreLayer = 5,
-                      CliffLayer = 6;
+                      DoodadLayer = 6,
+                      ShadowLayer = 7,
+                      CliffLayer = 8;
 
     private static int LightGrass = 0;
     private static int TreeTopLeft = 8, TreeTopRight = 9, TreeBottomLeft = 13, TreeBottomRight = 14;
@@ -21,9 +23,12 @@ public class BasicLevelDecorator {
         WaterWallSingle = 105, WaterVariation = 57;
     private static int NumTilesInTree = 4;
 
-    public static int BaseDark = 0, BaseLight = 1, BaseDarkElevated = 2, BaseLightElevated = 3, BaseWater = 5, BaseDarkTree = 6, BaseLightTree = 7;
+    public static int BaseLight = 0, BaseDark = 1, BaseLightElevated = 2, BaseDarkElevated = 3, BaseWater = 5, BaseLightTree = 6, BaseDarkTree = 7;
     public static int ElevationIndexDiff = 2;
     public static int TreeIndexDiff = 6;
+    public static int DoodadChance = 1;
+
+    private static bool PlaceShadows = true;
 
     private int[,] level;
 
@@ -61,7 +66,7 @@ public class BasicLevelDecorator {
                 // is x (col) and second is y (row). So they are flipped.
                 Int2 tileLocation = new Int2(col, row);
 
-                if (IsLightGrass(index))
+                if (IsDarkGrass(index))
                 {
                     Tile.SetTile(tileLocation, FloorLayer, TilesetIndex, CalculateGrassTile(col, row,
                         TileDictionaries.DarkGrassDictionary), false);
@@ -71,6 +76,13 @@ public class BasicLevelDecorator {
                 {
                     int cliffTile = CalculateBarrierTile(col, row);
                     Tile.SetTile(tileLocation, CliffLayer, TilesetIndex, cliffTile, true);
+                    if (PlaceShadows && row > 0 && row > 0 && col > 0 && col < level.GetLength(1) - 1)
+                    {
+                        int left = IsElevated(level[row, col - 1]) ? 1 : 0;
+                        int right = IsElevated(level[row, col + 1]) ? 1 : 0;
+                        Tile.SetTile(new Int2(col, row - 1), ShadowLayer, TilesetIndex,
+                            TileDictionaries.BarrierShadowDictionary[left * 10 + right], false);
+                    }
                 }
             }
         }
@@ -92,9 +104,12 @@ public class BasicLevelDecorator {
         }
     }
 
-    bool IsLightGrass (int index)
+    void PotentiallyPlaceDoodad(int row, int col)
     {
-        return index == BaseLight || index == BaseLightElevated || index == BaseLightTree;
+        if (Random.Range(0, 100) < DoodadChance)
+        {
+            Tile.SetTile(new Int2(col, row), DoodadLayer, TilesetIndex, SelectFromWeightedList(TileDictionaries.DoodadVariations), false);
+        }
     }
 
     bool IsFloor(int index)
@@ -424,6 +439,7 @@ public class BasicLevelDecorator {
             return 0;
         }
 
+        // 0 = floor, 1 = elevated non-wall, 2 = wall
         return GetTypeForBarrier(x, y - 1) == 1 ? 1 : 2;
     }
 
@@ -506,8 +522,35 @@ public class BasicLevelDecorator {
         {
             for (int col = 0; col < level.GetLength(1); col++)
             {
-                Tile.SetTile(new Int2(col, row), FloorLayer, TilesetIndex, LightGrass, false);
+                Tile.SetTile(new Int2(col, row), FloorLayer, TilesetIndex,
+                    SelectFromWeightedList(TileDictionaries.LightGrassMiddleVariations), false);
+                PotentiallyPlaceDoodad(row, col);
             }
         }
+    }
+
+    int SelectFromWeightedList(List<List<int>> weightedList)
+    {
+        int total = 0;
+        foreach (List<int> item in weightedList)
+        {
+            total += item[1];
+        }
+
+        int rand = Random.Range(0, total);
+        int result = weightedList[0][0];
+
+        foreach (List<int> item in weightedList)
+        {
+            if (rand < item[1])
+            {
+                result = item[0];
+                break;
+            }
+
+            rand -= item[1];
+        }
+
+        return result;
     }
 }

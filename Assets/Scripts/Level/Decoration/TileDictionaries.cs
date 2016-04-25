@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SpriteTile;
 
 public class TileDictionaries {
 
@@ -61,6 +60,14 @@ public class TileDictionaries {
         {20, 33},
         {210, 33},
         {220, 33}
+    };
+
+    public static Dictionary<int, int> BarrierShadowDictionary = new Dictionary<int, int>()
+    {
+        {00, 35},
+        {01, 39},
+        {10, 41},
+        {11, 40}
     };
 
     public static Dictionary<int, GrassObj[]> DarkGrassDictionary = new Dictionary<int, GrassObj[]>
@@ -129,5 +136,22 @@ public class TileDictionaries {
     public static List<int> WaterCenterTiles = new List<int>()
     {
         42, 42, 42, 42, 57
+    };
+
+    public static List<List<int>> LightGrassMiddleVariations = new List<List<int>>()
+    {
+        new List<int> {0, 20},
+        new List<int> {7, 2},
+        new List<int> {12, 1}
+    };
+
+    public static List<List<int>> DoodadVariations = new List<List<int>>
+    {
+        new List<int> {19, 1},
+        new List<int> {20, 1},
+        new List<int> {21, 1},
+        new List<int> {28, 1},
+        new List<int> {29, 1},
+        new List<int> {30, 1}
     };
 }
