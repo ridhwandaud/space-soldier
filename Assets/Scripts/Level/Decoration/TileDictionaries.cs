@@ -46,9 +46,20 @@ public class TileDictionaries {
         {212, 22}, // LeftThinElevated
         {201, 26}, // TopThinElevated
         {1220, 37}, // MiddleWall
-        {21, 25}, // TopThinElevated
+        {21, 256}, // TopThinElevated
         {22, 26}, // SingleElevated
         {122, 24}, // RightThinElevated
+
+        {1001110, 33},
+        {1101110, 38},
+        {1011110, 36},
+        {1111110, 37},
+        {1011120, 36},
+        {1111120, 37},
+        {1101210, 38},
+        {1111210, 37},
+        {1001010, 33},
+        {1001100, 33},
 
         // TODO: These next ones are lone blocks. Make them into rocks or other obstacles.
         {0, 33},
@@ -131,6 +142,7 @@ public class TileDictionaries {
         {01, 72},
         {10, 67},
         {11, 81}
+
     };
 
     public static List<int> WaterCenterTiles = new List<int>()

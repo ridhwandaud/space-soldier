@@ -19,8 +19,10 @@ public class BasicLevelDecorator {
 
     private static int LightGrass = 0;
     private static int TreeTopLeft = 8, TreeTopRight = 9, TreeBottomLeft = 13, TreeBottomRight = 14;
+    private static int TreeLeftShadow = 17, TreeRightShadow = 18;
     private static int WaterWallLeft = 72, WaterWallCenter = 81, WaterWallRight = 67,
         WaterWallSingle = 105, WaterVariation = 57;
+    private static int LeftWall = 36, MiddleWall = 37, RightWall = 38;
     private static int NumTilesInTree = 4;
 
     public static int BaseLight = 0, BaseDark = 1, BaseLightElevated = 2, BaseDarkElevated = 3, BaseWater = 5, BaseLightTree = 6, BaseDarkTree = 7;
@@ -255,6 +257,18 @@ public class BasicLevelDecorator {
             Tile.SetTile(new Int2(col, row + 1), CliffLayer, TilesetIndex, TreeTopLeft, true);
             Tile.SetTile(new Int2(col + 1, row + 1), CliffLayer, TilesetIndex, TreeTopRight, true);
 
+            if (row - 1 >= 0)
+            {
+                if (IsFloor(level[row - 1, col]) || IsTree(level[row - 1, col]))
+                {
+                    Tile.SetTile(new Int2(col, row - 1), ShadowLayer, TilesetIndex, TreeLeftShadow, true);
+                }
+                if (IsFloor(level[row - 1, col + 1]) || IsTree(level[row - 1, col + 1]))
+                {
+                    Tile.SetTile(new Int2(col + 1, row - 1), ShadowLayer, TilesetIndex, TreeRightShadow, true);
+                }
+            }
+
             return true;
         } else
         {
@@ -282,6 +296,8 @@ public class BasicLevelDecorator {
                 }
             }
         }
+
+        SetWaterTiles();
     }
 
     void AttemptLakeCreation(int x, int y, int[,] tracker)
@@ -299,7 +315,6 @@ public class BasicLevelDecorator {
         {
             Int2 pos = queue.Dequeue();
             islandMembers.Add(pos);
-            seenThisIteration[pos.x, pos.y] = true;
 
             if (pos.x - 1 < 0 || pos.x + 1 >= level.GetLength(0) || pos.y - 1 < 0 || pos.y + 1 >= level.GetLength(1))
             {
@@ -339,39 +354,69 @@ public class BasicLevelDecorator {
             {
                 level[islandSquare.x, islandSquare.y] = BaseWater;
                 Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex,
-                    CalculateWaterTile(islandSquare.x, islandSquare.y, seenThisIteration), true);
+                    CalculateWaterTile(islandSquare.x, islandSquare.y), true);
             }
         }
     }
 
-    int CalculateWaterTile(int row, int col, bool[,] seenThisIteration)
+    void SetWaterTiles()
     {
-        if (seenThisIteration[row + 1, col])
+        for (int row = 0; row < level.GetLength(0); row++)
+        {
+            for (int col = 0; col < level.GetLength(1); col++)
+            {
+                if (level[row, col] == BaseWater)
+                {
+                    Tile.SetTile(new Int2(col, row), CliffLayer, TilesetIndex,
+                        CalculateWaterTile(row, col), true);
+                }
+            }
+        }
+    }
+
+    int CalculateWaterTile(int row, int col)
+    {
+        if (level[row + 1, col] == BaseWater)
         {
             return TileDictionaries.WaterCenterTiles[Random.Range(0, TileDictionaries.WaterCenterTiles.Count)];
         } else
         {
-            int lookupIndex = 10 * (seenThisIteration[row + 1, col - 1] ? 0 : 1) + (seenThisIteration[row + 1, col + 1] ? 0 : 1);
+            int lookupIndex = 10 * (level[row + 1, col - 1] == BaseWater ? 0 : 1) + (level[row + 1, col + 1] == BaseWater ? 0 : 1);
             return TileDictionaries.WaterTopDictionary[lookupIndex];
         }
     }
 
-    int CalculateBarrierTile(int x, int y)
+    int CalculateBarrierTile(int col, int row)
     {
-        int top = GetTypeForBarrier(x, y + 1),
-            left = GetTypeForNonTopBarrier(x - 1, y),
-            right = GetTypeForNonTopBarrier(x + 1, y),
-            bottom = GetTypeForNonTopBarrier(x, y - 1);
+        int top = GetTypeForBarrier(col, row + 1),
+            left = GetTypeForNonTopBarrier(col - 1, row),
+            right = GetTypeForNonTopBarrier(col + 1, row),
+            bottom = GetTypeForNonTopBarrier(col, row - 1);
         int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
-        return TileDictionaries.BarrierTileDictionary[lookupIndex];
+
+        int tileIndex = TileDictionaries.BarrierTileDictionary[lookupIndex];
+
+        if ((tileIndex == LeftWall || tileIndex == MiddleWall || tileIndex == RightWall) && row + 1 < level.GetLength(0))
+        {
+            lookupIndex += 10000 * GetTypeForBarrier(col + 1, row + 1);
+            lookupIndex += 100000 * GetTypeForBarrier(col - 1, row + 1);
+            lookupIndex += 1000000;
+
+            if (TileDictionaries.BarrierTileDictionary.ContainsKey(lookupIndex))
+            {
+                tileIndex = TileDictionaries.BarrierTileDictionary[lookupIndex];
+            }
+        }
+
+        return tileIndex;
     }
 
-    int CalculateShoreTile(int x, int y, int[,] level)
+    int CalculateShoreTile(int col, int row, int[,] level)
     {
-        int top = GetTypeForTileAboveShore(x, y + 1),
-            left = GetTypeForTileAdjacentToShore(x - 1, y),
-            right = GetTypeForTileAdjacentToShore(x + 1, y),
-            bottom = GetTypeForTileAdjacentToShore(x, y - 1);
+        int top = GetTypeForTileAboveShore(col, row + 1),
+            left = GetTypeForTileAdjacentToShore(col - 1, row),
+            right = GetTypeForTileAdjacentToShore(col + 1, row),
+            bottom = GetTypeForTileAdjacentToShore(col, row - 1);
         int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
         if (TileDictionaries.ShoreDictionary.ContainsKey(lookupIndex))
         {
@@ -381,15 +426,15 @@ public class BasicLevelDecorator {
         return -1;
     }
 
-    int GetTypeForTileAboveShore(int x, int y)
+    int GetTypeForTileAboveShore(int col, int row)
     {
-        if (y >= level.GetLength(0) || level[y, x] == BaseWater)
+        if (row >= level.GetLength(0) || level[row, col] == BaseWater)
         {
             return 0;
         }
 
-        bool leftWater = x + 1 >= level.GetLength(1) || level[y, x + 1] == BaseWater;
-        bool rightWater = x - 1 < 0 || level[y, x - 1] == BaseWater;
+        bool leftWater = col + 1 >= level.GetLength(1) || level[row, col + 1] == BaseWater;
+        bool rightWater = col - 1 < 0 || level[row, col - 1] == BaseWater;
 
         if (!leftWater && !rightWater)
         {
@@ -411,85 +456,85 @@ public class BasicLevelDecorator {
         return -1; //you done fucked up
     }
 
-    int GetTypeForTileAdjacentToShore(int x, int y)
+    int GetTypeForTileAdjacentToShore(int col, int row)
     {
-        return x < 0 || x >= level.GetLength(1) || y < 0 || y >= level.GetLength(0) || level[y, x] == BaseWater ? 0 : 1;
+        return col < 0 || col >= level.GetLength(1) || row < 0 || row >= level.GetLength(0) || level[row, col] == BaseWater ? 0 : 1;
     }
 
-    int GetTypeForBarrier(int x, int y)
+    int GetTypeForBarrier(int col, int row)
     {
-        if (x < 0 || y < 0 || x >= level.GetLength(1) || y >= level.GetLength(0))
+        if (col < 0 || row < 0 || col >= level.GetLength(1) || row >= level.GetLength(0))
         {
             return 1;
         }
 
-        int index = level[y, x];
+        int index = level[row, col];
         return IsFloor(index) || IsTree(index) ? 0 : 1;
     }
 
-    int GetTypeForNonTopBarrier(int x, int y)
+    int GetTypeForNonTopBarrier(int col, int row)
     {
-        if (x < 0 || y < 0 || x >= level.GetLength(1) || y >= level.GetLength(0))
+        if (col < 0 || row < 0 || col >= level.GetLength(1) || row >= level.GetLength(0))
         {
             return 1;
         }
 
-        if (GetTypeForBarrier(x, y) == 0)
+        if (GetTypeForBarrier(col, row) == 0)
         {
             return 0;
         }
 
         // 0 = floor, 1 = elevated non-wall, 2 = wall
-        return GetTypeForBarrier(x, y - 1) == 1 ? 1 : 2;
+        return GetTypeForBarrier(col, row - 1) == 1 ? 1 : 2;
     }
 
-    int CalculateGrassTile(int x, int y, Dictionary<int, GrassObj[]> grassDictionary)
+    int CalculateGrassTile(int col, int row, Dictionary<int, GrassObj[]> grassDictionary)
     {
-        int top = GetTypeForGrassTile(x, y, 0, 1),
-            left = GetTypeForGrassTile(x, y, -1, 0),
-            right = GetTypeForGrassTile(x, y, 1, 0),
-            bottom = GetTypeForGrassTile(x, y, 0, -1);
+        int top = GetTypeForGrassTile(col, row, 0, 1),
+            left = GetTypeForGrassTile(col, row, -1, 0),
+            right = GetTypeForGrassTile(col, row, 1, 0),
+            bottom = GetTypeForGrassTile(col, row, 0, -1);
         int lookupIndex = top * 1000 + left * 100 + right * 10 + bottom;
         GrassObj grassObject = grassDictionary[lookupIndex][Random.Range(0, grassDictionary[lookupIndex].Length)];
         if (grassObject.DecorateEdges)
         {
-            SetSurroundingGrass(x, y);
+            SetSurroundingGrass(col, row);
         }
 
         return grassObject.Index;
     }
 
-    int GetTypeForGrassTile(int x, int y, int xOffset, int yOffset)
+    int GetTypeForGrassTile(int col, int row, int colOffset, int rowOffset)
     {
-        int newX = x + xOffset, newY = y + yOffset;
-        if (newX < 0 || newY < 0 || newX >= level.GetLength(1) || newY >= level.GetLength(0))
+        int newCol = col + colOffset, newRow = row + rowOffset;
+        if (newCol < 0 || newRow < 0 || newCol >= level.GetLength(1) || newRow >= level.GetLength(0))
         {
-            return GrassIndexType(level[y, x]);
+            return GrassIndexType(level[row, col]);
         }
 
-        return GrassIndexType(level[newY, newX]);
+        return GrassIndexType(level[newRow, newCol]);
     }
 
-    void SetSurroundingGrass(int x, int y)
+    void SetSurroundingGrass(int col, int row)
     {
-        if (x + 1 < level.GetLength(1) && !IsDarkGrass(level[y, x + 1]))
+        if (col + 1 < level.GetLength(1) && !IsDarkGrass(level[row, col + 1]))
         {
-            Tile.SetTile(new Int2(x + 1, y), AdditionalGrassLayer1, TilesetIndex, 94, false);
+            Tile.SetTile(new Int2(col + 1, row), AdditionalGrassLayer1, TilesetIndex, 94, false);
         }
 
-        if (x - 1 > 0 && !IsDarkGrass(level[y, x - 1]))
+        if (col - 1 > 0 && !IsDarkGrass(level[row, col - 1]))
         {
-            Tile.SetTile(new Int2(x - 1, y), AdditionalGrassLayer2, TilesetIndex, 93, false);
+            Tile.SetTile(new Int2(col - 1, row), AdditionalGrassLayer2, TilesetIndex, 93, false);
         }
 
-        if (y + 1 < level.GetLength(0) && !IsDarkGrass(level[y + 1, x]))
+        if (row + 1 < level.GetLength(0) && !IsDarkGrass(level[row + 1, col]))
         {
-            Tile.SetTile(new Int2(x, y + 1), AdditionalGrassLayer3, TilesetIndex, 92, false);
+            Tile.SetTile(new Int2(col, row + 1), AdditionalGrassLayer3, TilesetIndex, 92, false);
         }
 
-        if (y - 1 > 0 && !IsDarkGrass(level[y - 1, x]))
+        if (row - 1 > 0 && !IsDarkGrass(level[row - 1, col]))
         {
-            Tile.SetTile(new Int2(x, y - 1), AdditionalGrassLayer4, TilesetIndex, 95, false);
+            Tile.SetTile(new Int2(col, row - 1), AdditionalGrassLayer4, TilesetIndex, 95, false);
         }
     }
 
