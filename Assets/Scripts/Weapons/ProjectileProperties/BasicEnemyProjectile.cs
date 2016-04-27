@@ -14,7 +14,7 @@ public class BasicEnemyProjectile : MonoBehaviour {
             other.GetComponent<PlayerHealth>().InflictDamage(damage);
         }
 
-        if (other.tag == "Player" || other.tag == "Wall" || other.tag == "Obstacle")
+        if (other.tag == "Player" || other.gameObject.layer == GameSettings.WallLayerNumber || other.tag == "Obstacle")
         {
             GetComponent<ProjectileDestroy>().Destroy();
         }

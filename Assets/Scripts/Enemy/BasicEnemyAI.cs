@@ -28,7 +28,7 @@ public class BasicEnemyAI : EnemyAI {
 
     void Update()
     {
-        if (!GameState.WallCollidersInitialized || KnockbackInProgress)
+        if (KnockbackInProgress)
         {
             return;
         }

@@ -30,7 +30,7 @@ public class FootSoldierAI : EnemyAI {
 
     void Update()
     {
-        if (!GameState.WallCollidersInitialized || KnockbackInProgress)
+        if (KnockbackInProgress)
         {
             return;
         }

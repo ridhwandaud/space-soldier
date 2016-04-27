@@ -4,18 +4,20 @@ using SpriteTile;
 
 public class BasicLevelDecorator {
     public static int TilesetIndex = 3;
-    private static int NumLayers = 8;
+    private static int NumLayers = 11;
 
     // SpriteTile layers/sorting layers.
-    public static int FloorLayer = 0,
-                      AdditionalGrassLayer1 = 1,
-                      AdditionalGrassLayer2 = 2,
-                      AdditionalGrassLayer3 = 3,
-                      AdditionalGrassLayer4 = 4,
-                      ShoreLayer = 5,
-                      DoodadLayer = 6,
-                      ShadowLayer = 7,
-                      CliffLayer = 8;
+    public static int FloorTileLayer = 0,
+                      AdditionalGrassTileLayer1 = 1,
+                      AdditionalGrassTileLayer2 = 2,
+                      AdditionalGrassTileLayer3 = 3,
+                      AdditionalGrassTileLayer4 = 4,
+                      ShoreTileLayer = 5,
+                      DoodadTileLayer = 6,
+                      ShadowTileLayer = 7,
+                      WaterTileLayer = 8,
+                      CliffTileLayer = 9,
+                      TreeTileLayer = 11;
 
     private static int LightGrass = 0;
     private static int TreeTopLeft = 8, TreeTopRight = 9, TreeBottomLeft = 13, TreeBottomRight = 14;
@@ -34,14 +36,18 @@ public class BasicLevelDecorator {
 
     private int[,] level;
 
-	public void DecorateWorld(int[,] level)
+	public void DecorateWorld(int[,] level, bool isBossLevel, Vector2 playerSpawn, List<Vector2> openPositions)
     {
         this.level = level;
         SetUpMap();
         LayDefaultTiles(LightGrass);
         CreateLakes();
         RemoveStragglers();
-        PlaceTrees();
+        if (!isBossLevel)
+        {
+            PlaceTrees(playerSpawn, openPositions);
+        }
+
         SetGrassAndCliffs();
         DecorateShores();
         AnimateWater();
@@ -70,19 +76,19 @@ public class BasicLevelDecorator {
 
                 if (IsDarkGrass(index))
                 {
-                    Tile.SetTile(tileLocation, FloorLayer, TilesetIndex, CalculateGrassTile(col, row,
+                    Tile.SetTile(tileLocation, FloorTileLayer, TilesetIndex, CalculateGrassTile(col, row,
                         TileDictionaries.DarkGrassDictionary), false);
                 }
 
                 if (IsElevated(index))
                 {
                     int cliffTile = CalculateBarrierTile(col, row);
-                    Tile.SetTile(tileLocation, CliffLayer, TilesetIndex, cliffTile, true);
+                    Tile.SetTile(tileLocation, CliffTileLayer, TilesetIndex, cliffTile, true);
                     if (PlaceShadows && row > 0 && row > 0 && col > 0 && col < level.GetLength(1) - 1)
                     {
                         int left = IsElevated(level[row, col - 1]) ? 1 : 0;
                         int right = IsElevated(level[row, col + 1]) ? 1 : 0;
-                        Tile.SetTile(new Int2(col, row - 1), ShadowLayer, TilesetIndex,
+                        Tile.SetTile(new Int2(col, row - 1), ShadowTileLayer, TilesetIndex,
                             TileDictionaries.BarrierShadowDictionary[left * 10 + right], false);
                     }
                 }
@@ -110,7 +116,7 @@ public class BasicLevelDecorator {
     {
         if (Random.Range(0, 100) < DoodadChance)
         {
-            Tile.SetTile(new Int2(col, row), DoodadLayer, TilesetIndex, SelectFromWeightedList(TileDictionaries.DoodadVariations), false);
+            Tile.SetTile(new Int2(col, row), DoodadTileLayer, TilesetIndex, SelectFromWeightedList(TileDictionaries.DoodadVariations), false);
         }
     }
 
@@ -140,14 +146,14 @@ public class BasicLevelDecorator {
                     int shoreTile = CalculateShoreTile(col, row, level);
                     if (shoreTile != -1)
                     {
-                        Tile.SetTile(new Int2(col, row), ShoreLayer, TilesetIndex, shoreTile, false);
+                        Tile.SetTile(new Int2(col, row), ShoreTileLayer, TilesetIndex, shoreTile, false);
                     }
                 }
             }
         }
     }
 
-    void PlaceTrees()
+    void PlaceTrees(Vector2 playerSpawn, List<Vector2> openPositions)
     {
         int numWalkableTiles = GetNumWalkableTiles();
 
@@ -157,9 +163,9 @@ public class BasicLevelDecorator {
             {
                 // Uniform random distribution. I don't like the clumping though so might explore a different
                 // technique (Poisson perhaps)
-                if (CanPlaceTree(row, col) && Random.Range(0, 20) == 0)
+                if (CanPlaceTree(row, col, playerSpawn) && Random.Range(0, 20) == 0)
                 {
-                    if (AttemptTreePlacement(row, col, numWalkableTiles))
+                    if (AttemptTreePlacement(row, col, numWalkableTiles, openPositions))
                     {
                         numWalkableTiles -= NumTilesInTree;
                     } 
@@ -168,10 +174,12 @@ public class BasicLevelDecorator {
         }
     }
 
-    bool CanPlaceTree(int row, int col)
+    bool CanPlaceTree(int row, int col, Vector2 playerSpawn)
     {
         return row + 1 < level.GetLength(0) && col + 1 < level.GetLength(1)
-            && IsFloor(level[row, col]) && IsFloor(level[row + 1, col]) && IsFloor(level[row, col + 1]) && IsFloor(level[row + 1, col + 1]);
+            && IsFloor(level[row, col]) && IsFloor(level[row + 1, col]) && IsFloor(level[row, col + 1]) && IsFloor(level[row + 1, col + 1])
+            && !(row == playerSpawn.y && col == playerSpawn.x) && !(row + 1 == playerSpawn.y && col == playerSpawn.x)
+            && !(row + 1 == playerSpawn.y && col + 1 == playerSpawn.x) && !(row == playerSpawn.y && col + 1 ==  playerSpawn.x);
     }
 
     int GetNumWalkableTiles()
@@ -189,7 +197,7 @@ public class BasicLevelDecorator {
         return result;
     }
 
-    bool AttemptTreePlacement (int row, int col, int numWalkableTiles)
+    bool AttemptTreePlacement (int row, int col, int numWalkableTiles, List<Vector2> openPositions)
     {
         int prevBottomLeft = level[row, col], prevBottomRight = level[row, col + 1], prevTopLeft = level[row + 1, col],
             prevTopRight = level[row + 1, col + 1];
@@ -252,21 +260,20 @@ public class BasicLevelDecorator {
 
         if (newNumWalkableTiles == numWalkableTiles - NumTilesInTree)
         {
-            Tile.SetTile(new Int2(col, row), CliffLayer, TilesetIndex, TreeBottomLeft, true);
-            Tile.SetTile(new Int2(col + 1, row), CliffLayer, TilesetIndex, TreeBottomRight, true);
-            Tile.SetTile(new Int2(col, row + 1), CliffLayer, TilesetIndex, TreeTopLeft, true);
-            Tile.SetTile(new Int2(col + 1, row + 1), CliffLayer, TilesetIndex, TreeTopRight, true);
+            Tile.SetTile(new Int2(col, row), TreeTileLayer, TilesetIndex, TreeBottomLeft, true);
+            Tile.SetTile(new Int2(col + 1, row), TreeTileLayer, TilesetIndex, TreeBottomRight, true);
+            Tile.SetTile(new Int2(col, row + 1), TreeTileLayer, TilesetIndex, TreeTopLeft, false);
+            Tile.SetTile(new Int2(col + 1, row + 1), TreeTileLayer, TilesetIndex, TreeTopRight, false);
+
+            openPositions.Remove(new Vector2(col, row));
+            openPositions.Remove(new Vector2(col + 1, row));
+            openPositions.Remove(new Vector2(col, row + 1));
+            openPositions.Remove(new Vector2(col + 1, row + 1));
 
             if (row - 1 >= 0)
             {
-                if (IsFloor(level[row - 1, col]) || IsTree(level[row - 1, col]))
-                {
-                    Tile.SetTile(new Int2(col, row - 1), ShadowLayer, TilesetIndex, TreeLeftShadow, true);
-                }
-                if (IsFloor(level[row - 1, col + 1]) || IsTree(level[row - 1, col + 1]))
-                {
-                    Tile.SetTile(new Int2(col + 1, row - 1), ShadowLayer, TilesetIndex, TreeRightShadow, true);
-                }
+                Tile.SetTile(new Int2(col, row - 1), ShadowTileLayer, TilesetIndex, TreeLeftShadow, true);
+                Tile.SetTile(new Int2(col + 1, row - 1), ShadowTileLayer, TilesetIndex, TreeRightShadow, true);
             }
 
             return true;
@@ -353,8 +360,6 @@ public class BasicLevelDecorator {
             foreach (Int2 islandSquare in islandMembers)
             {
                 level[islandSquare.x, islandSquare.y] = BaseWater;
-                Tile.SetTile(new Int2(islandSquare.y, islandSquare.x), CliffLayer, TilesetIndex,
-                    CalculateWaterTile(islandSquare.x, islandSquare.y), true);
             }
         }
     }
@@ -367,7 +372,7 @@ public class BasicLevelDecorator {
             {
                 if (level[row, col] == BaseWater)
                 {
-                    Tile.SetTile(new Int2(col, row), CliffLayer, TilesetIndex,
+                    Tile.SetTile(new Int2(col, row), WaterTileLayer, TilesetIndex,
                         CalculateWaterTile(row, col), true);
                 }
             }
@@ -519,22 +524,22 @@ public class BasicLevelDecorator {
     {
         if (col + 1 < level.GetLength(1) && !IsDarkGrass(level[row, col + 1]))
         {
-            Tile.SetTile(new Int2(col + 1, row), AdditionalGrassLayer1, TilesetIndex, 94, false);
+            Tile.SetTile(new Int2(col + 1, row), AdditionalGrassTileLayer1, TilesetIndex, 94, false);
         }
 
         if (col - 1 > 0 && !IsDarkGrass(level[row, col - 1]))
         {
-            Tile.SetTile(new Int2(col - 1, row), AdditionalGrassLayer2, TilesetIndex, 93, false);
+            Tile.SetTile(new Int2(col - 1, row), AdditionalGrassTileLayer2, TilesetIndex, 93, false);
         }
 
         if (row + 1 < level.GetLength(0) && !IsDarkGrass(level[row + 1, col]))
         {
-            Tile.SetTile(new Int2(col, row + 1), AdditionalGrassLayer3, TilesetIndex, 92, false);
+            Tile.SetTile(new Int2(col, row + 1), AdditionalGrassTileLayer3, TilesetIndex, 92, false);
         }
 
         if (row - 1 > 0 && !IsDarkGrass(level[row - 1, col]))
         {
-            Tile.SetTile(new Int2(col, row - 1), AdditionalGrassLayer4, TilesetIndex, 95, false);
+            Tile.SetTile(new Int2(col, row - 1), AdditionalGrassTileLayer4, TilesetIndex, 95, false);
         }
     }
 
@@ -567,7 +572,7 @@ public class BasicLevelDecorator {
         {
             for (int col = 0; col < level.GetLength(1); col++)
             {
-                Tile.SetTile(new Int2(col, row), FloorLayer, TilesetIndex,
+                Tile.SetTile(new Int2(col, row), FloorTileLayer, TilesetIndex,
                     SelectFromWeightedList(TileDictionaries.LightGrassMiddleVariations), false);
                 PotentiallyPlaceDoodad(row, col);
             }

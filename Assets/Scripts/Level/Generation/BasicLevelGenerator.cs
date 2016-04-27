@@ -53,6 +53,9 @@ public class BasicLevelGenerator : ILevelGenerator
         List<Vector2> openPositions;
         BasicLevelSize size = getLevelSize(isBossLevel);
         int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel, out bossSpawn);
+
+        decorator.DecorateWorld(level, isBossLevel, playerSpawn, openPositions);
+
         if (!isBossLevel)
         {
             populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
@@ -61,8 +64,6 @@ public class BasicLevelGenerator : ILevelGenerator
             GameState.IsBossFight = true;
             GameObject obj = MonoBehaviour.Instantiate(plantBossPrefab, bossSpawn, Quaternion.identity) as GameObject;
         }
-
-        decorator.DecorateWorld(level);
 
         return level;
     }

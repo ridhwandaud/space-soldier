@@ -52,24 +52,11 @@ public class LoadLevel : MonoBehaviour {
 
         BasicLevelGenerator generator = new BasicLevelGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
-        StartCoroutine(ConfigureColliders());
+        Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
+        Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
         player.transform.position = playerSpawn;
-        Debug.Log("playaspawn: " + playerSpawn);
 
         AStar.world = generatedLevel;
-    }
-
-    public static IEnumerator ConfigureColliders()
-    {
-        yield return new WaitForEndOfFrame();
-
-        PolygonCollider2D[] polygonColliders = GameObject.Find("SpriteTileColliders").GetComponentsInChildren<PolygonCollider2D>();
-        foreach (PolygonCollider2D collider in polygonColliders)
-        {
-            collider.tag = "Wall";
-        }
-
-        GameState.WallCollidersInitialized = true;
     }
 
     private bool hasAdjacentFloor(int[,] level, int x, int y)

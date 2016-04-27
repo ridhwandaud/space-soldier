@@ -28,7 +28,7 @@ public class KirbyAI : EnemyAI {
 	}
 	
 	void Update () {
-        if (!GameState.WallCollidersInitialized || Time.time < KnockbackEndTime)
+        if (Time.time < KnockbackEndTime)
         {
             return;
         }

@@ -44,6 +44,6 @@ public class BasicPlayerProjectile : MonoBehaviour
 
     protected bool isObstacle(Collider2D other)
     {
-        return other.tag == "Enemy" || other.tag == "Wall" || other.tag == "Obstacle" || other.tag == "Boss";
+        return other.tag == "Enemy" || other.gameObject.layer == GameSettings.WallLayerNumber || other.tag == "Obstacle" || other.tag == "Boss";
     }
 }

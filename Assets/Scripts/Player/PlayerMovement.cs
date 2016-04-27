@@ -34,36 +34,36 @@ public class PlayerMovement : MonoBehaviour {
 
         Vector2 newVelocity = new Vector2(inputX, inputY).normalized * speed;
 
-        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y + collisionDistance), BasicLevelDecorator.CliffLayer)
+        if ((CollisionCheck(rb.position.x, rb.position.y + collisionDistance)
+            || CollisionCheck(rb.position.x - halfCollisionDistance, rb.position.y + collisionDistance)
+            || CollisionCheck(rb.position.x + halfCollisionDistance, rb.position.y + collisionDistance)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.up, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputY > 0)
         {
             newVelocity.y = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - halfCollisionDistance, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + halfCollisionDistance, rb.position.y - collisionDistance), BasicLevelDecorator.CliffLayer)
+        if ((CollisionCheck(rb.position.x, rb.position.y - collisionDistance)
+            || CollisionCheck(rb.position.x - halfCollisionDistance, rb.position.y - collisionDistance)
+            || CollisionCheck(rb.position.x + halfCollisionDistance, rb.position.y - collisionDistance)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.down, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputY < 0)
         {
             newVelocity.y = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y - halfCollisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x + collisionDistance, rb.position.y + halfCollisionDistance), BasicLevelDecorator.CliffLayer)
+        if ((CollisionCheck(rb.position.x + collisionDistance, rb.position.y)
+            || CollisionCheck(rb.position.x + collisionDistance, rb.position.y - halfCollisionDistance)
+            || CollisionCheck(rb.position.x + collisionDistance, rb.position.y + halfCollisionDistance)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.right, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputX > 0)
         {
             newVelocity.x = 0;
         }
-        if ((Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y - halfCollisionDistance), BasicLevelDecorator.CliffLayer)
-            || Tile.GetCollider(new Vector2(rb.position.x - collisionDistance, rb.position.y + halfCollisionDistance), BasicLevelDecorator.CliffLayer)
+        if ((CollisionCheck(rb.position.x - collisionDistance, rb.position.y)
+            || CollisionCheck(rb.position.x - collisionDistance, rb.position.y - halfCollisionDistance)
+            || CollisionCheck(rb.position.x - collisionDistance, rb.position.y + halfCollisionDistance)
             || Physics2D.BoxCast(rb.position, boxCollider.size, 0f, Vector2.left, halfCollisionDistance,
                 LayerMasks.ObstacleLayerMask).transform != null)
             && inputX < 0)
@@ -74,5 +74,13 @@ public class PlayerMovement : MonoBehaviour {
         rb.velocity = newVelocity;
         animator.SetInteger("HorizontalAxis", (int)newVelocity.x);
         animator.SetInteger("VerticalAxis", (int)newVelocity.y);
+    }
+
+    bool CollisionCheck(float x, float y)
+    {
+        Vector2 pos = new Vector2(x, y);
+        return Tile.GetCollider(pos, BasicLevelDecorator.CliffTileLayer)
+            || Tile.GetCollider(pos, BasicLevelDecorator.WaterTileLayer)
+            || Tile.GetCollider(pos, BasicLevelDecorator.TreeTileLayer);
     }
 }

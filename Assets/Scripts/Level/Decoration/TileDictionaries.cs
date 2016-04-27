@@ -46,7 +46,7 @@ public class TileDictionaries {
         {212, 22}, // LeftThinElevated
         {201, 26}, // TopThinElevated
         {1220, 37}, // MiddleWall
-        {21, 256}, // TopThinElevated
+        {21, 26}, // TopThinElevated
         {22, 26}, // SingleElevated
         {122, 24}, // RightThinElevated
 

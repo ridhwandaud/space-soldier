@@ -14,7 +14,5 @@ public class TutorialLoader : MonoBehaviour {
 
         GameState.TutorialMode = true;
         GameState.SpaceLocked = true;
-
-        StartCoroutine(LoadLevel.ConfigureColliders());
     }
 }

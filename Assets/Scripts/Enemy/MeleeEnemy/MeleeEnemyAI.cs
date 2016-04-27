@@ -42,7 +42,7 @@ public class MeleeEnemyAI : EnemyAI {
     }
 	
 	void Update () {
-        if (!GameState.WallCollidersInitialized || KnockbackInProgress)
+        if (KnockbackInProgress)
         {
             return;
         }

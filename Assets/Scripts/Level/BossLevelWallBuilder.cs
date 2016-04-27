@@ -24,7 +24,7 @@ public class BossLevelWallBuilder : MonoBehaviour {
         for (int x = 0; x < DoorPositions.Count; x++)
         {
             Int2 pos = DoorPositions[x];
-            Tile.SetTile(new Int2(pos.y, pos.x), BasicLevelDecorator.CliffLayer, 3, 33, true);
+            Tile.SetTile(new Int2(pos.y, pos.x), BasicLevelDecorator.CliffTileLayer, 3, 33, true);
 
             if (x < DoorPositions.Count - 1)
             {
