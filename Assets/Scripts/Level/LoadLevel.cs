@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using SpriteTile;
 
 public class LoadLevel : MonoBehaviour {
-    public static HashSet<int> WallIndices = new HashSet<int>() {2};
-    public static HashSet<int> FloorIndices = new HashSet<int>() {0, 1};
+    public static HashSet<int> FloorIndices = new HashSet<int>() {BasicLevelDecorator.BaseDark, BasicLevelDecorator.BaseLight};
     public static bool IsFirstLoad = true;
 
     public static LoadLevel instance = null;
@@ -30,7 +28,6 @@ public class LoadLevel : MonoBehaviour {
 
     void Start()
     {
-        Debug.Log("start");
         IsFirstLoad = false;
     }
 
@@ -38,7 +35,6 @@ public class LoadLevel : MonoBehaviour {
     {
         if (!IsFirstLoad)
         {
-            Debug.Log("Init level from OnLevelWasLoaded");
             InitLevel();
         }
     }

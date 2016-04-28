@@ -11,8 +11,7 @@ public class EnemyUtil {
 
     public static bool CanSee(Vector2 pos1, Vector2 pos2)
     {
-        return Physics2D.Linecast(pos1, pos2, LayerMasks.WallLayerMask).transform == null &&
-            Physics2D.Linecast(pos1, pos2, LayerMasks.ObstacleLayerMask).transform == null;
+        return Physics2D.Linecast(pos1, pos2, LayerMasks.SightObstructedLayerMask).transform == null;
     }
 
     public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 pos1, Vector2 pos2, float colliderSizeMultiplierX = 1.25f,
@@ -21,7 +20,7 @@ public class EnemyUtil {
         Vector2 colliderSize = enemyCollider.size;
         Vector2 boxCastSize = new Vector2(colliderSize.x * colliderSizeMultiplierX, colliderSize.y * colliderSizeMultiplierY);
         RaycastHit2D boxHit = Physics2D.BoxCast(pos1, boxCastSize, 0f, pos2 - pos1,
-            boxCastDistance, LayerMasks.WallLayerMask);
+            boxCastDistance, LayerMasks.MovementObstructedLayerMask);
 
         return boxHit.transform == null;
     }
@@ -111,7 +110,7 @@ public class EnemyUtil {
         {
             possibleDir = VectorUtil.RotateVector(vectorToRotate, rotation * Mathf.Deg2Rad).normalized;
             if (Physics2D.BoxCast(pos, colliderSize, 0f, possibleDir,
-                2f, LayerMasks.WallLayerMask).collider == null)
+                2f, LayerMasks.MovementObstructedLayerMask).collider == null)
             {
                 break;
             }
