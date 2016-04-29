@@ -92,11 +92,16 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (Input.GetButtonDown("ToggleLeftWeapon") || Input.GetAxisRaw("Mouse ScrollWheel") > 0)
         {
-            ToggleLeftWeapon();
+            ToggleLeftWeaponForward();
             if (GameState.TutorialMode)
             {
                 TutorialEngine.Instance.Trigger(TutorialTrigger.LeftWeaponSwitched);
             }
+        }
+
+        if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+        {
+            ToggleLeftWeaponBackwards();
         }
 
         if (Input.GetButtonDown("ToggleRightWeapon"))
@@ -111,7 +116,8 @@ public class PlayerWeaponControl : MonoBehaviour {
         }
 	}
 
-    private void ToggleWeapon (ref bool mouseButtonClicked, ref int weaponIndex, ref Weapon currentWeapon, InventorySlot[] weapons)
+    private void ToggleWeapon (ref bool mouseButtonClicked, ref int weaponIndex, ref Weapon currentWeapon,
+        InventorySlot[] weapons, int dir)
     {
         int weaponsExamined = 0;
         int originalWeaponIndex = weaponIndex;
@@ -119,7 +125,7 @@ public class PlayerWeaponControl : MonoBehaviour {
         do
         {
             weaponIndex = weaponIndex == weapons.Length - 1 ? 0 : ++weaponIndex;
-            weaponsExamined++;
+            weaponsExamined += dir;
         } while (!weapons[weaponIndex].Occupied && weaponsExamined < weapons.Length);
 
         if (originalWeaponIndex != weaponIndex && currentWeapon != null && mouseButtonClicked)
@@ -134,12 +140,17 @@ public class PlayerWeaponControl : MonoBehaviour {
 
     void ToggleRightWeapon()
     {
-        ToggleWeapon(ref rightMouseButtonClicked, ref currentRightWeaponIndex, ref rightGun, rightWeapons);
+        ToggleWeapon(ref rightMouseButtonClicked, ref currentRightWeaponIndex, ref rightGun, rightWeapons, 1);
     }
 
-    void ToggleLeftWeapon ()
+    void ToggleLeftWeaponForward ()
     {
-        ToggleWeapon(ref leftMouseButtonClicked, ref currentLeftWeaponIndex, ref leftGun, leftWeapons);
+        ToggleWeapon(ref leftMouseButtonClicked, ref currentLeftWeaponIndex, ref leftGun, leftWeapons, 1);
+    }
+
+    void ToggleLeftWeaponBackwards ()
+    {
+        ToggleWeapon(ref leftMouseButtonClicked, ref currentLeftWeaponIndex, ref leftGun, leftWeapons, -1);
     }
 
     public void ReconfigureWeapons()
@@ -148,7 +159,7 @@ public class PlayerWeaponControl : MonoBehaviour {
 
         if (!leftWeapons[currentLeftWeaponIndex].Occupied)
         {
-            ToggleLeftWeapon();
+            ToggleLeftWeaponForward();
         } else if (!leftGun)
         {
             leftGun = leftWeapons[currentLeftWeaponIndex].GetWeaponIfExists();
