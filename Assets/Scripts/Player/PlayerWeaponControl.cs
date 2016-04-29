@@ -90,7 +90,7 @@ public class PlayerWeaponControl : MonoBehaviour {
             TutorialEngine.Instance.Trigger(TutorialTrigger.BothGunsFired);
         }
 
-        if (Input.GetButtonDown("ToggleLeftWeapon"))
+        if (Input.GetButtonDown("ToggleLeftWeapon") || Input.GetAxisRaw("Mouse ScrollWheel") > 0)
         {
             ToggleLeftWeapon();
             if (GameState.TutorialMode)

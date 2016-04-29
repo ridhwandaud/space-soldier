@@ -2,6 +2,15 @@
 using System.Collections;
 
 public class CameraControl : MonoBehaviour {
+    [SerializeField]
+    private Texture2D crosshair1X;
+    [SerializeField]
+    private Texture2D crosshair2X;
+    [SerializeField]
+    private Texture2D crosshair3X;
+    [SerializeField]
+    private Texture2D crosshair4X;
+
     public delegate void CameraFunction();
     private Rigidbody2D rb;
 
@@ -23,20 +32,26 @@ public class CameraControl : MonoBehaviour {
         {
             lastScreenHeight = Screen.height;
             int scalingFactor;
+            Texture2D cursor;
             if (Screen.height < 540)
             {
+                cursor = crosshair1X;
                 scalingFactor = 1;
             } else if (Screen.height < 720)
             {
+                cursor = crosshair2X;
                 scalingFactor = 2;
             } else if (Screen.height < 1080)
             {
+                cursor = crosshair3X;
                 scalingFactor = 3;
             } else
             {
+                cursor = crosshair4X;
                 scalingFactor = 4;
             }
             Camera.main.orthographicSize = Screen.height / (24f * 2f * scalingFactor);
+            Cursor.SetCursor(cursor, new Vector2(cursor.width / 2, cursor.width / 2), CursorMode.ForceSoftware);
         }
     }
 
