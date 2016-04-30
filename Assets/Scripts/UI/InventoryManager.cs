@@ -33,14 +33,14 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
-    public void InstantiateNewTile(InventoryTileInfo info)
+    public void InstantiateNewTile(InventoryTileInfo info, SkillType skillType)
     {
         int slotNumber = -1;
 
         for (int i = 0; i < slotTransforms.Count; i++)
         {
             InventorySlot inventorySlot = slotTransforms[i].GetComponent<InventorySlot>();
-            if (!inventorySlot.Occupied)
+            if (!inventorySlot.Occupied && skillType == inventorySlot.SkillType)
             {
                 slotNumber = i;
                 break;

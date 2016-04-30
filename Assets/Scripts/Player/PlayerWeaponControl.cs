@@ -46,7 +46,7 @@ public class PlayerWeaponControl : MonoBehaviour {
             InventoryManager.Instance.InstantiateTileAtPosition(tileInfo, 6);
         } else
         {
-            InventoryManager.Instance.InstantiateNewTile(tileInfo);
+            InventoryManager.Instance.InstantiateNewTile(tileInfo, SkillType.Weapon);
         }
     }
 	
@@ -235,7 +235,7 @@ public class PlayerWeaponControl : MonoBehaviour {
     {
         if (leftGun)
         {
-            if (leftGun.FacingLeft)
+            if (FacingLeft())
             {
                 leftGun.SetToLeftSide();
             } else
@@ -243,6 +243,11 @@ public class PlayerWeaponControl : MonoBehaviour {
                 leftGun.SetToRightSide();
             }
         }
+    }
+
+    bool FacingLeft()
+    {
+        return VectorUtil.DirectionToMousePointer(transform).x < 0;
     }
 
     public void ShowWeaponOnRight()

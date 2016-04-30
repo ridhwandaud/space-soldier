@@ -10,6 +10,7 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public bool Unlocked;
     public Tooltip tooltip;
     public Weapon weapon;
+    public SkillType skillType;
 
     public List<SkillDependency> Dependencies;
     public PlayerWeaponControl playerWeaponControl;
@@ -45,7 +46,7 @@ public class SkillTreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             if (Points == 0)
             {
-                InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon));
+                InventoryManager.Instance.InstantiateNewTile(new InventoryManager.InventoryTileInfo(null, weapon), skillType);
                 if (GameState.TutorialMode && weapon.GetName() == "Machine Gun")
                 {
                     TutorialEngine.Instance.Trigger(TutorialTrigger.MachineGunAcquired);

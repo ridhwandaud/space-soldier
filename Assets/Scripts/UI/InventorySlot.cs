@@ -7,6 +7,8 @@ public class InventorySlot : MonoBehaviour {
         }
     }
 
+    public SkillType SkillType;
+
     private InventoryTile tile;
 
     public Weapon GetWeaponIfExists()
