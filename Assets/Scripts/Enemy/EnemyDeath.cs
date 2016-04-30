@@ -22,10 +22,8 @@ public class EnemyDeath : MonoBehaviour {
                 TutorialEngine.Instance.Trigger(TutorialTrigger.EnemyKilled);
             }
 
-            Debug.Log("There are " + GameState.NumEnemiesRemaining + " enemies remaining.");
             if (GameState.NumEnemiesRemaining == 0 && !GameState.IsBossFight)
             {
-                Debug.Log("Creating portal.");
                 createPortal();
             }
         }

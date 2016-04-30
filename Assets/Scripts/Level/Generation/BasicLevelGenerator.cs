@@ -58,6 +58,7 @@ public class BasicLevelGenerator : ILevelGenerator
 
         if (!isBossLevel)
         {
+            GameState.IsBossFight = false;
             populator.spawnEnemies(getEnemySpawnData(size, levelIndex), openPositions, playerSpawn);
         } else
         {

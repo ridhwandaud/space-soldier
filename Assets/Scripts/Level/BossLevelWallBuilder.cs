@@ -71,8 +71,6 @@ public class BossLevelWallBuilder : MonoBehaviour {
                 instance.DoorPositions.Add(pos);
             }
         }
-
-        Debug.Log(instance.DoorPositions);
     }
 
     void Start()
