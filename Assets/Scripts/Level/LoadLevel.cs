@@ -46,10 +46,11 @@ public class LoadLevel : MonoBehaviour {
 
         Tile.SetCamera();
 
-        BasicLevelGenerator generator = new BasicLevelGenerator();
+        //BasicLevelGenerator generator = new BasicLevelGenerator();
+        ILevelGenerator generator = new CityGenerator();
         int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
-        Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
-        Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
+        //Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
+        //Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
         player.transform.position = playerSpawn;
 
         AStar.world = generatedLevel;

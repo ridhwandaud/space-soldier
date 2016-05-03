@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
+        return;
+
         if (GameState.Paused || GameState.InputLocked)
         {
             return;
