@@ -3,52 +3,69 @@ using System.Collections.Generic;
 
 public class CityGenerator : ILevelGenerator {
 
-    // Temporary
     public static List<Road> Roads = new List<Road>();
+    public static List<Rect> FinalRectangles = new List<Rect>();
+    private static float MinDistanceBetweenRoads = 5f;
+    private static int MaxDivisions = 15;
+    private static int MaxAttempts = 2000;
+    private static int MinGap = 3;
 
-    public int[,] GenerateLevel(int levelIndex, out Vector3 playerSpawn)
+    public int[,] GenerateLevel (int levelIndex, out Vector3 playerSpawn)
     {
-        List<Road> roads = new List<Road>();
-        roads.Add(new Road(0, 0, 0, 5));
+        Rect startingRect = new Rect(0, 0, 20, 20);
+        RenderRect(startingRect);
+        Queue<Rect> q = new Queue<Rect>();
+        q.Enqueue(startingRect);
+        int numDivisions = 0;
+        int numAttempts = 0;
+        int numInCurrentLevel = 1;
+        int numInNextLevel = 0;
+        bool horizontal = true;
 
-        Queue<Road> q = new Queue<Road>();
-        q.Enqueue(roads[0]);
-
-        //int numAttempts = 0;
-        int generatedRoadCount = 0;
-
-        while (q.Count > 0 && roads.Count < 50)
+        while (q.Count > 0 && numAttempts < MaxAttempts && numDivisions < MaxDivisions)
         {
-            Road road = q.Dequeue();
-            generatedRoadCount = 0;
-            while (generatedRoadCount < 3)
+            Rect curr = q.Dequeue();
+            if (horizontal && curr.height > MinGap * 2)
             {
-                Road generatedRoad = GenerateRoad(road);
-                roads.Add(generatedRoad);
-                q.Enqueue(generatedRoad);
-                generatedRoadCount++;
+                float newY = curr.y + Random.Range(MinGap, curr.height - MinGap / 2);
+                Roads.Add(new Road(curr.x, newY, curr.xMax, newY));
+                q.Enqueue(new Rect(curr.x, curr.y, curr.width, newY - curr.y));
+                q.Enqueue(new Rect(curr.x, newY, curr.width, curr.yMax - newY));
+                numInNextLevel += 2;
+                numDivisions++;
+            } else if (!horizontal && curr.width > MinGap * 2)
+            {
+                float newX = curr.x + Random.Range(MinGap, curr.width - MinGap / 2);
+                Roads.Add(new Road(newX, curr.y, newX, curr.yMax));
+                q.Enqueue(new Rect(curr.x, curr.y, newX - curr.x, curr.height));
+                q.Enqueue(new Rect(newX, curr.y, curr.xMax - newX, curr.height));
+                numInNextLevel += 2;
+                numDivisions++;
+            } else
+            {
+                FinalRectangles.Add(curr);
             }
+
+            numInCurrentLevel--;
+
+            if (numInCurrentLevel == 0)
+            {
+                numInCurrentLevel = numInNextLevel;
+                numInNextLevel = 0;
+                horizontal = !horizontal;
+            }
+            numAttempts++;
         }
 
         playerSpawn = Vector3.zero;
         return null;
     }
 
-    Road GenerateRoad(Road road)
+    void RenderRect(Rect rect)
     {
-        int sign = Random.Range(0, 1) < 0 ? -1 : 1;
-        int length = Random.Range(3, 12);
-
-        if (road.IsHorizontal())
-        {
-            Vector2 endpoint1 = new Vector2(Random.Range(road.Endpoint1.x, road.Endpoint2.x), road.Endpoint1.y);
-            Vector2 endpoint2 = new Vector2(endpoint1.x, endpoint1.y + length * sign);
-            return new Road(endpoint1.x, endpoint1.y, endpoint2.x, endpoint2.y);
-        } else
-        {
-            Vector2 endpoint1 = new Vector2(road.Endpoint1.x, Random.Range(road.Endpoint1.y, road.Endpoint2.y));
-            Vector2 endpoint2 = new Vector2(endpoint1.x + length * sign, endpoint1.y);
-            return new Road(endpoint1.x, endpoint1.y, endpoint2.x, endpoint2.y);
-        }
+        Roads.Add(new Road(rect.x, rect.y, rect.x, rect.yMax));
+        Roads.Add(new Road(rect.x, rect.y, rect.xMax, rect.y));
+        Roads.Add(new Road(rect.xMax, rect.y, rect.xMax, rect.yMax));
+        Roads.Add(new Road(rect.x, rect.yMax, rect.xMax, rect.yMax));
     }
 }
