@@ -6,6 +6,8 @@ public class LoadLevel : MonoBehaviour {
     public static HashSet<int> FloorIndices = new HashSet<int>() {BasicLevelDecorator.BaseDark, BasicLevelDecorator.BaseLight};
     public static bool IsFirstLoad = true;
 
+    public static bool TestingCityLevel = false;
+
     public static LoadLevel instance = null;
 
     void Awake ()
@@ -46,14 +48,17 @@ public class LoadLevel : MonoBehaviour {
 
         Tile.SetCamera();
 
-        //BasicLevelGenerator generator = new BasicLevelGenerator();
-        ILevelGenerator generator = new CityGenerator();
-        int[,] generatedLevel = generator.GenerateLevel(GameState.LevelIndex, out playerSpawn);
-        //Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
-        //Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
-        player.transform.position = playerSpawn;
+        if (TestingCityLevel)
+        {
+            AStar.world = new CityGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn); 
+        } else
+        {
+            AStar.world = new BasicLevelGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn);
+            Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
+            Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
+        }
 
-        AStar.world = generatedLevel;
+        player.transform.position = playerSpawn;
     }
 
     private bool hasAdjacentFloor(int[,] level, int x, int y)

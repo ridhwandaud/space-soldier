@@ -18,9 +18,7 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
-        return;
-
-        if (GameState.Paused || GameState.InputLocked)
+        if (GameState.Paused || GameState.InputLocked || LoadLevel.TestingCityLevel)
         {
             return;
         }
