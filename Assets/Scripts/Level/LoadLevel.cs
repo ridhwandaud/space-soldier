@@ -68,4 +68,18 @@ public class LoadLevel : MonoBehaviour {
             || (y < level.GetLength(1) - 1 && FloorIndices.Contains(level[x, y + 1]))
             || (y > 0 && FloorIndices.Contains(level[x, y - 1]));
     }
+
+    // Debug code
+    void OnDrawGizmos()
+    {
+        return;
+        foreach (CityGenerator.PerimeterRect r in CityGenerator.PerimeterRects)
+        {
+            foreach (CityGenerator.PerimeterPoint p in r.points)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawCube(new Vector2(p.x, p.y), new Vector3(1, 1, 1));
+            }
+        }
+    }
 }
