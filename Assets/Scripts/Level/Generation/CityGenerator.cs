@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using SpriteTile;
 
 public class CityGenerator : ILevelGenerator {
@@ -11,9 +10,9 @@ public class CityGenerator : ILevelGenerator {
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 4;
     private static int MaxAttachAttempts = 1000;
-    private static int NumStartingRectangles = 7;
+    private static int NumStartingRectangles = 5;
     private static int PerimeterPadding = 3;
-    private static Dictionary<PerimeterPoint, int> IntersectionCounts = new Dictionary<PerimeterPoint, int>();
+    private static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
 
     private static Int2 BaseRectWidthRange = new Int2(15, 20);
     private static Int2 BaseRectHeightRange = BaseRectWidthRange;
@@ -29,7 +28,6 @@ public class CityGenerator : ILevelGenerator {
         q.Enqueue(startingRect);
 
         AddRects(q, startingRect, NumStartingRectangles - 1);
-        PerimeterRects.ForEach(r => r.points = r.points.Where(p => IntersectionCounts[p] < 3).ToList());
         DrawPerimeter();
         DivideRects(q);
 
@@ -101,11 +99,18 @@ public class CityGenerator : ILevelGenerator {
                 PerimeterPoint next = i == r.points.Count - 1 ? r.points[0] : r.points[i + 1];
                 bool contained = false;
 
-                foreach (PerimeterRect potentialContainer in PerimeterRects)
+                if (curr.DoNotDraw(next, r))
                 {
-                    if (potentialContainer.ContainsPoint(curr) || potentialContainer.ContainsPoint(next)) {
-                        contained = true;
-                        break;
+                    contained = true;
+                } else
+                {
+                    foreach (PerimeterRect potentialContainer in PerimeterRects)
+                    {
+                        if (potentialContainer.ContainsPoint(curr) || potentialContainer.ContainsPoint(next))
+                        {
+                            contained = true;
+                            break;
+                        }
                     }
                 }
 
@@ -206,6 +211,11 @@ public class CityGenerator : ILevelGenerator {
             AddPoint(new PerimeterPoint(left, bottom, Side.Left));
         }
 
+        public bool Overlaps(PerimeterRect other)
+        {
+            return new Rect(left, bottom, right - left, top - bottom).Overlaps(new Rect(other.left, other.bottom, other.right - other.left, other.top - other.bottom));
+        }
+
         public void AddPoint(PerimeterPoint p)
         {
             int numPoints = points.Count;
@@ -222,13 +232,12 @@ public class CityGenerator : ILevelGenerator {
                 }
             }
 
-            if (IntersectionCounts.ContainsKey(p))
+            if (PointDict.ContainsKey(p))
             {
-                IntersectionCounts[p] = IntersectionCounts[p] + 1;
-            }
-            else
+                PointDict[p].Add(this);
+            } else
             {
-                IntersectionCounts.Add(p, 1);
+                PointDict[p] = new HashSet<PerimeterRect> { this };
             }
         }
 
@@ -239,60 +248,60 @@ public class CityGenerator : ILevelGenerator {
 
         public void GenerateIntersections(PerimeterRect other)
         {
-            if (right > other.left && right < other.right)
+            if (right >= other.left && right <= other.right)
             {
-                if (other.top > bottom && other.top < top)
+                if (other.top >= bottom && other.top <= top)
                 {
                     AddPoint(new PerimeterPoint(right, other.top, Side.Right));
                     other.AddPoint(new PerimeterPoint(right, other.top, Side.Top));
                 }
 
-                if (other.bottom > bottom && other.bottom < top)
+                if (other.bottom >= bottom && other.bottom <= top)
                 {
                     AddPoint(new PerimeterPoint(right, other.bottom, Side.Right));
                     other.AddPoint(new PerimeterPoint(right, other.bottom, Side.Bottom));
                 }
             }
 
-            if (left > other.left && left < other.right)
+            if (left >= other.left && left <= other.right)
             {
-                if (other.top > bottom && other.top < top)
+                if (other.top >= bottom && other.top <= top)
                 {
                     AddPoint(new PerimeterPoint(left, other.top, Side.Left));
                     other.AddPoint(new PerimeterPoint(left, other.top, Side.Top));
                 }
 
-                if (other.bottom > bottom && other.bottom < top)
+                if (other.bottom >= bottom && other.bottom <= top)
                 {
                     AddPoint(new PerimeterPoint(left, other.bottom, Side.Left));
                     other.AddPoint(new PerimeterPoint(left, other.bottom, Side.Bottom));
                 }
             }
 
-            if (bottom > other.bottom && bottom < other.top)
+            if (bottom >= other.bottom && bottom <= other.top)
             {
-                if (other.left > left && other.left < right)
+                if (other.left >= left && other.left <= right)
                 {
                     AddPoint(new PerimeterPoint(other.left, bottom, Side.Bottom));
                     other.AddPoint(new PerimeterPoint(other.left, bottom, Side.Left));
                 }
 
-                if (other.right > left && other.right < right)
+                if (other.right >= left && other.right <= right)
                 {
                     AddPoint(new PerimeterPoint(other.right, bottom, Side.Bottom));
                     other.AddPoint(new PerimeterPoint(other.right, bottom, Side.Right));
                 }
             }
 
-            if (top > other.bottom && top < other.top)
+            if (top >= other.bottom && top <= other.top)
             {
-                if (other.left > left && other.left < right)
+                if (other.left >= left && other.left <= right)
                 {
                     AddPoint(new PerimeterPoint(other.left, top, Side.Top));
                     other.AddPoint(new PerimeterPoint(other.left, top, Side.Left));
                 }
 
-                if (other.right > left && other.right < right)
+                if (other.right >= left && other.right <= right)
                 {
                     AddPoint(new PerimeterPoint(other.right, top, Side.Top));
                     other.AddPoint(new PerimeterPoint(other.right, top, Side.Right));
@@ -337,6 +346,36 @@ public class CityGenerator : ILevelGenerator {
             {
                 return y.CompareTo(other.y);
             }
+        }
+
+        public bool DoNotDraw(PerimeterPoint other, PerimeterRect thisRect)
+        {
+            HashSet<PerimeterRect> thisRects = PointDict[this];
+            HashSet<PerimeterRect> otherRects = PointDict[other];
+            List<PerimeterRect> sharedRects = new List<PerimeterRect>();
+
+            foreach (PerimeterRect rect in thisRects)
+            {
+                if (otherRects.Contains(rect) && rect != thisRect)
+                {
+                    sharedRects.Add(rect);
+                }
+            }
+
+            if (sharedRects.Count < 1)
+            {
+                return false;
+            }
+
+            foreach (PerimeterRect r in sharedRects)
+            {
+                if(r != thisRect && r.Overlaps(thisRect))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
