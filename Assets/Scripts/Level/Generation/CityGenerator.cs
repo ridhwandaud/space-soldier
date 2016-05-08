@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using SpriteTile;
 
 public class CityGenerator : ILevelGenerator {
@@ -10,8 +11,9 @@ public class CityGenerator : ILevelGenerator {
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 4;
     private static int MaxAttachAttempts = 1000;
-    private static int NumStartingRectangles = 5;
+    private static int NumStartingRectangles = 7;
     private static int PerimeterPadding = 3;
+    private static Dictionary<PerimeterPoint, int> IntersectionCounts = new Dictionary<PerimeterPoint, int>();
 
     private static Int2 BaseRectWidthRange = new Int2(15, 20);
     private static Int2 BaseRectHeightRange = BaseRectWidthRange;
@@ -27,6 +29,7 @@ public class CityGenerator : ILevelGenerator {
         q.Enqueue(startingRect);
 
         AddRects(q, startingRect, NumStartingRectangles - 1);
+        PerimeterRects.ForEach(r => r.points = r.points.Where(p => IntersectionCounts[p] < 3).ToList());
         DrawPerimeter();
         DivideRects(q);
 
@@ -183,24 +186,24 @@ public class CityGenerator : ILevelGenerator {
     public class PerimeterRect
     {
         public List<PerimeterPoint> points;
-        public float top;
-        public float right;
-        public float bottom;
-        public float left;
+        public int top;
+        public int right;
+        public int bottom;
+        public int left;
 
         public PerimeterRect (Rect r)
         {
             points = new List<PerimeterPoint>();
 
-            top = r.yMax + PerimeterPadding;
-            right = r.xMax + PerimeterPadding;
-            bottom = r.yMin - PerimeterPadding;
-            left = r.xMin - PerimeterPadding;
+            top = (int)r.yMax + PerimeterPadding;
+            right = (int)r.xMax + PerimeterPadding;
+            bottom = (int)r.yMin - PerimeterPadding;
+            left = (int)r.xMin - PerimeterPadding;
 
-            points.Add(new PerimeterPoint(left, top, Side.Top));
-            points.Add(new PerimeterPoint(right, top, Side.Right));
-            points.Add(new PerimeterPoint(right, bottom, Side.Bottom));
-            points.Add(new PerimeterPoint(left, bottom, Side.Left));
+            AddPoint(new PerimeterPoint(left, top, Side.Top));
+            AddPoint(new PerimeterPoint(right, top, Side.Right));
+            AddPoint(new PerimeterPoint(right, bottom, Side.Bottom));
+            AddPoint(new PerimeterPoint(left, bottom, Side.Left));
         }
 
         public void AddPoint(PerimeterPoint p)
@@ -217,6 +220,15 @@ public class CityGenerator : ILevelGenerator {
                     points.Insert(x, p);
                     break;
                 }
+            }
+
+            if (IntersectionCounts.ContainsKey(p))
+            {
+                IntersectionCounts[p] = IntersectionCounts[p] + 1;
+            }
+            else
+            {
+                IntersectionCounts.Add(p, 1);
             }
         }
 
@@ -291,11 +303,11 @@ public class CityGenerator : ILevelGenerator {
 
     public class PerimeterPoint
     {
-        public float x;
-        public float y;
+        public int x;
+        public int y;
         public Side side;
 
-        public PerimeterPoint(float x, float y, Side side)
+        public PerimeterPoint(int x, int y, Side side)
         {
             this.x = x;
             this.y = y;
@@ -325,6 +337,17 @@ public class CityGenerator : ILevelGenerator {
             {
                 return y.CompareTo(other.y);
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return 1000 * x + y;
+        }
+
+        public override bool Equals(System.Object point)
+        {
+            PerimeterPoint actualPoint = point as PerimeterPoint;
+            return x == actualPoint.x && y == actualPoint.y;
         }
     }
 
