@@ -11,7 +11,7 @@ public class CityGenerator : ILevelGenerator {
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 4;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 5;
+    private static int NumStartingRectangles = 3;
     public static int PerimeterPadding = 6;
 
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
@@ -32,9 +32,10 @@ public class CityGenerator : ILevelGenerator {
 
         AddRects(q, startingRect, NumStartingRectangles - 1);
         DrawPerimeter();
-        DivideRects(q);
+        Vector3 playerSpawnRef = new Vector3() ;
+        DivideRects(q, ref playerSpawnRef);
 
-        playerSpawn = Vector3.zero;
+        playerSpawn = playerSpawnRef;
         return null;
     }
 
@@ -161,7 +162,7 @@ public class CityGenerator : ILevelGenerator {
         return false;
     }
 
-    void DivideRects(Queue<Rect> q)
+    void DivideRects(Queue<Rect> q, ref Vector3 playerSpawn)
     {
         int numDivisions = 0;
         int numAttempts = 0;
@@ -170,6 +171,7 @@ public class CityGenerator : ILevelGenerator {
         bool horizontal = true;
 
         int maxDivisions = MaxDivisionsPerBase * q.Count;
+        bool spawned = false;
 
         while (q.Count > 0 && numAttempts < MaxDivideAttempts && numDivisions < maxDivisions)
         {
@@ -182,6 +184,12 @@ public class CityGenerator : ILevelGenerator {
                 q.Enqueue(new Rect(curr.x, newY, curr.width, curr.yMax - newY));
                 numInNextLevel += 2;
                 numDivisions++;
+
+                if (!spawned)
+                {
+                    spawned = true;
+                    playerSpawn = new Vector3(Random.Range(curr.x, curr.xMax), newY);
+                }
             }
             else if (!horizontal && curr.width > MinDivideGap * 2)
             {
@@ -191,6 +199,13 @@ public class CityGenerator : ILevelGenerator {
                 q.Enqueue(new Rect(newX, curr.y, curr.xMax - newX, curr.height));
                 numInNextLevel += 2;
                 numDivisions++;
+
+                if (!spawned)
+                {
+                    spawned = true;
+                    playerSpawn = new Vector3(newX, Random.Range(curr.y, curr.yMax));
+                }
+
             }
             else
             {
