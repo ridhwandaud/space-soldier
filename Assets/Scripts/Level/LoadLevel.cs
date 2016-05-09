@@ -73,13 +73,13 @@ public class LoadLevel : MonoBehaviour {
     void OnDrawGizmos()
     {
         return;
-        foreach (CityGenerator.PerimeterRect r in CityGenerator.PerimeterRects)
-        {
-            foreach (CityGenerator.PerimeterPoint p in r.points)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawCube(new Vector2(p.x, p.y), new Vector3(1, 1, 1));
-            }
-        }
+        //foreach (PerimeterRect r in PerimeterRects)
+        //{
+        //    foreach (CityGenerator.PerimeterPoint p in r.points)
+        //    {
+        //        Gizmos.color = Color.blue;
+        //        Gizmos.DrawCube(new Vector2(p.x, p.y), new Vector3(1, 1, 1));
+        //    }
+        //}
     }
 }
