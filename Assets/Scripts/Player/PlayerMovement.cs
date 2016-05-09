@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
-        if (GameState.Paused || GameState.InputLocked || LoadLevel.TestingCityLevel)
+        if (GameState.Paused || GameState.InputLocked)
         {
             return;
         }
@@ -79,6 +79,11 @@ public class PlayerMovement : MonoBehaviour {
     bool CollisionCheck(float x, float y)
     {
         Vector2 pos = new Vector2(x, y);
+
+        if (LoadLevel.TestingCityLevel)
+        {
+            return false;
+        }
         return Tile.GetCollider(pos, BasicLevelDecorator.CliffTileLayer)
             || Tile.GetCollider(pos, BasicLevelDecorator.WaterTileLayer)
             || Tile.GetCollider(pos, BasicLevelDecorator.TreeTileLayer);

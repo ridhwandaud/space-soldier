@@ -11,7 +11,7 @@ public class CityGenerator : ILevelGenerator {
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 4;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 3;
+    private static int NumStartingRectangles = 5;
     public static int PerimeterPadding = 6;
 
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
@@ -28,14 +28,17 @@ public class CityGenerator : ILevelGenerator {
         StartingRects.Add(startingRect);
         RenderRect(startingRect);
         Queue<Rect> q = new Queue<Rect>();
+        List<Road> perimeterLines = new List<Road>();
         q.Enqueue(startingRect);
 
         AddRects(q, startingRect, NumStartingRectangles - 1);
-        DrawPerimeter();
+        DrawPerimeter(perimeterLines);
         Vector3 playerSpawnRef = new Vector3() ;
         DivideRects(q, ref playerSpawnRef);
 
         playerSpawn = playerSpawnRef;
+        new CityGridCreator().GenerateGrid(perimeterLines, FinalRectangles);
+
         return null;
     }
 
@@ -102,7 +105,7 @@ public class CityGenerator : ILevelGenerator {
         }
     }
 
-    void DrawPerimeter()
+    void DrawPerimeter(List<Road> perimeterLines)
     {
         foreach (PerimeterRect r in PerimeterRects)
         {
@@ -130,7 +133,7 @@ public class CityGenerator : ILevelGenerator {
 
                 if (draw)
                 {
-                    new Road(curr.x, curr.y, next.x, next.y, true);
+                    perimeterLines.Add(new Road(curr.x, curr.y, next.x, next.y, true));
                 }
             }
         }
