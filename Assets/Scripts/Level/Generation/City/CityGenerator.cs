@@ -7,17 +7,17 @@ public class CityGenerator : ILevelGenerator {
     public static List<Road> Roads = new List<Road>();
     public static List<Rect> FinalRectangles = new List<Rect>();
     public static List<Rect> StartingRects = new List<Rect>();
-    private static int MaxDivisionsPerBase = 8;
+    private static int MaxDivisionsPerBase = 3;
     private static int MaxDivideAttempts = 2000;
-    private static int MinDivideGap = 4;
+    private static int MinDivideGap = 5;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 5;
+    private static int NumStartingRectangles = 10;
     public static int PerimeterPadding = 6;
 
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
 
-    private static Int2 BaseRectWidthRange = new Int2(15, 20);
-    private static Int2 BaseRectHeightRange = BaseRectWidthRange;
+    private static Int2 BaseRectWidthRange = new Int2(15, 15);
+    private static Int2 BaseRectHeightRange = new Int2(10, 10);
 
     public static List<PerimeterRect> PerimeterRects = new List<PerimeterRect>();
 
@@ -224,6 +224,11 @@ public class CityGenerator : ILevelGenerator {
                 horizontal = !horizontal;
             }
             numAttempts++;
+        }
+
+        foreach (Rect r in q)
+        {
+            FinalRectangles.Add(r);
         }
     }
 

@@ -46,9 +46,18 @@ public class CityGridCreator {
         foreach (Rect r in rects)
         {
             DrawGridLine(grid, (int)r.xMin, (int)r.yMin, (int)r.xMin, (int)r.yMax, 1);
+            DrawGridLine(grid, (int)r.xMin + 1, (int)r.yMin, (int)r.xMin + 1, (int)r.yMax, 1);
+
             DrawGridLine(grid, (int)r.xMin, (int)r.yMin, (int)r.xMax, (int)r.yMin, 1);
+            DrawGridLine(grid, (int)r.xMin, (int)r.yMin - 1, (int)r.xMax, (int)r.yMin - 1, 1);
+
             DrawGridLine(grid, (int)r.xMax, (int)r.yMin, (int)r.xMax, (int)r.yMax, 1);
+            DrawGridLine(grid, (int)r.xMax + 1, (int)r.yMin, (int)r.xMax + 1, (int)r.yMax, 1);
+
             DrawGridLine(grid, (int)r.xMin, (int)r.yMax, (int)r.xMax, (int)r.yMax, 1);
+            DrawGridLine(grid, (int)r.xMin, (int)r.yMax - 1, (int)r.xMax, (int)r.yMax - 1, 1);
+
+            Tile.SetTile(new Int2(normalizeX((int)r.xMax + 1), normalizeY((int)r.yMin - 1)), TileSetIndex, 1, false);
         }
     }
 
@@ -64,7 +73,7 @@ public class CityGridCreator {
                 int y = normalizeY(i);
                 int x = normalizeX(x1);
                 grid[y, x] = tileIndex; // change this to not be the exact same as the var used for the actual SpriteTile tile index
-                Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, true);
+                Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, false);
             }
         }
         else
@@ -76,7 +85,7 @@ public class CityGridCreator {
                 int x = normalizeX(i);
                 int y = normalizeY(y1);
                 grid[y, x] = tileIndex;
-                Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, true);
+                Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, false);
             }
         }
     }
