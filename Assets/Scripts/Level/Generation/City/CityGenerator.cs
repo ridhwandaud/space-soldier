@@ -9,15 +9,15 @@ public class CityGenerator : ILevelGenerator {
     public static List<Rect> StartingRects = new List<Rect>();
     private static int MaxDivisionsPerBase = 3;
     private static int MaxDivideAttempts = 2000;
-    private static int MinDivideGap = 5;
+    private static int MinDivideGap = 6;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 10;
+    private static int NumStartingRectangles = 4;
     public static int PerimeterPadding = 6;
 
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
 
-    private static Int2 BaseRectWidthRange = new Int2(15, 15);
-    private static Int2 BaseRectHeightRange = new Int2(10, 10);
+    private static Int2 BaseRectWidthRange = new Int2(20, 20);
+    private static Int2 BaseRectHeightRange = new Int2(15, 20);
 
     public static List<PerimeterRect> PerimeterRects = new List<PerimeterRect>();
 
@@ -65,13 +65,13 @@ public class CityGenerator : ILevelGenerator {
 
                 if (dirNum == 0 || dirNum == 2)
                 {
-                    y = (int)Random.Range(curr.y, curr.y + curr.height);
+                    y = (int)Random.Range(curr.y, curr.y + curr.height / 2);
                     x = (int)(dirNum == 0 ? curr.x - width : curr.x + curr.width);
                 }
                 else
                 {
                     y = (int)(dirNum == 1 ? curr.y + curr.height : curr.y - height);
-                    x = (int)Random.Range(curr.x, curr.x + curr.width);
+                    x = (int)Random.Range(curr.x, curr.x + curr.width / 2);
                 }
 
                 Rect newRect = new Rect(x, y, width, height);
@@ -79,7 +79,7 @@ public class CityGenerator : ILevelGenerator {
 
                 foreach (Rect rect in StartingRects)
                 {
-                    if (newRect.Overlaps(rect))
+                    if (newRect.Overlaps(rect) || RectsAreOneTileApart(rect, newRect))
                     {
                         overlap = true;
                         break;
@@ -103,6 +103,33 @@ public class CityGenerator : ILevelGenerator {
                 numAttemptsThisRect++;
             }
         }
+    }
+
+    bool RectsAreOneTileApart(Rect r1, Rect r2)
+    {
+        return LinesAreOneTileApart(r1.xMin, r1.xMax, r1.yMin, r2.xMin, r2.xMax, r2.yMax)
+            || LinesAreOneTileApart(r1.xMin, r1.xMax, r1.yMax, r2.xMin, r2.xMax, r2.yMin)
+            || LinesAreOneTileApart(r1.yMin, r1.yMax, r1.xMin, r2.yMin, r2.yMax, r2.xMax)
+            || LinesAreOneTileApart(r1.yMin, r1.yMax, r1.xMax, r2.yMin, r2.yMax, r2.xMin);
+    }
+
+    bool LinesAreOneTileApart (float line1Min, float line1Max, float line1OtherCoord, float line2Min, float line2Max,
+        float line2OtherCoord)
+    {
+        if (IsBetween(line1Min, line2Min, line2Max)
+            || IsBetween(line1Max, line2Min, line2Max)
+            || IsBetween(line2Min, line1Min, line1Max)
+            || IsBetween(line2Max, line1Min, line1Max))
+        {
+            return Mathf.Abs(line1OtherCoord - line2OtherCoord) == 1;    
+        }
+
+        return false;
+    }
+
+    bool IsBetween (float valToCheck, float min, float max)
+    {
+        return (valToCheck > min && valToCheck < max) && valToCheck != min && valToCheck != max;
     }
 
     void DrawPerimeter(List<Road> perimeterLines)
