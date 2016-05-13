@@ -9,15 +9,15 @@ public class CityGenerator : ILevelGenerator {
     public static List<Rect> StartingRects = new List<Rect>();
     private static int MaxDivisionsPerBase = 3;
     private static int MaxDivideAttempts = 2000;
-    private static int MinDivideGap = 6;
+    private static int MinDivideGap = 4;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 4;
+    private static int NumStartingRectangles = 5;
     public static int PerimeterPadding = 6;
 
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
 
-    private static Int2 BaseRectWidthRange = new Int2(20, 20);
-    private static Int2 BaseRectHeightRange = new Int2(15, 20);
+    private static Int2 BaseRectWidthRange = new Int2(20, 25);
+    private static Int2 BaseRectHeightRange = new Int2(20, 25);
 
     public static List<PerimeterRect> PerimeterRects = new List<PerimeterRect>();
 
@@ -37,7 +37,8 @@ public class CityGenerator : ILevelGenerator {
         DivideRects(q, ref playerSpawnRef);
 
         playerSpawn = playerSpawnRef;
-        new CityGridCreator().GenerateGrid(perimeterLines, FinalRectangles);
+        int[,] grid = new CityGridCreator().GenerateGrid(perimeterLines, FinalRectangles);
+        new CityDecorator().GenerateBuildings(FinalRectangles, grid);
 
         return null;
     }
@@ -160,7 +161,7 @@ public class CityGenerator : ILevelGenerator {
 
                 if (draw)
                 {
-                    perimeterLines.Add(new Road(curr.x, curr.y, next.x, next.y, true));
+                    perimeterLines.Add(new Road(curr.x, curr.y, next.x, next.y, 1));
                 }
             }
         }
@@ -270,11 +271,11 @@ public class CityGenerator : ILevelGenerator {
     }
 
     // TODO: Remove
-    static void RenderRect(Rect rect, bool isPerim = false)
+    public static void RenderRect(Rect rect, int colorCode = 0)
     {
-        Roads.Add(new Road(rect.x, rect.y, rect.x, rect.yMax, isPerim));
-        Roads.Add(new Road(rect.x, rect.y, rect.xMax, rect.y, isPerim));
-        Roads.Add(new Road(rect.xMax, rect.y, rect.xMax, rect.yMax, isPerim));
-        Roads.Add(new Road(rect.x, rect.yMax, rect.xMax, rect.yMax, isPerim));
+        Roads.Add(new Road(rect.x, rect.y, rect.x, rect.yMax, colorCode));
+        Roads.Add(new Road(rect.x, rect.y, rect.xMax, rect.y, colorCode));
+        Roads.Add(new Road(rect.xMax, rect.y, rect.xMax, rect.yMax, colorCode));
+        Roads.Add(new Road(rect.x, rect.yMax, rect.xMax, rect.yMax, colorCode));
     }
 }
