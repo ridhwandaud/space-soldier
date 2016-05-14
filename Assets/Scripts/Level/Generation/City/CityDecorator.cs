@@ -6,14 +6,29 @@ public class CityDecorator {
 
     // Minimum size of a building, as defined in the list.
     private static int MinStructureWidth = 3;
-    private static int MinStructureHeight = 2;
+    private static int MinStructureHeight = 3;
 
     // If the divided dimension is greater than the corresponding max, a division WILL happen.
     private static int MaxBlockWidth = 6;
     private static int MaxBlockHeight = 6;
 
-	public void GenerateBuildings(List<Rect> cityBlocks, int[,] tilemap)
+    private List<List<List<Building>>> BuildingList;
+
+    public void GenerateBuildings (List<Rect> cityBlocks, int[,] tilemap)
     {
+        ConstructBuildingArray();
+        //for (int x = 0; x < buildingList.Count; x++) {
+        //    List<List<Building>> row = buildingList[x];
+        //    for(int y = 0; y < row.Count; y++)
+        //    {
+        //        List<Building> col = row[y];
+        //        if(col.Count > 0)
+        //        {
+        //            Debug.Log("Found " + col.Count + " at row " + x + " col " + y + " .");
+        //        }
+        //    }
+        //}
+
         foreach (Rect cityBlock in cityBlocks)
         {
             int numAttempts = 0;
@@ -43,7 +58,7 @@ public class CityDecorator {
                         vert ? divisionOffset : curr.width,
                         vert ? curr.height : divisionOffset));
                     rectQueue.Enqueue(new Rect(
-                        vert ? curr.xMin + divisionOffset : curr.xMin ,
+                        vert ? curr.xMin + divisionOffset : curr.xMin,
                         vert ? curr.yMin : curr.yMin + divisionOffset,
                         vert ? width - divisionOffset : width,
                         vert ? height : height - divisionOffset));
@@ -55,4 +70,67 @@ public class CityDecorator {
             }
         }
     }
+
+    void SelectAndPlaceBuilding(Rect rect)
+    {
+        List<Building> potentialBuildings = new List<Building>();
+        for (int row = (int)rect.height - 2; row < rect.height; row++)
+        {
+            for (int col = (int)rect.width - 2; col < rect.width; col++)
+            {
+                potentialBuildings.AddRange(BuildingList[row][col]);
+            }
+        }
+
+        Building selectedBuilding = potentialBuildings[Random.Range(0, potentialBuildings.Count)];
+
+        int rowOffset = Random.Range(0, (int)rect.height - selectedBuilding.NumRows + 1);
+        int colOffset = Random.Range(0, (int)rect.width - selectedBuilding.NumCols + 1);
+
+        selectedBuilding.Render((int)rect.y + rowOffset, (int)rect.x + colOffset);
+    }
+
+    void ConstructBuildingArray ()
+    {
+        List<List<List<Building>>> result = new List<List<List<Building>>>();
+
+        foreach (Building b in Buildings)
+        {
+            while (result.Count <= b.NumRows)
+            {
+                result.Add(new List<List<Building>>());
+            }
+
+            List<List<Building>> row = result[b.NumRows];
+
+            while (row.Count <= b.NumCols)
+            {
+                row.Add(new List<Building>());
+            }
+
+            row[b.NumCols].Add(b);
+        }
+
+        BuildingList = result;
+    }
+
+    private static List<Building> Buildings = new List<Building> {
+            new Building(
+                new int[,] { 
+                    { 3, 3, 3 },
+                    { 2, 2, 2 },
+                    { 1, 1, 1 }
+                },
+                new int[,] {
+                    { 0, 0, 0 }
+                }),
+            new Building(
+                new int[,] {
+                    { 2, 2, 2, 2 },
+                    { 1, 1, 1, 1 }
+                },
+                new int[,] {
+                    { 0, 0, 0, 0 }
+                }),
+    };
 }
