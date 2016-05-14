@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SpriteTile;
 
 public class BasicLevelDecorator {
-    public static int TilesetIndex = 3;
+    public static int TilesetIndex = 2;
     private static int NumLayers = 11;
 
     // SpriteTile layers/sorting layers.

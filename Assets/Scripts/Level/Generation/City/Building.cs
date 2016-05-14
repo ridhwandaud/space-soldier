@@ -1,6 +1,7 @@
 ﻿using SpriteTile;
+using UnityEngine;
 
-public class Building {
+public class Building  {
     public static int TilesetIndex = 3;
     public static int BaseLayerIndex = 1;
 
@@ -39,20 +40,20 @@ public class Building {
         int numRows = BaseTiles.GetLength(0) + HighRiseTiles.GetLength(0);
         int numCols = BaseTiles.GetLength(1);
 
-        for (int row = 0; row < numRows; row++)
+        for (int rowOffset = 0; rowOffset < numRows; rowOffset++)
         {
-            for (int col = 0; col < numCols; col++)
+            for (int colOffset = 0; colOffset < numCols; colOffset++)
             {
                 int tileNum;
-                if (row < BaseTiles.GetLength(0))
+                if (rowOffset < BaseTiles.GetLength(0))
                 {
-                    tileNum = BaseTiles[BaseTiles.GetLength(0) - row - 1, col];
+                    tileNum = BaseTiles[BaseTiles.GetLength(0) - rowOffset - 1, colOffset];
                 } else
                 {
-                    tileNum = HighRiseTiles[BaseTiles.GetLength(1) - (row - BaseTiles.GetLength(0)) - 1, col];
+                    tileNum = HighRiseTiles[HighRiseTiles.GetLength(0) - (rowOffset - BaseTiles.GetLength(0)) - 1, colOffset];
                 }
 
-                Tile.SetTile(new Int2(col, row), BaseLayerIndex + row, TilesetIndex, tileNum, false);
+                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), 1, TilesetIndex, tileNum, false);
             }
         }
     }

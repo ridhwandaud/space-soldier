@@ -17,6 +17,7 @@ public class CityGridCreator {
         Tile.NewLevel(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
         Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
         Tile.SetLayerPosition(0, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
+        Tile.SetLayerPosition(1, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
 
         for (int row = 0; row < result.GetLength(0); row++)
         {
@@ -57,7 +58,7 @@ public class CityGridCreator {
             DrawGridLine(grid, (int)r.xMin, (int)r.yMax, (int)r.xMax, (int)r.yMax, 1);
             DrawGridLine(grid, (int)r.xMin, (int)r.yMax - 1, (int)r.xMax, (int)r.yMax - 1, 1);
 
-            Tile.SetTile(new Int2(normalizeX((int)r.xMax + 1), normalizeY((int)r.yMin - 1)), TileSetIndex, 1, false);
+            Tile.SetTile(new Int2(NormalizeX((int)r.xMax + 1), NormalizeY((int)r.yMin - 1)), TileSetIndex, 1, false);
         }
     }
 
@@ -70,8 +71,8 @@ public class CityGridCreator {
             int maxY = Mathf.Max(y1, y2);
             for (int i = minY; i <= maxY; i++)
             {
-                int y = normalizeY(i);
-                int x = normalizeX(x1);
+                int y = NormalizeY(i);
+                int x = NormalizeX(x1);
                 grid[y, x] = tileIndex; // change this to not be the exact same as the var used for the actual SpriteTile tile index
                 Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, false);
             }
@@ -82,8 +83,8 @@ public class CityGridCreator {
             int maxX = Mathf.Max(x1, x2);
             for (int i = minX; i <= maxX; i++)
             {
-                int x = normalizeX(i);
-                int y = normalizeY(y1);
+                int x = NormalizeX(i);
+                int y = NormalizeY(y1);
                 grid[y, x] = tileIndex;
                 Tile.SetTile(new Int2(x, y), TileSetIndex, tileIndex, false);
             }
@@ -136,12 +137,12 @@ public class CityGridCreator {
         return new int[maxY - minY + 2 * Padding + 1, maxX - minX + 2 * Padding + 1];
     }
 
-    private int normalizeX(int val)
+    public static int NormalizeX(int val)
     {
         return val - NormalizationOffsetX;
     }
 
-    private int normalizeY(int val)
+    public static int NormalizeY(int val)
     {
         return val - NormalizationOffsetY;
     }
