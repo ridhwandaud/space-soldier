@@ -9,6 +9,8 @@ public class CityGridCreator {
 
     private static int TileSetIndex = 0;
 
+    public static int RoadThickness = 4;
+
 	public int[,] GenerateGrid(List<Road> perimeterLines, List<Rect> rectangles)
     {
         int[,] result = createEmptyArray(perimeterLines);
@@ -49,19 +51,14 @@ public class CityGridCreator {
     {
         foreach (Rect r in rects)
         {
-            DrawGridLine(grid, (int)r.xMin, (int)r.yMin, (int)r.xMin, (int)r.yMax, 1);
-            DrawGridLine(grid, (int)r.xMin + 1, (int)r.yMin, (int)r.xMin + 1, (int)r.yMax, 1);
+            for (int i = 0; i < RoadThickness; i++)
+            {
+                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, 1);
+                DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax, 1);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, 1);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, 1);
 
-            DrawGridLine(grid, (int)r.xMin, (int)r.yMin, (int)r.xMax, (int)r.yMin, 1);
-            DrawGridLine(grid, (int)r.xMin, (int)r.yMin - 1, (int)r.xMax, (int)r.yMin - 1, 1);
-
-            DrawGridLine(grid, (int)r.xMax, (int)r.yMin, (int)r.xMax, (int)r.yMax, 1);
-            DrawGridLine(grid, (int)r.xMax + 1, (int)r.yMin, (int)r.xMax + 1, (int)r.yMax, 1);
-
-            DrawGridLine(grid, (int)r.xMin, (int)r.yMax, (int)r.xMax, (int)r.yMax, 1);
-            DrawGridLine(grid, (int)r.xMin, (int)r.yMax - 1, (int)r.xMax, (int)r.yMax - 1, 1);
-
-            Tile.SetTile(new Int2(NormalizeX((int)r.xMax + 1), NormalizeY((int)r.yMin - 1)), TileSetIndex, 1, false);
+            }
         }
     }
 

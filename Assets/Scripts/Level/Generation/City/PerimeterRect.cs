@@ -14,8 +14,8 @@ public class PerimeterRect
         points = new List<PerimeterPoint>();
 
         top = (int)r.yMax + CityGenerator.PerimeterPadding;
-        right = (int)r.xMax + CityGenerator.PerimeterPadding;
-        bottom = (int)r.yMin - CityGenerator.PerimeterPadding;
+        right = (int)r.xMax + CityGenerator.PerimeterPadding + CityGridCreator.RoadThickness - 1;
+        bottom = (int)r.yMin - CityGenerator.PerimeterPadding - CityGridCreator.RoadThickness + 1;
         left = (int)r.xMin - CityGenerator.PerimeterPadding;
 
         AddPoint(new PerimeterPoint(left, top, Side.Top));

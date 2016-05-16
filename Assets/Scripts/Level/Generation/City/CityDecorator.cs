@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class CityDecorator {
-    private static int RoadThickness = 2;
-
     // Minimum size of a building, as defined in the list.
     private static int MinStructureWidth = 4;
     private static int MinStructureHeight = 1;
@@ -22,9 +20,9 @@ public class CityDecorator {
         foreach (Rect cityBlock in cityBlocks)
         {
             Queue<Rect> rectQueue = new Queue<Rect>();
-            int ceiling = (int)cityBlock.yMax - RoadThickness + 1;
-            rectQueue.Enqueue(new Rect(cityBlock.xMin + RoadThickness, cityBlock.yMin + 1, cityBlock.size.x - RoadThickness,
-                cityBlock.size.y - RoadThickness));
+            int ceiling = (int)cityBlock.yMax - CityGridCreator.RoadThickness + 1;
+            rectQueue.Enqueue(new Rect(cityBlock.xMin + CityGridCreator.RoadThickness, cityBlock.yMin + 1,
+                cityBlock.size.x - CityGridCreator.RoadThickness, cityBlock.size.y - CityGridCreator.RoadThickness));
 
             while (rectQueue.Count > 0)
             {
@@ -33,13 +31,12 @@ public class CityDecorator {
 
                 bool canDivideVertically = width >= MinStructureWidth * 2;
                 bool canDivideHorizontally = height >= MinStructureHeight * 2;
-                bool vert = (canDivideVertically && canDivideHorizontally) ? Random.Range(0, 2) == 0 : canDivideVertically;
-                vert = width > height;
+                bool vert = (canDivideVertically && canDivideHorizontally) ? height - MaxBlockHeight < width - MaxBlockWidth : canDivideVertically;
 
                 float dividedDimensionLength = vert ? width : height;
                 float maxDimension = vert ? MaxBlockWidth : MaxBlockHeight;
 
-                if ((canDivideHorizontally || canDivideVertically) && (dividedDimensionLength > maxDimension || Random.Range(0, 4) < 2))
+                if ((canDivideHorizontally || canDivideVertically) && (dividedDimensionLength > maxDimension || Random.Range(0, 5) < 1))
                 {
                     float padding = vert ? MinStructureWidth : MinStructureHeight;
                     float divisionOffset = Random.Range((int)padding, (int)(dividedDimensionLength - padding));
@@ -91,7 +88,7 @@ public class CityDecorator {
         int rowOffset = Random.Range(0, (int)rect.height - selectedBuilding.NumBaseRows + 1);
         int colOffset = Random.Range(0, (int)rect.width - selectedBuilding.NumCols + 1);
 
-        selectedBuilding.Render(CityGridCreator.NormalizeY((int)rect.y + 0), CityGridCreator.NormalizeX((int)rect.x + 0));
+        selectedBuilding.Render(CityGridCreator.NormalizeY((int)rect.y + 0), CityGridCreator.NormalizeX((int)rect.x + colOffset));
     }
 
     void ConstructBuildingDictionary ()
