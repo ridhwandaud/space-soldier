@@ -6,7 +6,7 @@ public class CityDecorator {
 
     // Minimum size of a building, as defined in the list.
     private static int MinStructureWidth = 4;
-    private static int MinStructureHeight = 4;
+    private static int MinStructureHeight = 1;
 
     // If the divided dimension is greater than the corresponding max, a division WILL happen.
     private static int MaxBlockWidth = 6;
@@ -123,7 +123,7 @@ public class CityDecorator {
                     { 162, 163, 164, 165 }
                 },
                 new int[,] {
-                    { 181, 182, 183, 14 },
+                    { 181, 182, 183, 184 },
                     { 200, 201, 202, 203 },
                     { 220, 221, 222, 223 }
                 }),

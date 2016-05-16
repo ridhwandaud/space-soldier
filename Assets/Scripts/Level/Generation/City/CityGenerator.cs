@@ -14,6 +14,9 @@ public class CityGenerator : ILevelGenerator {
     private static int NumStartingRectangles = 5;
     public static int PerimeterPadding = 6;
 
+    // Must be less than # of configured sorting layers. Btw, Default sorting layer is #10.
+    public static int MaxRectangleHeight;
+
     public static Dictionary<PerimeterPoint, HashSet<PerimeterRect>> PointDict = new Dictionary<PerimeterPoint, HashSet<PerimeterRect>>();
 
     private static Int2 BaseRectWidthRange = new Int2(20, 25);
@@ -23,6 +26,8 @@ public class CityGenerator : ILevelGenerator {
 
     public int[,] GenerateLevel (int levelIndex, out Vector3 playerSpawn)
     {
+        MaxRectangleHeight = MinDivideGap * 2 - 1;
+
         Rect startingRect = new Rect(0, 0, Random.Range(BaseRectWidthRange.x, BaseRectWidthRange.y),
             Random.Range(BaseRectHeightRange.x, BaseRectHeightRange.y));
         StartingRects.Add(startingRect);
@@ -204,7 +209,7 @@ public class CityGenerator : ILevelGenerator {
         int maxDivisions = MaxDivisionsPerBase * q.Count;
         bool spawned = false;
 
-        while (q.Count > 0 && numAttempts < MaxDivideAttempts && numDivisions < maxDivisions)
+        while (q.Count > 0 && numDivisions < maxDivisions)
         {
             Rect curr = q.Dequeue();
             if (horizontal && curr.height > MinDivideGap * 2)

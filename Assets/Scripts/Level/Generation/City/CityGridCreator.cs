@@ -15,9 +15,12 @@ public class CityGridCreator {
 
         Int2 mapDimensions = new Int2(result.GetLength(1), result.GetLength(0));
         Tile.NewLevel(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
-        Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
-        Tile.SetLayerPosition(0, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
-        Tile.SetLayerPosition(1, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
+
+        for (int i = 0; i < CityGenerator.MaxRectangleHeight; i++)
+        {
+            Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
+            Tile.SetLayerPosition(i, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
+        }
 
         for (int row = 0; row < result.GetLength(0); row++)
         {
