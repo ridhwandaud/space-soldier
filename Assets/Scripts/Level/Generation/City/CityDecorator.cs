@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CityDecorator {
     private static int RoadThickness = 2;
@@ -20,25 +21,26 @@ public class CityDecorator {
 
         foreach (Rect cityBlock in cityBlocks)
         {
-            int numAttempts = 0;
             Queue<Rect> rectQueue = new Queue<Rect>();
+            int ceiling = (int)cityBlock.yMax - RoadThickness + 1;
             rectQueue.Enqueue(new Rect(cityBlock.xMin + RoadThickness, cityBlock.yMin + 1, cityBlock.size.x - RoadThickness,
                 cityBlock.size.y - RoadThickness));
+
             while (rectQueue.Count > 0)
             {
-                numAttempts++;
                 Rect curr = rectQueue.Dequeue();
                 int width = (int)curr.size.x, height = (int)curr.size.y;
 
-                bool canDivide = width >= MinStructureWidth * 2 || height >= MinStructureHeight * 2;
-                bool vert = width > height;
+                bool canDivideVertically = width >= MinStructureWidth * 2;
+                bool canDivideHorizontally = height >= MinStructureHeight * 2;
+                bool vert = (canDivideVertically && canDivideHorizontally) ? Random.Range(0, 2) == 0 : canDivideVertically;
+                vert = width > height;
 
                 float dividedDimensionLength = vert ? width : height;
                 float maxDimension = vert ? MaxBlockWidth : MaxBlockHeight;
 
-                if (canDivide && (dividedDimensionLength > maxDimension || Random.Range(0, 4) < 2))
+                if ((canDivideHorizontally || canDivideVertically) && (dividedDimensionLength > maxDimension || Random.Range(0, 4) < 2))
                 {
-                    // Divide
                     float padding = vert ? MinStructureWidth : MinStructureHeight;
                     float divisionOffset = Random.Range((int)padding, (int)(dividedDimensionLength - padding));
                     rectQueue.Enqueue(new Rect(
@@ -55,22 +57,23 @@ public class CityDecorator {
                 {
                     // Place building. Tiles from xMin, yMin (inclusive) to xMax, yMax (exclusive) can be potentially filled.
                     //CityGenerator.RenderRect(curr, 2);
-                    SelectAndPlaceBuilding(curr);
+                    SelectAndPlaceBuilding(curr, ceiling);
                 }
             }
         }
     }
 
-    void SelectAndPlaceBuilding(Rect rect)
+    void SelectAndPlaceBuilding(Rect rect, int ceiling)
     {
         List<Building> potentialBuildings = new List<Building>();
-        for (int row = (int)rect.height - 3; row <= rect.height; row++)
+        for (int row = (int)rect.height - 4; row <= rect.height; row++)
         {
-            for (int col = (int)rect.width - 3; col <= rect.width; col++)
+            for (int col = (int)rect.width - 4; col <= rect.width; col++)
             {
                 if (BuildingDictionary.ContainsKey(row) && BuildingDictionary[row].ContainsKey(col))
                 {
-                    potentialBuildings.AddRange(BuildingDictionary[row][col]);
+                    potentialBuildings.AddRange(BuildingDictionary[row][col].Where(
+                        building => building.NumRows <= ceiling - rect.yMin).ToList());
                 }
             }
         }
@@ -79,13 +82,13 @@ public class CityDecorator {
 
         if (potentialBuildings.Count == 0)
         {
-            Debug.Log("Unpopulatable rect with " + rect.height + " rows and " + rect.width + " columns.");
+            //Debug.Log("Unpopulatable rect with " + rect.height + " rows and " + rect.width + " columns.");
             return;
         }
 
         Building selectedBuilding = potentialBuildings[rand];
 
-        int rowOffset = Random.Range(0, (int)rect.height - selectedBuilding.NumRows + 1);
+        int rowOffset = Random.Range(0, (int)rect.height - selectedBuilding.NumBaseRows + 1);
         int colOffset = Random.Range(0, (int)rect.width - selectedBuilding.NumCols + 1);
 
         selectedBuilding.Render(CityGridCreator.NormalizeY((int)rect.y + 0), CityGridCreator.NormalizeX((int)rect.x + 0));
@@ -97,12 +100,12 @@ public class CityDecorator {
 
         foreach (Building b in Buildings)
         {
-            if (!result.ContainsKey(b.NumRows))
+            if (!result.ContainsKey(b.NumBaseRows))
             {
-                result[b.NumRows] = new Dictionary<int, List<Building>>();
+                result[b.NumBaseRows] = new Dictionary<int, List<Building>>();
             }
 
-            Dictionary<int, List<Building>> rowDict = result[b.NumRows];
+            Dictionary<int, List<Building>> rowDict = result[b.NumBaseRows];
 
             if (!rowDict.ContainsKey(b.NumCols))
             {

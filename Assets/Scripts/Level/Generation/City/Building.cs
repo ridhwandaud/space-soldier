@@ -7,11 +7,19 @@ public class Building {
     private int[,] BaseTiles;
     private int[,] HighRiseTiles;
 
-    public int NumRows
+    public int NumBaseRows
     {
         get
         {
             return BaseTiles.GetLength(0);
+        }
+    }
+
+    public int NumRows
+    {
+        get
+        {
+            return BaseTiles.GetLength(0) + HighRiseTiles.GetLength(0);
         }
     }
 

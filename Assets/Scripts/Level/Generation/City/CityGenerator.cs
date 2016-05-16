@@ -11,7 +11,7 @@ public class CityGenerator : ILevelGenerator {
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 4;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 5;
+    private static int NumStartingRectangles = 4;
     public static int PerimeterPadding = 6;
 
     // Must be less than # of configured sorting layers. Btw, Default sorting layer is #10.
