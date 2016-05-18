@@ -12,7 +12,7 @@ public class CityGenerator : ILevelGenerator {
     private static int MinDivideGap = 6;
     private static int MaxAttachAttemptsPerRect = 50;
     private static int NumStartingRectangles = 3;
-    public static int PerimeterPadding = 6;
+    public static int PerimeterPadding = 8;
 
     // Must be less than # of configured sorting layers. Btw, Default sorting layer is #10.
     public static int MaxRectangleHeight;
@@ -43,7 +43,9 @@ public class CityGenerator : ILevelGenerator {
 
         playerSpawn = playerSpawnRef;
         int[,] grid = new CityGridCreator().GenerateGrid(perimeterLines, FinalRectangles);
-        new CityDecorator().GenerateBuildings(FinalRectangles, grid);
+        CityDecorator decorator = new CityDecorator();
+        decorator.GenerateBuildings(FinalRectangles, grid);
+        decorator.DecoratePerimeters(perimeterLines);
 
         return null;
     }
@@ -167,7 +169,21 @@ public class CityGenerator : ILevelGenerator {
 
                 if (draw)
                 {
-                    perimeterLines.Add(new Road(curr.x, curr.y, next.x, next.y, 1));
+                    Side side;
+                    if (curr.side == Side.Top && (next.side == Side.Top || next.side == Side.Right))
+                    {
+                        side = Side.Top;
+                    } else if (curr.side == Side.Right && (next.side == Side.Right || next.side == Side.Bottom))
+                    {
+                        side = Side.Right;
+                    } else if (curr.side == Side.Bottom && (next.side == Side.Bottom || next.side == Side.Left))
+                    {
+                        side = Side.Bottom;
+                    } else
+                    {
+                        side = Side.Left;
+                    }
+                    perimeterLines.Add(new Road(curr.x, curr.y, next.x, next.y, 1, side));
                 }
             }
         }

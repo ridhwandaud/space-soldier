@@ -1,8 +1,9 @@
 ﻿using SpriteTile;
+using UnityEngine;
 
 public class Building {
     public static int TilesetIndex = 3;
-    public static int BaseLayerIndex = 1;
+    public static int BaseBuildingIndex = 1;
 
     private int[,] BaseTiles;
     private int[,] HighRiseTiles;
@@ -42,10 +43,21 @@ public class Building {
         HighRiseTiles = highRiseTiles;
     }
 
-    public void Render(int startRow, int startCol)
+    public bool Render (int startRow, int startCol)
     {
         int numRows = BaseTiles.GetLength(0) + HighRiseTiles.GetLength(0);
         int numCols = BaseTiles.GetLength(1);
+
+        for (int rowOffset = 0; rowOffset < NumBaseRows; rowOffset++)
+        {
+            for (int colOffset = 0; colOffset < numCols; colOffset++)
+            {
+                if (Tile.GetTile(new Int2(startCol + colOffset, startRow + rowOffset), BaseBuildingIndex).tile != -1)
+                {
+                    return false;
+                }
+            }
+        }
 
         for (int rowOffset = 0; rowOffset < numRows; rowOffset++)
         {
@@ -60,8 +72,11 @@ public class Building {
                     tileNum = HighRiseTiles[HighRiseTiles.GetLength(0) - (rowOffset - BaseTiles.GetLength(0)) - 1, colOffset];
                 }
 
-                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), BaseLayerIndex + rowOffset, TilesetIndex, tileNum, false);
+                int layer = rowOffset < NumBaseRows ? BaseBuildingIndex : BaseBuildingIndex + rowOffset;
+                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, false);
             }
         }
+
+        return true;
     }
 }
