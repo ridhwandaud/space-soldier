@@ -1,18 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using SpriteTile;
 
 public class CityDecorator {
     private static int SizeCushionAmount = 4;
     private static int PerimeterBuildingOffset = 5;
+    private static int AllowedBuildingSizeDiff = 4;
+    private static int AllowedPerimeterBuildingSizeDiff = 2;
+    private static int MinStructureWidth;
+    private static int MinStructureHeight;
+    private static int MaxStructureWidth;
+    private static int MaxStructureHeight;
 
     private Dictionary<int, Dictionary<int, List<Building>>> BuildingDictionary;
 
     public void GenerateBuildings (List<Rect> cityBlocks, int[,] tilemap)
     {
-        int minStructureWidth, minStructureHeight, maxBlockWidth, maxBlockHeight;
-        ConstructBuildingDictionary(out minStructureWidth, out minStructureHeight, out maxBlockWidth, out maxBlockHeight);
+        ConstructBuildingDictionary();
+        int maxBlockWidth = MaxStructureWidth + SizeCushionAmount, maxBlockHeight = MaxStructureHeight + SizeCushionAmount;
 
         foreach (Rect cityBlock in cityBlocks)
         {
@@ -26,8 +31,8 @@ public class CityDecorator {
                 Rect curr = rectQueue.Dequeue();
                 int width = (int)curr.size.x, height = (int)curr.size.y;
 
-                bool canDivideVertically = width >= minStructureWidth * 2;
-                bool canDivideHorizontally = height >= minStructureHeight * 2;
+                bool canDivideVertically = width >= MinStructureWidth * 2;
+                bool canDivideHorizontally = height >= MinStructureHeight * 2;
                 bool vert = (canDivideVertically && canDivideHorizontally) ? height - maxBlockHeight < width - maxBlockWidth : canDivideVertically;
 
                 float dividedDimensionLength = vert ? width : height;
@@ -35,7 +40,7 @@ public class CityDecorator {
 
                 if ((canDivideHorizontally || canDivideVertically) && (dividedDimensionLength > maxDimension || Random.Range(0, 5) < 1))
                 {
-                    float padding = vert ? minStructureWidth : minStructureHeight;
+                    float padding = vert ? MinStructureWidth : MinStructureHeight;
                     float divisionOffset = Random.Range((int)padding, (int)(dividedDimensionLength - padding));
                     rectQueue.Enqueue(new Rect(
                         curr.xMin,
@@ -50,24 +55,31 @@ public class CityDecorator {
                 } else
                 {
                     // Place building. Tiles from xMin, yMin (inclusive) to xMax, yMax (exclusive) can be potentially filled.
-                    CityGenerator.RenderRect(curr, 2);
-                    SelectAndPlaceBuilding(curr, ceiling);
+                    //CityGenerator.RenderRect(curr, 2);
+                    Building selectedBuilding = SelectBuilding((int)curr.width, (int)curr.height, (int)curr.yMin, AllowedBuildingSizeDiff, ceiling);
+                    if (selectedBuilding !=  null)
+                    {
+                        int rowOffset = Random.Range(0, (int)curr.height - selectedBuilding.NumBaseRows + 1);
+                        int colOffset = Random.Range(0, (int)curr.width - selectedBuilding.NumCols + 1);
+
+                        selectedBuilding.Render(CityGridCreator.NormalizeY((int)curr.y + 0), CityGridCreator.NormalizeX((int)curr.x + colOffset));
+                    }
                 }
             }
         }
     }
 
-    void SelectAndPlaceBuilding(Rect rect, int ceiling)
+    Building SelectBuilding (int width, int height, int yMin, int buildingVariationAmount, int ceiling = 100)
     {
         List<Building> potentialBuildings = new List<Building>();
-        for (int row = (int)rect.height - SizeCushionAmount; row <= rect.height; row++)
+        for (int row = height - buildingVariationAmount; row <= height; row++)
         {
-            for (int col = (int)rect.width - SizeCushionAmount; col <= rect.width; col++)
+            for (int col = width - buildingVariationAmount; col <= width; col++)
             {
                 if (BuildingDictionary.ContainsKey(row) && BuildingDictionary[row].ContainsKey(col))
                 {
                     potentialBuildings.AddRange(BuildingDictionary[row][col].Where(
-                        building => building.NumRows <= ceiling - rect.yMin).ToList());
+                        building => building.NumRows <= ceiling - yMin).ToList());
                 }
             }
         }
@@ -77,15 +89,10 @@ public class CityDecorator {
         if (potentialBuildings.Count == 0)
         {
             //Debug.Log("Unpopulatable rect with " + rect.height + " rows and " + rect.width + " columns.");
-            return;
+            return null;
         }
 
-        Building selectedBuilding = potentialBuildings[rand];
-
-        int rowOffset = Random.Range(0, (int)rect.height - selectedBuilding.NumBaseRows + 1);
-        int colOffset = Random.Range(0, (int)rect.width - selectedBuilding.NumCols + 1);
-
-        selectedBuilding.Render(CityGridCreator.NormalizeY((int)rect.y + 0), CityGridCreator.NormalizeX((int)rect.x + colOffset));
+        return potentialBuildings[rand];
     }
 
     public void DecoratePerimeters(List<Road> perimeterLines)
@@ -104,31 +111,39 @@ public class CityDecorator {
             
             while (canContinue)
             {
+                int maxWidth = vert ? PerimeterBuildingOffset : Mathf.Min(MaxStructureWidth, maxX - currX);
+                int maxHeight = vert ? Mathf.Min(MaxStructureHeight, maxY - currY) : PerimeterBuildingOffset;
 
-                Building temp = Buildings[1];
-                temp.Render(CityGridCreator.NormalizeY(currY), CityGridCreator.NormalizeX(currX));
-                //Tile.SetTile(new Int2(CityGridCreator.NormalizeX(currX), CityGridCreator.NormalizeY(currY)), 0, 2, false);
+                Building building = SelectBuilding(maxWidth, maxHeight, currY, AllowedPerimeterBuildingSizeDiff);
+                
+                if (building != null)
+                {
+                    building.Render(CityGridCreator.NormalizeY(currY), CityGridCreator.NormalizeX(currX));
 
-                currX += vert ? 0 : temp.NumCols;
-                currY += vert ? temp.NumBaseRows : 0;
+                    currX += vert ? 0 : building.NumCols;
+                    currY += vert ? building.NumBaseRows : 0;
 
-                canContinue = vert ? currY < maxY : currX < maxX;
+                    canContinue = vert ? currY < maxY : currX < maxX;
+                } else
+                {
+                    canContinue = false;
+                }
             }
         }
     }
 
-    void ConstructBuildingDictionary (out int minStructureWidth, out int minStructureHeight, out int maxBlockWidth, out int maxBlockHeight)
+    void ConstructBuildingDictionary ()
     {
         Dictionary<int, Dictionary<int, List<Building>>> result = new Dictionary<int, Dictionary<int, List<Building>>>();
-        minStructureWidth = Buildings[0].NumCols;
-        minStructureHeight = Buildings[0].NumBaseRows;
+        MinStructureWidth = Buildings[0].NumCols;
+        MinStructureHeight = Buildings[0].NumBaseRows;
         int maxWidth = Buildings[0].NumCols;
         int maxHeight = Buildings[0].NumBaseRows;
 
         foreach (Building b in Buildings)
         {
-            minStructureWidth = Mathf.Min(minStructureWidth, b.NumCols);
-            minStructureHeight = Mathf.Min(minStructureHeight, b.NumBaseRows);
+            MinStructureWidth = Mathf.Min(MinStructureWidth, b.NumCols);
+            MinStructureHeight = Mathf.Min(MinStructureHeight, b.NumBaseRows);
             maxWidth = Mathf.Max(maxWidth, b.NumCols);
             maxHeight = Mathf.Max(maxHeight, b.NumBaseRows);
 
@@ -149,8 +164,8 @@ public class CityDecorator {
             buildings.Add(b);
         }
 
-        maxBlockWidth = maxWidth + SizeCushionAmount;
-        maxBlockHeight = maxHeight + SizeCushionAmount;
+        MaxStructureWidth = maxWidth;
+        MaxStructureHeight = maxHeight;
 
         BuildingDictionary = result;
     }

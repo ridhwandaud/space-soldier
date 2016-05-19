@@ -226,7 +226,7 @@ public class CityGenerator : ILevelGenerator {
         int maxDivisions = MaxDivisionsPerBase * q.Count;
         bool spawned = false;
 
-        while (q.Count > 0 && numAttempts < MaxDivideAttempts && numDivisions < maxDivisions)
+        while (q.Count > 0 && numAttempts < MaxDivideAttempts && numDivisions < maxDivisions && numAttempts < MaxDivideAttempts)
         {
             Rect curr = q.Dequeue();
             if (horizontal && curr.height > MinDivideGap * 2)
