@@ -32,6 +32,7 @@ public class BasicLevelPopulator
                     GameObject obj = MonoBehaviour.Instantiate(enemyPrefab, new Vector3(
                         spawnPosition.x * GameSettings.TileSize, spawnPosition.y * GameSettings.TileSize, 0),
                         Quaternion.identity) as GameObject;
+                    //Debug.Log("spawning at " + spawnPosition.x + ", " + spawnPosition.y);
                     obj.transform.SetParent(enemyContainer);
 
                     if (spawnDatum.isEnemy)

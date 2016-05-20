@@ -119,7 +119,7 @@ public class BasicLevelGenerator : ILevelGenerator
         };
     }
 
-    private struct EnemySpawnConfig
+    public struct EnemySpawnConfig
     {
         public Int2 basicEnemyMinMax;
         public Int2 footSoldierMinMax;
@@ -155,19 +155,19 @@ public class BasicLevelGenerator : ILevelGenerator
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> smallLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> mediumLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
     private Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>> LargeLevelConfig = new Dictionary<BasicLevelDifficulty, List<EnemySpawnConfig>>();
-    private List<EnemySpawnConfig> smallEasyLevelConfigs = new List<EnemySpawnConfig>
+    private static List<EnemySpawnConfig> smallEasyLevelConfigs = new List<EnemySpawnConfig>
     {
         new EnemySpawnConfig(new Int2(2, 3), new Int2(1, 3), new Int2(2, 3), new Int2(1, 1), new Int2(0, 0), new Int2(1, 1)),
         new EnemySpawnConfig(new Int2(2, 4), new Int2(0, 0), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(1, 1)),
         new EnemySpawnConfig(new Int2(0, 1), new Int2(2, 2), new Int2(3, 4), new Int2(1, 2), new Int2(0, 0), new Int2(1, 1)),
     };
-    private List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
+    private static List<EnemySpawnConfig> mediumEasyLevelConfigs = new List<EnemySpawnConfig>
     {
         new EnemySpawnConfig(new Int2(5, 6), new Int2(5, 6), new Int2(5, 6), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1)),
         new EnemySpawnConfig(new Int2(6, 7), new Int2(3, 5), new Int2(8, 9), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1)),
         new EnemySpawnConfig(new Int2(3, 5), new Int2(3, 5), new Int2(3, 5), new Int2(1, 2), new Int2(1, 1), new Int2(1, 1))
     };
-    private List<EnemySpawnConfig> largeEasyLevelConfigs = new List<EnemySpawnConfig>
+    public static List<EnemySpawnConfig> largeEasyLevelConfigs = new List<EnemySpawnConfig>
     {
         new EnemySpawnConfig(new Int2(6, 7), new Int2(4, 5), new Int2(6, 7), new Int2(1, 2), new Int2(1, 2), new Int2(1, 2)),
         new EnemySpawnConfig(new Int2(5, 7), new Int2(3, 4), new Int2(9, 9), new Int2(1, 2), new Int2(1, 2), new Int2(1, 2)),

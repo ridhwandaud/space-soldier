@@ -6,7 +6,11 @@ public class CityGridCreator {
     private static int Padding = 4;
     private static int NormalizationOffsetX;
     private static int NormalizationOffsetY;
-    private static int GridArrayRoadIndex = 1;
+    public static int GridArrayRoadIndex = 1;
+    private static int RoadTileIndex = 1;
+    public static int DefaultWalkableIndex = 0;
+    private static int PerimeterArrayIndex = 3;
+    private static int PerimeterTileIndex = 2;
 
     private static int TileSetIndex = 0;
 
@@ -45,7 +49,7 @@ public class CityGridCreator {
         foreach (Road line in perimeterLines)
         {
             DrawGridLine(grid, (int)line.Endpoint1.x, (int)line.Endpoint1.y, (int)line.Endpoint2.x, (int)line.Endpoint2.y,
-                2, Building.BaseBuildingIndex);
+                PerimeterTileIndex, PerimeterArrayIndex, Building.BaseBuildingIndex);
         }
     }
 
@@ -55,15 +59,16 @@ public class CityGridCreator {
         {
             for (int i = 0; i < RoadThickness; i++)
             {
-                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, GridArrayRoadIndex, 0);
-                DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax, GridArrayRoadIndex, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, GridArrayRoadIndex, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, RoadTileIndex, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax,
+                    RoadTileIndex, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, RoadTileIndex,  GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, RoadTileIndex, GridArrayRoadIndex, 0);
             }
         }
     }
 
-    void DrawGridLine(int[,] grid, int x1, int y1, int x2, int y2, int tileIndex, int layer)
+    void DrawGridLine(int[,] grid, int x1, int y1, int x2, int y2, int tileIndex, int arrayIndex, int layer)
     {
         bool vert = x1 == x2;
         if (vert)
@@ -74,7 +79,7 @@ public class CityGridCreator {
             {
                 int y = NormalizeY(i);
                 int x = NormalizeX(x1);
-                grid[y, x] = tileIndex; // change this to not be the exact same as the var used for the actual SpriteTile tile index
+                grid[y, x] = arrayIndex; // change this to not be the exact same as the var used for the actual SpriteTile tile index
                 Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, false);
             }
         }
@@ -86,7 +91,7 @@ public class CityGridCreator {
             {
                 int x = NormalizeX(i);
                 int y = NormalizeY(y1);
-                grid[y, x] = tileIndex;
+                grid[y, x] = arrayIndex;
                 Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, false);
             }
         }

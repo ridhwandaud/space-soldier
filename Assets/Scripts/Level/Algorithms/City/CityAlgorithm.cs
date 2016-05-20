@@ -12,7 +12,7 @@ public class CityAlgorithm
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 6;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 10;
+    private static int NumStartingRectangles = 3;
     public static int PerimeterPadding = 8;
 
     // Must be less than # of configured sorting layers. Btw, Default sorting layer is #10.
