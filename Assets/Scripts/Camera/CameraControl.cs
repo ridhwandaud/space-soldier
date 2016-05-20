@@ -50,7 +50,7 @@ public class CameraControl : MonoBehaviour {
                 cursor = crosshair4X;
                 scalingFactor = 4;
             }
-            Camera.main.orthographicSize = Screen.height / (24f * 2f * scalingFactor);
+            //Camera.main.orthographicSize = Screen.height / (24f * 2f * scalingFactor);
             Cursor.SetCursor(cursor, new Vector2(cursor.width / 2, cursor.width / 2), CursorMode.ForceSoftware);
         }
     }

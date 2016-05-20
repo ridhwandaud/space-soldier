@@ -42,8 +42,8 @@ public class PerimeterPoint
     // not draw the line because these types of lines are not truly part of the perimeter and they make the whole city look kind of weird.
     public bool IsInsetPerimeter (PerimeterPoint other, PerimeterRect thisRect)
     {
-        HashSet<PerimeterRect> rectsContainingThisPoint = CityGenerator.PointDict[this];
-        HashSet<PerimeterRect> rectsContainingTargetPoint = CityGenerator.PointDict[other];
+        HashSet<PerimeterRect> rectsContainingThisPoint = CityAlgorithm.PointDict[this];
+        HashSet<PerimeterRect> rectsContainingTargetPoint = CityAlgorithm.PointDict[other];
         List<PerimeterRect> sharedRects = new List<PerimeterRect>();
 
         foreach (PerimeterRect rect in rectsContainingThisPoint)

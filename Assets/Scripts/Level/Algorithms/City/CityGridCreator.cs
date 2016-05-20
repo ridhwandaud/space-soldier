@@ -6,6 +6,7 @@ public class CityGridCreator {
     private static int Padding = 4;
     private static int NormalizationOffsetX;
     private static int NormalizationOffsetY;
+    private static int GridArrayRoadIndex = 1;
 
     private static int TileSetIndex = 0;
 
@@ -18,7 +19,7 @@ public class CityGridCreator {
         Int2 mapDimensions = new Int2(result.GetLength(1), result.GetLength(0));
         Tile.NewLevel(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
 
-        for (int i = 0; i < CityGenerator.MaxRectangleHeight; i++)
+        for (int i = 0; i < CityAlgorithm.MaxRectangleHeight; i++)
         {
             Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
             Tile.SetLayerPosition(i, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
@@ -54,11 +55,10 @@ public class CityGridCreator {
         {
             for (int i = 0; i < RoadThickness; i++)
             {
-                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, 1, 0);
-                DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax, 1, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, 1, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, 1, 0);
-
+                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, GridArrayRoadIndex, 0);
             }
         }
     }

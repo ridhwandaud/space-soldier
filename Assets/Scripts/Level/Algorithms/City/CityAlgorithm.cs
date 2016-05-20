@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using SpriteTile;
 
-public class CityGenerator : ILevelGenerator {
+public class CityAlgorithm
+{
+    private CityGridCreator CityGridCreator = new CityGridCreator();
 
     public static List<Road> Roads = new List<Road>();
-    public static List<Rect> FinalRectangles = new List<Rect>();
     public static List<Rect> StartingRects = new List<Rect>();
     private static int MaxDivisionsPerBase = 3;
     private static int MaxDivideAttempts = 2000;
     private static int MinDivideGap = 6;
     private static int MaxAttachAttemptsPerRect = 50;
-    private static int NumStartingRectangles = 3;
+    private static int NumStartingRectangles = 10;
     public static int PerimeterPadding = 8;
 
     // Must be less than # of configured sorting layers. Btw, Default sorting layer is #10.
@@ -24,7 +25,7 @@ public class CityGenerator : ILevelGenerator {
 
     public static List<PerimeterRect> PerimeterRects = new List<PerimeterRect>();
 
-    public int[,] GenerateLevel (int levelIndex, out Vector3 playerSpawn)
+    public int[,] ExecuteAlgorithm (List<Rect> finalRectangles, List<Road> perimeterLines, out Vector3 playerSpawn)
     {
         MaxRectangleHeight = MinDivideGap * 2 - 1;
 
@@ -33,24 +34,18 @@ public class CityGenerator : ILevelGenerator {
         StartingRects.Add(startingRect);
         RenderRect(startingRect);
         Queue<Rect> q = new Queue<Rect>();
-        List<Road> perimeterLines = new List<Road>();
         q.Enqueue(startingRect);
 
         AddRects(q, startingRect, NumStartingRectangles - 1);
         DrawPerimeter(perimeterLines);
-        Vector3 playerSpawnRef = new Vector3() ;
-        DivideRects(q, ref playerSpawnRef);
+        Vector3 playerSpawnRef = new Vector3();
+        DivideRects(q, ref playerSpawnRef, finalRectangles);
 
         playerSpawn = playerSpawnRef;
-        int[,] grid = new CityGridCreator().GenerateGrid(perimeterLines, FinalRectangles);
-        CityDecorator decorator = new CityDecorator();
-        decorator.GenerateBuildings(FinalRectangles, grid);
-        decorator.DecoratePerimeters(perimeterLines);
-
-        return null;
+        return CityGridCreator.GenerateGrid(perimeterLines, finalRectangles);
     }
 
-    void AddRects(Queue<Rect> q, Rect startingRect, int numToAdd)
+    void AddRects (Queue<Rect> q, Rect startingRect, int numToAdd)
     {
         AddPerimeterRect(new PerimeterRect(startingRect));
         Queue<Rect> attachmentAnchors = new Queue<Rect>();
@@ -103,7 +98,8 @@ public class CityGenerator : ILevelGenerator {
                     AddPerimeterRect(new PerimeterRect(newRect));
                     numAdded++;
                     break;
-                } else if(numAttemptsThisRect == MaxAttachAttemptsPerRect - 1)
+                }
+                else if (numAttemptsThisRect == MaxAttachAttemptsPerRect - 1)
                 {
                     attachmentAnchors.Dequeue();
                 }
@@ -113,7 +109,7 @@ public class CityGenerator : ILevelGenerator {
         }
     }
 
-    bool RectsAreTooClose(Rect r1, Rect r2)
+    bool RectsAreTooClose (Rect r1, Rect r2)
     {
         return LinesAreTooClose(r1.xMin, r1.xMax, r1.yMin, r2.xMin, r2.xMax, r2.yMax)
             || LinesAreTooClose(r1.xMin, r1.xMax, r1.yMax, r2.xMin, r2.xMax, r2.yMin)
@@ -130,7 +126,7 @@ public class CityGenerator : ILevelGenerator {
             || IsBetween(line2Max, line1Min, line1Max))
         {
             float distance = Mathf.Abs(line1OtherCoord - line2OtherCoord);
-            return distance <= CityGridCreator.RoadThickness && distance > 0;    
+            return distance <= CityGridCreator.RoadThickness && distance > 0;
         }
 
         return false;
@@ -141,7 +137,7 @@ public class CityGenerator : ILevelGenerator {
         return (valToCheck > min && valToCheck < max) && valToCheck != min && valToCheck != max;
     }
 
-    void DrawPerimeter(List<Road> perimeterLines)
+    void DrawPerimeter (List<Road> perimeterLines)
     {
         foreach (PerimeterRect r in PerimeterRects)
         {
@@ -154,7 +150,8 @@ public class CityGenerator : ILevelGenerator {
                 if (curr.IsInsetPerimeter(next, r))
                 {
                     draw = false;
-                } else
+                }
+                else
                 {
                     foreach (PerimeterRect potentialContainer in PerimeterRects)
                     {
@@ -173,13 +170,16 @@ public class CityGenerator : ILevelGenerator {
                     if (curr.side == Side.Top && (next.side == Side.Top || next.side == Side.Right))
                     {
                         side = Side.Top;
-                    } else if (curr.side == Side.Right && (next.side == Side.Right || next.side == Side.Bottom))
+                    }
+                    else if (curr.side == Side.Right && (next.side == Side.Right || next.side == Side.Bottom))
                     {
                         side = Side.Right;
-                    } else if (curr.side == Side.Bottom && (next.side == Side.Bottom || next.side == Side.Left))
+                    }
+                    else if (curr.side == Side.Bottom && (next.side == Side.Bottom || next.side == Side.Left))
                     {
                         side = Side.Bottom;
-                    } else
+                    }
+                    else
                     {
                         side = Side.Left;
                     }
@@ -189,7 +189,7 @@ public class CityGenerator : ILevelGenerator {
         }
     }
 
-    public bool IntersectsRect(PerimeterPoint p1, PerimeterPoint p2)
+    public bool IntersectsRect (PerimeterPoint p1, PerimeterPoint p2)
     {
         bool vert = p1.y != p2.y;
         foreach (Rect r in StartingRects)
@@ -215,7 +215,7 @@ public class CityGenerator : ILevelGenerator {
         return false;
     }
 
-    void DivideRects(Queue<Rect> q, ref Vector3 playerSpawn)
+    void DivideRects (Queue<Rect> q, ref Vector3 playerSpawn, List<Rect> finalRectangles)
     {
         int numDivisions = 0;
         int numAttempts = 0;
@@ -262,7 +262,7 @@ public class CityGenerator : ILevelGenerator {
             }
             else
             {
-                FinalRectangles.Add(curr);
+                finalRectangles.Add(curr);
             }
 
             numInCurrentLevel--;
@@ -278,11 +278,11 @@ public class CityGenerator : ILevelGenerator {
 
         foreach (Rect r in q)
         {
-            FinalRectangles.Add(r);
+            finalRectangles.Add(r);
         }
     }
 
-    void AddPerimeterRect(PerimeterRect r)
+    void AddPerimeterRect (PerimeterRect r)
     {
         foreach (PerimeterRect other in PerimeterRects)
         {
@@ -293,7 +293,7 @@ public class CityGenerator : ILevelGenerator {
     }
 
     // TODO: Remove
-    public static void RenderRect(Rect rect, int colorCode = 0)
+    public static void RenderRect (Rect rect, int colorCode = 0)
     {
         Roads.Add(new Road(rect.x, rect.y, rect.x, rect.yMax, colorCode));
         Roads.Add(new Road(rect.x, rect.y, rect.xMax, rect.y, colorCode));

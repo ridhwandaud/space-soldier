@@ -13,10 +13,10 @@ public class PerimeterRect
     {
         points = new List<PerimeterPoint>();
 
-        top = (int)r.yMax + CityGenerator.PerimeterPadding;
-        right = (int)r.xMax + CityGenerator.PerimeterPadding + CityGridCreator.RoadThickness - 1;
-        bottom = (int)r.yMin - CityGenerator.PerimeterPadding - CityGridCreator.RoadThickness + 1;
-        left = (int)r.xMin - CityGenerator.PerimeterPadding;
+        top = (int)r.yMax + CityAlgorithm.PerimeterPadding;
+        right = (int)r.xMax + CityAlgorithm.PerimeterPadding + CityGridCreator.RoadThickness - 1;
+        bottom = (int)r.yMin - CityAlgorithm.PerimeterPadding - CityGridCreator.RoadThickness + 1;
+        left = (int)r.xMin - CityAlgorithm.PerimeterPadding;
 
         AddPoint(new PerimeterPoint(left, top, Side.Top));
         AddPoint(new PerimeterPoint(right, top, Side.Right));
@@ -46,13 +46,13 @@ public class PerimeterRect
             }
         }
 
-        if (CityGenerator.PointDict.ContainsKey(p))
+        if (CityAlgorithm.PointDict.ContainsKey(p))
         {
-            CityGenerator.PointDict[p].Add(this);
+            CityAlgorithm.PointDict[p].Add(this);
         }
         else
         {
-            CityGenerator.PointDict[p] = new HashSet<PerimeterRect> { this };
+            CityAlgorithm.PointDict[p] = new HashSet<PerimeterRect> { this };
         }
     }
 

@@ -62,7 +62,7 @@ public class CityDecorator {
                         int rowOffset = Random.Range(0, (int)curr.height - selectedBuilding.NumBaseRows + 1);
                         int colOffset = Random.Range(0, (int)curr.width - selectedBuilding.NumCols + 1);
 
-                        selectedBuilding.Render(CityGridCreator.NormalizeY((int)curr.y + 0), CityGridCreator.NormalizeX((int)curr.x + colOffset));
+                        selectedBuilding.Render(CityGridCreator.NormalizeY((int)curr.y + 0), CityGridCreator.NormalizeX((int)curr.x + colOffset), tilemap);
                     }
                 }
             }
@@ -95,7 +95,7 @@ public class CityDecorator {
         return potentialBuildings[rand];
     }
 
-    public void DecoratePerimeters(List<Road> perimeterLines)
+    public void DecoratePerimeters(List<Road> perimeterLines, int[,] tilemap)
     {
         foreach (Road r in perimeterLines)
         {
@@ -118,7 +118,7 @@ public class CityDecorator {
                 
                 if (building != null)
                 {
-                    building.Render(CityGridCreator.NormalizeY(currY), CityGridCreator.NormalizeX(currX));
+                    building.Render(CityGridCreator.NormalizeY(currY), CityGridCreator.NormalizeX(currX), tilemap);
 
                     currX += vert ? 0 : building.NumCols;
                     currY += vert ? building.NumBaseRows : 0;
