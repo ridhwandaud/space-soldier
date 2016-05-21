@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SpriteTile;
 
 public class LoadLevel : MonoBehaviour {
-    public static HashSet<int> FloorIndices = new HashSet<int>() {BasicLevelDecorator.BaseDark, BasicLevelDecorator.BaseLight};
+    public static HashSet<int> FloorIndices;
     public static bool IsFirstLoad = true;
 
     public static bool TestingCityLevel = true;
@@ -50,9 +50,11 @@ public class LoadLevel : MonoBehaviour {
 
         if (TestingCityLevel)
         {
+            FloorIndices = new HashSet<int>() { CityGridCreator.DefaultWalkableIndex, CityGridCreator.GridArrayRoadIndex };
             AStar.world = new CityGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn); 
         } else
         {
+            FloorIndices = new HashSet<int>() { BasicLevelDecorator.BaseDark, BasicLevelDecorator.BaseLight };
             AStar.world = new BasicLevelGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn);
             Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
             Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);

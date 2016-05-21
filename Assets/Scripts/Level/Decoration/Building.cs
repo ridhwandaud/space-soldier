@@ -53,6 +53,7 @@ public class Building {
         {
             for (int colOffset = 0; colOffset < numCols; colOffset++)
             {
+                // SpriteTile returns a -1 if there is no tile at the given location.
                 if (Tile.GetTile(new Int2(startCol + colOffset, startRow + rowOffset), BaseBuildingIndex).tile != -1)
                 {
                     return false;
@@ -74,7 +75,7 @@ public class Building {
                 }
 
                 int layer = rowOffset < NumBaseRows ? BaseBuildingIndex : BaseBuildingIndex + rowOffset;
-                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, false);
+                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, true);
                 grid[startRow, startCol] = GridArrayBuildingIndex;
             }
         }

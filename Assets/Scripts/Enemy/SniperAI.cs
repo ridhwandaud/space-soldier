@@ -27,7 +27,7 @@ public class SniperAI : EnemyAI {
 	
 	void Update ()
     {
-        if (KnockbackInProgress)
+        if (KnockbackInProgress || GameSettings.PauseAllEnemies)
         {
             return;
         }

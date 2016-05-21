@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Road {
 
@@ -25,14 +24,15 @@ public class Road {
         Side = side;
         GameObject someObj = MonoBehaviour.Instantiate(Resources.Load("RoadRenderer")) as GameObject;
 
-        if (colorCode != 0)
-        {
-            lineRenderer = someObj.GetComponent<LineRenderer>();
-            lineRenderer.SetPosition(0, Endpoint1);
-            lineRenderer.SetPosition(1, Endpoint2);
+        // TODO: Fix Offset if I need to use this again for debugging.
+        //if (colorCode != 0)
+        //{
+        //    lineRenderer = someObj.GetComponent<LineRenderer>();
+        //    lineRenderer.SetPosition(0, Endpoint1);
+        //    lineRenderer.SetPosition(1, Endpoint2);
 
-            lineRenderer.SetColors(col, col);
-        }
+        //    lineRenderer.SetColors(col, col);
+        //}
     }
 
     // Roads are either completely horizontal or completely vertical.

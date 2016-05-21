@@ -16,6 +16,8 @@ public class CityGenerator : ILevelGenerator {
         CityDecorator.GenerateBuildings(finalRectangles, grid);
         CityDecorator.DecoratePerimeters(perimeterLines, grid);
         PopulateMap(grid, playerSpawn);
+        playerSpawn.x = CityGridCreator.NormalizeX((int)playerSpawn.x);
+        playerSpawn.y = CityGridCreator.NormalizeY((int)playerSpawn.y);
 
         return grid;
     }
@@ -53,11 +55,9 @@ public class CityGenerator : ILevelGenerator {
 
         Queue<Int2> q = new Queue<Int2>();
 
-        q.Enqueue(new Int2((int)playerSpawn.x, (int)playerSpawn.y));
+        q.Enqueue(new Int2(CityGridCreator.NormalizeX((int)playerSpawn.x), CityGridCreator.NormalizeX((int)playerSpawn.y)));
         bool[,] seen = new bool[grid.GetLength(0), grid.GetLength(1)];
         seen[(int)playerSpawn.y, (int)playerSpawn.x] = true;
-
-        Debug.Log("grid dimensions: " + grid.GetLength(0) + " rows, " + grid.GetLength(1) + " columns.");
 
         while(q.Count > 0)
         {

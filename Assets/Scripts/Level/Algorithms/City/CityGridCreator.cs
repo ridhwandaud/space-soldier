@@ -26,7 +26,13 @@ public class CityGridCreator {
         for (int i = 0; i < CityAlgorithm.MaxRectangleHeight; i++)
         {
             Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
-            Tile.SetLayerPosition(i, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
+            //Tile.SetLayerPosition(i, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
+
+            if (i >= Building.BaseBuildingIndex)
+            {
+                // Treat all building layers as walls.
+                Tile.SetColliderLayer(GameSettings.WallLayerNumber, i);
+            }
         }
 
         for (int row = 0; row < result.GetLength(0); row++)
