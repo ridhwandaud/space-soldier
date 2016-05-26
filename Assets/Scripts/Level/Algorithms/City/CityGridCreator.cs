@@ -26,7 +26,6 @@ public class CityGridCreator {
         for (int i = 0; i < CityAlgorithm.MaxRectangleHeight; i++)
         {
             Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
-            //Tile.SetLayerPosition(i, new Vector2(NormalizationOffsetX, NormalizationOffsetY));
 
             if (i >= Building.BaseBuildingIndex)
             {
@@ -85,7 +84,7 @@ public class CityGridCreator {
             {
                 int y = NormalizeY(i);
                 int x = NormalizeX(x1);
-                grid[y, x] = arrayIndex; // change this to not be the exact same as the var used for the actual SpriteTile tile index
+                grid[y, x] = arrayIndex;
                 Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, false);
             }
         }

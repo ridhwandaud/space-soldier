@@ -103,7 +103,7 @@ public class AStar : MonoBehaviour {
 
         Node[] visited = new Node[world.GetLength(0) * world.GetLength(1)];
 
-        HeapPriorityQueue<Node> frontier = new HeapPriorityQueue<Node>(100);
+        HeapPriorityQueue<Node> frontier = new HeapPriorityQueue<Node>(300);
         List<Node> result = new List<Node>();
         frontier.Enqueue(startNode, 0); // dummy value for priority since it will be popped immediately.
 

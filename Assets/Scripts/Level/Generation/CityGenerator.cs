@@ -15,9 +15,9 @@ public class CityGenerator : ILevelGenerator {
         int[,] grid = CityAlgorithm.ExecuteAlgorithm(finalRectangles, perimeterLines, out playerSpawn);
         CityDecorator.GenerateBuildings(finalRectangles, grid);
         CityDecorator.DecoratePerimeters(perimeterLines, grid);
-        PopulateMap(grid, playerSpawn);
         playerSpawn.x = CityGridCreator.NormalizeX((int)playerSpawn.x);
         playerSpawn.y = CityGridCreator.NormalizeY((int)playerSpawn.y);
+        PopulateMap(grid, playerSpawn);
 
         return grid;
     }
@@ -38,12 +38,13 @@ public class CityGenerator : ILevelGenerator {
         BasicLevelGenerator.EnemySpawnConfig config = BasicLevelGenerator.largeEasyLevelConfigs[0];
 
         List<SpawnData> spawnData = new List<SpawnData> {
-            new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
-            new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
-            new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
-            new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
-            new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
-            new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)
+            //new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
+            //new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
+            //new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
+            //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
+            //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab),
+            //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab)
+            new SpawnData(3, 3, basicEnemyPrefab)
         };
 
         CityPopulator.spawnEnemies(spawnData, GetOpenSpawnPositions(grid, playerSpawn), playerSpawn);
@@ -55,7 +56,7 @@ public class CityGenerator : ILevelGenerator {
 
         Queue<Int2> q = new Queue<Int2>();
 
-        q.Enqueue(new Int2(CityGridCreator.NormalizeX((int)playerSpawn.x), CityGridCreator.NormalizeX((int)playerSpawn.y)));
+        q.Enqueue(new Int2((int)playerSpawn.x, (int)playerSpawn.y));
         bool[,] seen = new bool[grid.GetLength(0), grid.GetLength(1)];
         seen[(int)playerSpawn.y, (int)playerSpawn.x] = true;
 

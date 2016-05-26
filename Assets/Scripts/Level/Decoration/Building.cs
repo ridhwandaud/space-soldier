@@ -66,17 +66,19 @@ public class Building {
             for (int colOffset = 0; colOffset < numCols; colOffset++)
             {
                 int tileNum;
+                bool setCollider = false;
                 if (rowOffset < BaseTiles.GetLength(0))
                 {
                     tileNum = BaseTiles[BaseTiles.GetLength(0) - rowOffset - 1, colOffset];
+                    grid[startRow + rowOffset, startCol + colOffset] = GridArrayBuildingIndex;
+                    setCollider = true;
                 } else
                 {
                     tileNum = HighRiseTiles[HighRiseTiles.GetLength(0) - (rowOffset - BaseTiles.GetLength(0)) - 1, colOffset];
                 }
 
                 int layer = rowOffset < NumBaseRows ? BaseBuildingIndex : BaseBuildingIndex + rowOffset;
-                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, true);
-                grid[startRow, startCol] = GridArrayBuildingIndex;
+                Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, setCollider);
             }
         }
 
