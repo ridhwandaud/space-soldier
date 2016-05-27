@@ -105,6 +105,7 @@ public class AStar : MonoBehaviour {
 
         HeapPriorityQueue<Node> frontier = new HeapPriorityQueue<Node>(300);
         List<Node> result = new List<Node>();
+        List<Int2> neighbors = null;
         frontier.Enqueue(startNode, 0); // dummy value for priority since it will be popped immediately.
 
         // Continue algorithm until there are no more open nodes.
@@ -127,12 +128,14 @@ public class AStar : MonoBehaviour {
                 }
 
                 result.Reverse();
+                break;
             }
             else
             {
-                List<Int2> neighbors = findNeighbors(current.point);
+                neighbors = findNeighbors(current.point);
 
-                foreach (Int2 neighbor in neighbors) { // foreach has a bug that creates garbage via wrappers
+                for (int i = 0; i < neighbors.Count; i++) {
+                    Int2 neighbor = neighbors[i];
                     int pointIndex = calculatePointIndex(neighbor);
 
                     Node neighborNode = visited[pointIndex] != null ?

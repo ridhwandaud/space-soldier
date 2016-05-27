@@ -1,4 +1,6 @@
-﻿using System;
+﻿#undef DEBUG
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -225,7 +227,7 @@ namespace Priority_Queue
         }
 
         /// <summary>
-        /// Removes the head of the queue (node with highest priority; ties are broken by order of insertion), and returns it.
+        /// Removes the head of the queue (node with lower priority value; ties are broken by order of insertion), and returns it.
         /// If queue is empty, result is undefined
         /// O(log n)
         /// </summary>
