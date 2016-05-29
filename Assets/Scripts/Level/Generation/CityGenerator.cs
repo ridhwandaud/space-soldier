@@ -33,7 +33,7 @@ public class CityGenerator : ILevelGenerator {
         GameObject knightPrefab = Resources.Load("Knight") as GameObject;
         GameObject kirbyPrefab = Resources.Load("Kirby") as GameObject;
         GameObject troopaPrefab = Resources.Load("Troopa") as GameObject;
-        GameObject plantBossPrefab = Resources.Load("PlantBoss") as GameObject;
+        GameObject catPrefab = Resources.Load("Cat") as GameObject;
 
         BasicLevelGenerator.EnemySpawnConfig config = BasicLevelGenerator.largeEasyLevelConfigs[0];
 
@@ -44,7 +44,7 @@ public class CityGenerator : ILevelGenerator {
             //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
             //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab),
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab)
-            new SpawnData(3, 3, basicEnemyPrefab)
+            new SpawnData(5, 5, catPrefab)
         };
 
         CityPopulator.spawnEnemies(spawnData, GetOpenSpawnPositions(grid, playerSpawn), playerSpawn);

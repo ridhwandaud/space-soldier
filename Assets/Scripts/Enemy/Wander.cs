@@ -17,13 +17,18 @@ public class Wander : MonoBehaviour {
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         enemyAI = GetComponent<EnemyAI>();
-        nextWanderTime = Time.time + Random.Range(0f, 3f);
         colliderSize = GetComponent<BoxCollider2D>().size;
+        ResetWanderTime();
 
         mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
 	}
 
-    public void DoWander()
+    public void ResetWanderTime()
+    {
+        nextWanderTime = Time.time + Random.Range(0f, 3f);
+    }
+
+    public void DoWander(int guidedWanderChance = 33)
     {
         if (!isVisible())
         {
@@ -40,7 +45,7 @@ public class Wander : MonoBehaviour {
 
         if (shouldWander())
         {
-            if (shouldMove && Random.Range(0f, 3f) > 1)
+            if (shouldMove && Random.Range(0, 100) > guidedWanderChance)
             {
                 shouldMove = false;
                 Vector2 dir = EnemyUtil.CalculateUnblockedDirection(transform.position, colliderSize, 1f, true);

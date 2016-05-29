@@ -14,12 +14,12 @@ public class EnemyUtil {
         return Physics2D.Linecast(pos1, pos2, LayerMasks.SightObstructedLayerMask).transform == null;
     }
 
-    public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 pos1, Vector2 pos2, float colliderSizeMultiplierX = 1.25f,
+    public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 startingPoint, Vector2 destinationPoint, float colliderSizeMultiplierX = 1.25f,
         float colliderSizeMultiplierY = 1.25f, float boxCastDistance = 1f)
     {
         Vector2 colliderSize = enemyCollider.size;
         Vector2 boxCastSize = new Vector2(colliderSize.x * colliderSizeMultiplierX, colliderSize.y * colliderSizeMultiplierY);
-        RaycastHit2D boxHit = Physics2D.BoxCast(pos1, boxCastSize, 0f, pos2 - pos1,
+        RaycastHit2D boxHit = Physics2D.BoxCast(startingPoint, boxCastSize, 0f, destinationPoint - startingPoint,
             boxCastDistance, LayerMasks.MovementObstructedLayerMask);
 
         return boxHit.transform == null;
