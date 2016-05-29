@@ -68,7 +68,7 @@ public class Building {
             {
                 int tileNum;
                 bool setCollider = false;
-                if (rowOffset < BaseTiles.GetLength(0))
+                if (rowOffset < NumBaseRows)
                 {
                     tileNum = BaseTiles[BaseTiles.GetLength(0) - rowOffset - 1, colOffset];
                     grid[startRow + rowOffset, startCol + colOffset] = GridArrayBuildingIndex;

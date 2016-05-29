@@ -27,6 +27,7 @@ public class CityGenerator : ILevelGenerator {
     {
         GameObject basicEnemyPrefab = Resources.Load("Enemy") as GameObject;
         GameObject footSoldierPrefab = Resources.Load("FootSoldier") as GameObject;
+        GameObject hyperScoutPrefab = Resources.Load("HyperScout") as GameObject;
         GameObject gordoPrefab = Resources.Load("Gordo") as GameObject;
         GameObject sniperPrefab = Resources.Load("Sniper") as GameObject;
         GameObject gordoTrapPrefab = Resources.Load("GordoTrap") as GameObject;
@@ -45,6 +46,7 @@ public class CityGenerator : ILevelGenerator {
             new SpawnData(4, 4, sniperPrefab),
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab)
             new SpawnData(5, 5, basicEnemyPrefab),
+            new SpawnData(5, 5, hyperScoutPrefab),
             new SpawnData(5, 5, footSoldierPrefab),
             new SpawnData(5, 5, catPrefab)
         };

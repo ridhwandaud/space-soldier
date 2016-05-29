@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof(Wander))]
 public class FootSoldierAI : EnemyAI {
 
+    public bool isHyperScout;
     public int firingDistance;
     public int attackingDistance;
     public float timeBetweenMoves;
