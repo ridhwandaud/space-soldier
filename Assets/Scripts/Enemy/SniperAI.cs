@@ -44,7 +44,7 @@ public class SniperAI : EnemyAI {
 
         if (EnemyUtil.CanSee(transform.position, playerPosition))
         {
-            if (IsVisible() && Time.time > nextFiringTime && !isPreparingForShot)
+            if (EnemyUtil.IsOnScreen(transform.position) && Time.time > nextFiringTime && !isPreparingForShot)
             {
                 chasing = true;
                 StartCharging();
@@ -57,7 +57,7 @@ public class SniperAI : EnemyAI {
 
         if (isPreparingForShot)
         {
-            if (EnemyUtil.CanSee(transform.position, playerPosition) && IsVisible())
+            if (EnemyUtil.CanSee(transform.position, playerPosition) && EnemyUtil.IsOnScreen(transform.position))
             {
                 // turn sprite and gun to face player.
             }
@@ -110,11 +110,5 @@ public class SniperAI : EnemyAI {
     {
         isPreparingForShot = false;
         animator.SetBool("Charging", false);
-    }
-
-    bool IsVisible()
-    {
-        Vector3 pos = mainCam.WorldToViewportPoint(transform.position);
-        return pos.x > 0 && pos.x < 1 && pos.y > 0 && pos.y < 1;
     }
 }

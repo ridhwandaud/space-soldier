@@ -9,9 +9,10 @@ public class EnemyUtil {
     private static float cornerAvoidanceDotProductThreshold = -.1f;
     private static Vector2[] directionVectors = new Vector2[] {Vector2.up, Vector2.down, Vector2.left, Vector2.right};
 
-    public static bool CanSee(Vector2 pos1, Vector2 pos2)
+    public static bool CanSee(Vector2 enemyPosition, Vector2 targetPosition)
     {
-        return Physics2D.Linecast(pos1, pos2, LayerMasks.SightObstructedLayerMask).transform == null;
+        return IsOnScreen(enemyPosition) && Physics2D.Linecast(enemyPosition, targetPosition,
+            LayerMasks.SightObstructedLayerMask).transform == null;
     }
 
     public static bool PathIsNotBlocked(BoxCollider2D enemyCollider, Vector2 startingPoint, Vector2 destinationPoint, float colliderSizeMultiplierX = 1.25f,
@@ -118,5 +119,11 @@ public class EnemyUtil {
         }
 
         return possibleDir;
+    }
+
+    public static bool IsOnScreen(Vector2 pos)
+    {
+        Vector2 viewportPoint = Camera.main.WorldToViewportPoint(pos);
+        return viewportPoint.x > 0 && viewportPoint.x < 1 && viewportPoint.y > 0 && viewportPoint.y < 1;
     }
 }

@@ -15,6 +15,10 @@ public class CatAI : EnemyAI
     private float CometContinuationDistance;
     [SerializeField]
     private float CometSpeed;
+    [SerializeField]
+    private int Damage;
+    [SerializeField]
+    private int AccuracyVariation;
 
     private Wander wanderScript;
     private SpriteRenderer spriteRenderer;
@@ -70,7 +74,21 @@ public class CatAI : EnemyAI
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            BeginLaunch();
+            if (InCometProximity())
+            {
+                BeginLaunch();
+            } else
+            {
+                EndLaunch();
+            }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            Player.PlayerHealth.InflictDamage(Damage);
         }
     }
 
@@ -78,7 +96,7 @@ public class CatAI : EnemyAI
     {
         spriteRenderer.color = Color.blue;
         Vector2 offset = Player.PlayerTransform.position - transform.position;
-        float rotationAmount = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+        float rotationAmount = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg + Random.Range(-AccuracyVariation, AccuracyVariation);
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, rotationAmount));
         rb2d.velocity = offset.normalized * CometSpeed;
 

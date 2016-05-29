@@ -44,6 +44,8 @@ public class CityGenerator : ILevelGenerator {
             //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
             //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab),
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab)
+            new SpawnData(5, 5, basicEnemyPrefab),
+            new SpawnData(5, 5, footSoldierPrefab),
             new SpawnData(5, 5, catPrefab)
         };
 

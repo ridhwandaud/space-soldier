@@ -54,7 +54,7 @@ public class CityGridCreator {
         foreach (Road line in perimeterLines)
         {
             DrawGridLine(grid, (int)line.Endpoint1.x, (int)line.Endpoint1.y, (int)line.Endpoint2.x, (int)line.Endpoint2.y,
-                PerimeterTileIndex, PerimeterArrayIndex, Building.BaseBuildingIndex);
+                PerimeterTileIndex, PerimeterArrayIndex, Building.BaseBuildingIndex, true);
         }
     }
 
@@ -64,16 +64,20 @@ public class CityGridCreator {
         {
             for (int i = 0; i < RoadThickness; i++)
             {
-                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, RoadTileIndex, GridArrayRoadIndex, 0);
+                DrawGridLine(grid, (int)r.xMin + i, (int)r.yMin, (int)r.xMin + i, (int)r.yMax, RoadTileIndex,
+                    GridArrayRoadIndex, 0, false);
                 DrawGridLine(grid, (int)r.xMax + i, (int)r.yMin - RoadThickness + 1, (int)r.xMax + i, (int)r.yMax,
-                    RoadTileIndex, GridArrayRoadIndex, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, RoadTileIndex,  GridArrayRoadIndex, 0);
-                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, RoadTileIndex, GridArrayRoadIndex, 0);
+                    RoadTileIndex, GridArrayRoadIndex, 0, false);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMin - i, (int)r.xMax, (int)r.yMin - i, RoadTileIndex,
+                    GridArrayRoadIndex, 0, false);
+                DrawGridLine(grid, (int)r.xMin, (int)r.yMax - i, (int)r.xMax, (int)r.yMax - i, RoadTileIndex,
+                    GridArrayRoadIndex, 0, false);
             }
         }
     }
 
-    void DrawGridLine(int[,] grid, int x1, int y1, int x2, int y2, int tileIndex, int arrayIndex, int layer)
+    void DrawGridLine(int[,] grid, int x1, int y1, int x2, int y2, int tileIndex, int arrayIndex, int layer,
+        bool isCollider)
     {
         bool vert = x1 == x2;
         if (vert)
@@ -85,7 +89,7 @@ public class CityGridCreator {
                 int y = NormalizeY(i);
                 int x = NormalizeX(x1);
                 grid[y, x] = arrayIndex;
-                Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, false);
+                Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, isCollider);
             }
         }
         else
@@ -97,7 +101,7 @@ public class CityGridCreator {
                 int x = NormalizeX(i);
                 int y = NormalizeY(y1);
                 grid[y, x] = arrayIndex;
-                Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, false);
+                Tile.SetTile(new Int2(x, y), layer, TileSetIndex, tileIndex, isCollider);
             }
         }
     }
