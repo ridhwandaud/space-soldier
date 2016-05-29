@@ -4,6 +4,7 @@ using UnityEngine;
 public class Building {
     public static int TilesetIndex = 3;
     public static int BaseBuildingIndex = 1;
+    public static int HighRiseBaseBuildingIndex = 12;
     private static int GridArrayBuildingIndex = 2;
 
     private int[,] BaseTiles;
@@ -77,7 +78,7 @@ public class Building {
                     tileNum = HighRiseTiles[HighRiseTiles.GetLength(0) - (rowOffset - BaseTiles.GetLength(0)) - 1, colOffset];
                 }
 
-                int layer = rowOffset < NumBaseRows ? BaseBuildingIndex : BaseBuildingIndex + rowOffset;
+                int layer = rowOffset < NumBaseRows ? BaseBuildingIndex : HighRiseBaseBuildingIndex + rowOffset;
                 Tile.SetTile(new Int2(startCol + colOffset, startRow + rowOffset), layer, TilesetIndex, tileNum, setCollider);
             }
         }

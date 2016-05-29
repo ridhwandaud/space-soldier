@@ -23,7 +23,8 @@ public class CityGridCreator {
         Int2 mapDimensions = new Int2(result.GetLength(1), result.GetLength(0));
         Tile.NewLevel(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
 
-        for (int i = 0; i < CityAlgorithm.MaxRectangleHeight; i++)
+        // Eventually I should create sorting layers dynamically based on max rectangle height (if it is possible to do so via script).
+        for (int i = 0; i < GameSettings.NumSortingLayers; i++)
         {
             Tile.AddLayer(mapDimensions, 0, GameSettings.TileSize, 0, LayerLock.None);
 

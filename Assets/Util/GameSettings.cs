@@ -8,4 +8,5 @@ public class GameSettings {
     public static HashSet<int> WallIndices = new HashSet<int>() { 2 };
     public static float KnockbackVelocity = 7f;
     public static float KnockbackDuration = .05f;
+    public static int NumSortingLayers = 21;
 }
