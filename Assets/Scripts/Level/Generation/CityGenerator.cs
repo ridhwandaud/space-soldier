@@ -42,7 +42,7 @@ public class CityGenerator : ILevelGenerator {
             //new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
             //new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
             //new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
-            //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
+            new SpawnData(3, 4, kirbyPrefab),
             new SpawnData(4, 4, sniperPrefab),
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab)
             new SpawnData(5, 5, basicEnemyPrefab),

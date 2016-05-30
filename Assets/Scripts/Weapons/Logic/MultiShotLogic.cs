@@ -36,7 +36,7 @@ public class MultiShotLogic : MonoBehaviour {
 
         bullet.transform.rotation = Quaternion.Euler(0, 0, angle);
         bullet.SetActive(true);
-        bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset) * projectileSpeed;
+        bullet.GetComponent<Rigidbody2D>().velocity = VectorUtil.RotateVector(centerDirection, angleOffset).normalized * projectileSpeed;
 
         if (firedByPlayer)
         {

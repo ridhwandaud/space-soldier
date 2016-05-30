@@ -5,6 +5,7 @@ public class SniperAI : EnemyAI {
     public float timeBetweenShots;
     public int damage;
     public float aimStoppingDelay; // Amount of time to wait after player is out of sight before aimer goes away.
+    public int range;
 
     private float nextFiringTime = 0;
     private bool isAiming = false;
@@ -20,6 +21,7 @@ public class SniperAI : EnemyAI {
     private bool sniperWasHit = false;
     private bool firing = false;
     private Vector3 lockedPosition;
+    private float rangeSquared;
 
 	void Awake () {
         projectilePool = GameObject.Find("FireballPool").GetComponent<StackPool>();
@@ -29,6 +31,8 @@ public class SniperAI : EnemyAI {
         rb2d = GetComponent<Rigidbody2D>();
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
+
+        rangeSquared = range * range;
     }
 	
 	void Update ()
@@ -49,9 +53,9 @@ public class SniperAI : EnemyAI {
             return;
         }
 
-        if (EnemyUtil.CanSee(transform.position, playerPosition))
+        if (EnemyUtil.CanSee(transform.position, playerPosition, false))
         {
-            if (EnemyUtil.IsOnScreen(transform.position) && Time.time > nextFiringTime && !isAiming)
+            if ((Player.PlayerTransform.position - transform.position).sqrMagnitude <= rangeSquared && Time.time > nextFiringTime && !isAiming)
             {
                 chasing = true;
                 StartAiming();

@@ -9,9 +9,9 @@ public class EnemyUtil {
     private static float cornerAvoidanceDotProductThreshold = -.1f;
     private static Vector2[] directionVectors = new Vector2[] {Vector2.up, Vector2.down, Vector2.left, Vector2.right};
 
-    public static bool CanSee(Vector2 enemyPosition, Vector2 targetPosition)
+    public static bool CanSee (Vector2 enemyPosition, Vector2 targetPosition, bool mustBeOnScreen = true)
     {
-        return IsOnScreen(enemyPosition) && Physics2D.Linecast(enemyPosition, targetPosition,
+        return (!mustBeOnScreen || IsOnScreen(enemyPosition)) && Physics2D.Linecast(enemyPosition, targetPosition,
             LayerMasks.SightObstructedLayerMask).transform == null;
     }
 

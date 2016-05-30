@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BasicEnemyFire : MonoBehaviour {
+public class BasicEnemyFire : EnemyWeapon {
 
     public float fireInterval = 2f;
     public float projectileSpeed = 10f;
@@ -15,7 +15,7 @@ public class BasicEnemyFire : MonoBehaviour {
         projectilePool = GameObject.Find(projectilePoolName).GetComponent<StackPool>();
 	}
 	
-	public int Fire () {
+	public override int Fire () {
         int missAmountDegrees = Random.Range(-accuracyVariation, accuracyVariation);
 
         if (Time.time > nextFireTime)

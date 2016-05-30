@@ -4,7 +4,6 @@ using System.Collections;
 [RequireComponent (typeof(Wander))]
 public class FootSoldierAI : EnemyAI {
 
-    public bool isHyperScout;
     public int firingDistance;
     public int attackingDistance;
     public float timeBetweenMoves;
@@ -16,18 +15,19 @@ public class FootSoldierAI : EnemyAI {
     private Rigidbody2D rb2d;
     private float nextMoveTime = 0;
     private int shotsFiredThisMovement = 0;
-    private BasicEnemyFire enemyFireScript;
     private Wander wanderScript;
     private int numMovementAttempts;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
 
+    private EnemyWeapon weapon;
+
     void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
-        enemyFireScript = GetComponent<BasicEnemyFire>();
         wanderScript = GetComponent<Wander>();
         colliderSize = GetComponent<BoxCollider2D>().size;
+        weapon = GetComponent<EnemyWeapon>();
     }
 
     void Update()
@@ -58,7 +58,7 @@ public class FootSoldierAI : EnemyAI {
             if (shotsFiredThisMovement < shotsFiredPerMovement)
             {
                 rb2d.velocity = Vector2.zero;
-                shotsFiredThisMovement += enemyFireScript.Fire();
+                shotsFiredThisMovement += weapon.Fire();
             }
             else
             {
