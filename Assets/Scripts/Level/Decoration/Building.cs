@@ -7,8 +7,8 @@ public class Building {
     public static int HighRiseBaseBuildingIndex = 12;
     private static int GridArrayBuildingIndex = 2;
 
-    private int[,] BaseTiles;
-    private int[,] HighRiseTiles;
+    public int[,] BaseTiles { get; set; }
+    public int[,] HighRiseTiles { get; set; }
 
     public int NumBaseRows
     {

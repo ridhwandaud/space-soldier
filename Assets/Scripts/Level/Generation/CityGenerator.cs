@@ -35,6 +35,7 @@ public class CityGenerator : ILevelGenerator {
         GameObject kirbyPrefab = Resources.Load("Kirby") as GameObject;
         GameObject troopaPrefab = Resources.Load("Troopa") as GameObject;
         GameObject catPrefab = Resources.Load("Cat") as GameObject;
+        Material wallMaterial = Resources.Load("WallMaterial") as Material;
 
         BasicLevelGenerator.EnemySpawnConfig config = BasicLevelGenerator.largeEasyLevelConfigs[0];
 
@@ -52,6 +53,20 @@ public class CityGenerator : ILevelGenerator {
         };
 
         CityPopulator.spawnEnemies(spawnData, GetOpenSpawnPositions(grid, playerSpawn), playerSpawn);
+        SetWallMaterials(wallMaterial);
+    }
+
+    void SetWallMaterials(Material wallMaterial)
+    {
+        CityDecorator.Buildings.ForEach(b => {
+            for (int row = 0; row < b.HighRiseTiles.GetLength(0); row++)
+            {
+                for (int col = 0; col < b.HighRiseTiles.GetLength(1); col++)
+                {
+                    Tile.SetTileMaterial(Building.TilesetIndex, b.HighRiseTiles[row, col], wallMaterial);
+                }
+            }
+        });
     }
 
     List<Vector2> GetOpenSpawnPositions(int[,] grid, Vector2 playerSpawn)

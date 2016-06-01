@@ -6,7 +6,7 @@ public class LoadLevel : MonoBehaviour {
     public static HashSet<int> FloorIndices;
     public static bool IsFirstLoad = true;
 
-    public static bool TestingCityLevel = true;
+    public static bool TestingCityLevel = false;
 
     public static LoadLevel instance = null;
 

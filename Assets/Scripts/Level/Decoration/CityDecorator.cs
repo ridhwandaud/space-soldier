@@ -170,7 +170,7 @@ public class CityDecorator {
         BuildingDictionary = result;
     }
 
-    private static List<Building> Buildings = new List<Building> {
+    public static List<Building> Buildings = new List<Building> {
             new Building(
                 new int[,] {
                     { 162, 163, 164, 165 }
