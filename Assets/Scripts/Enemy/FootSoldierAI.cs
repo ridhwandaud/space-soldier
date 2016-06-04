@@ -19,6 +19,7 @@ public class FootSoldierAI : EnemyAI {
     private int numMovementAttempts;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
+    private Animator animator;
 
     private EnemyWeapon weapon;
 
@@ -28,6 +29,7 @@ public class FootSoldierAI : EnemyAI {
         wanderScript = GetComponent<Wander>();
         colliderSize = GetComponent<BoxCollider2D>().size;
         weapon = GetComponent<EnemyWeapon>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -57,11 +59,18 @@ public class FootSoldierAI : EnemyAI {
         {
             if (shotsFiredThisMovement < shotsFiredPerMovement)
             {
+                animator.SetBool("Firing", true);
                 rb2d.velocity = Vector2.zero;
                 shotsFiredThisMovement += weapon.Fire();
+
+                float xDirProportion, yDirProportion;
+                GetXYRatios(Player.PlayerTransform.position - transform.position, out xDirProportion, out yDirProportion);
+                animator.SetFloat("ToPlayerX", xDirProportion);
+                animator.SetFloat("ToPlayerY", yDirProportion);
             }
             else
             {
+                animator.SetBool("Firing", false);
                 shotsFiredThisMovement = 0;
                 nextMoveTime = Time.time + timeBetweenMoves;
 
@@ -74,7 +83,23 @@ public class FootSoldierAI : EnemyAI {
             shotsFiredThisMovement = 0;
         }
 
-        previousVelocity = rb2d.velocity;
+        float xVelocityProportion, yVelocityProportion;
+        GetXYRatios(rb2d.velocity, out xVelocityProportion, out yVelocityProportion);
+        animator.SetFloat("MoveX", xVelocityProportion);
+        animator.SetFloat("MoveY", yVelocityProportion);
+    }
+
+    // TODO: Extract to utility.
+    private void GetXYRatios(Vector2 vec, out float xRatio, out float yRatio)
+    {
+        float sum = Mathf.Abs(vec.x) + Mathf.Abs(vec.y);
+        xRatio = Truncate(vec.x / sum);
+        yRatio = Truncate(vec.y / sum);
+    }
+
+    private float Truncate(float num)
+    {
+        return Mathf.Floor(Mathf.Round(num * 100)) / 100;
     }
 
     void OnCollisionEnter2D(Collision2D other)

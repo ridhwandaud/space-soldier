@@ -110,12 +110,12 @@ public class BasicLevelGenerator : ILevelGenerator
         //};
 
         return new List<SpawnData> {
-            new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
-            new SpawnData(config.footSoldierMinMax.x, config.footSoldierMinMax.y, footSoldierPrefab),
-            new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
-            new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
-            new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
-            new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)
+            //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
+            new SpawnData(1, 1, footSoldierPrefab),
+            //new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
+            //new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
+            //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
+            //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)
         };
     }
 
