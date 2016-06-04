@@ -19,6 +19,7 @@ public class FootSoldierAI : EnemyAI {
     private int numMovementAttempts;
     private Vector2 previousVelocity = Vector2.zero;
     private Vector2 colliderSize;
+    private Animator animator;
 
     private EnemyWeapon weapon;
 
@@ -28,6 +29,7 @@ public class FootSoldierAI : EnemyAI {
         wanderScript = GetComponent<Wander>();
         colliderSize = GetComponent<BoxCollider2D>().size;
         weapon = GetComponent<EnemyWeapon>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -75,6 +77,9 @@ public class FootSoldierAI : EnemyAI {
         }
 
         previousVelocity = rb2d.velocity;
+        Vector3 normalizedMotion = rb2d.velocity.normalized;
+        animator.SetFloat("MoveX", rb2d.velocity.x == 0 ? 0 : rb2d.velocity.x > 0 ? 1 : -1);
+        animator.SetFloat("MoveY", rb2d.velocity.y == 0 ? 0 : rb2d.velocity.y > 0 ? 1 : -1);
     }
 
     void OnCollisionEnter2D(Collision2D other)
