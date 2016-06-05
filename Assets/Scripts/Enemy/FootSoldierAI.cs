@@ -64,7 +64,7 @@ public class FootSoldierAI : EnemyAI {
                 shotsFiredThisMovement += weapon.Fire();
 
                 float xDirProportion, yDirProportion;
-                GetXYRatios(Player.PlayerTransform.position - transform.position, out xDirProportion, out yDirProportion);
+                EnemyUtil.GetXYRatios(Player.PlayerTransform.position - transform.position, out xDirProportion, out yDirProportion);
                 animator.SetFloat("ToPlayerX", xDirProportion);
                 animator.SetFloat("ToPlayerY", yDirProportion);
             }
@@ -84,22 +84,9 @@ public class FootSoldierAI : EnemyAI {
         }
 
         float xVelocityProportion, yVelocityProportion;
-        GetXYRatios(rb2d.velocity, out xVelocityProportion, out yVelocityProportion);
+        EnemyUtil.GetXYRatios(rb2d.velocity, out xVelocityProportion, out yVelocityProportion);
         animator.SetFloat("MoveX", xVelocityProportion);
         animator.SetFloat("MoveY", yVelocityProportion);
-    }
-
-    // TODO: Extract to utility.
-    private void GetXYRatios(Vector2 vec, out float xRatio, out float yRatio)
-    {
-        float sum = Mathf.Abs(vec.x) + Mathf.Abs(vec.y);
-        xRatio = Truncate(vec.x / sum);
-        yRatio = Truncate(vec.y / sum);
-    }
-
-    private float Truncate(float num)
-    {
-        return Mathf.Floor(Mathf.Round(num * 100)) / 100;
     }
 
     void OnCollisionEnter2D(Collision2D other)

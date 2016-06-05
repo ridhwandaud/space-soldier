@@ -88,6 +88,18 @@ public class EnemyUtil {
         return pullVector.normalized * speed;
     }
 
+    public static void GetXYRatios (Vector2 vec, out float xRatio, out float yRatio)
+    {
+        float sum = Mathf.Abs(vec.x) + Mathf.Abs(vec.y);
+        xRatio = sum == 0 ? 0 : Truncate(vec.x / sum);
+        yRatio = sum == 0 ? 0 : Truncate(vec.y / sum);
+    }
+
+    public static float Truncate (float num)
+    {
+        return Mathf.Floor(Mathf.Round(num * 100)) / 100;
+    }
+
     public static Vector2 CalculateUnblockedDirection(Vector2 pos, Vector2 colliderSize, float castDistance,
         bool wandering)
     {
