@@ -55,7 +55,7 @@ public class BasicLevelGenerator : ILevelGenerator
         int[,] level = algorithm.ExecuteAlgorithm((int)size, out openPositions, out playerSpawn, isBossLevel, out bossSpawn);
 
         decorator.DecorateWorld(level, isBossLevel, playerSpawn, openPositions);
-
+        
         if (!isBossLevel)
         {
             GameState.IsBossFight = false;
@@ -112,7 +112,7 @@ public class BasicLevelGenerator : ILevelGenerator
         return new List<SpawnData> {
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
             new SpawnData(1, 1, footSoldierPrefab),
-            //new SpawnData(config.gordoMinMax.x, config.gordoMinMax.y, gordoPrefab),
+            new SpawnData(3, 3, gordoPrefab),
             //new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
             //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
             //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)

@@ -49,7 +49,29 @@ public class MeleeEnemyAI : EnemyAI {
 
         ChaseIfNecessary();
         fsm.Update();
+        UpdateAnimations();
 	}
+
+    void UpdateAnimations()
+    {
+        bool moving = rb2d.velocity.sqrMagnitude != 0;
+        animator.SetBool("Moving", moving);
+
+        if (moving)
+        {
+            float xVelocityRatio, yVelocityRatio;
+            EnemyUtil.GetXYRatios(rb2d.velocity, out xVelocityRatio, out yVelocityRatio);
+            animator.SetFloat("VelocityX", xVelocityRatio);
+            animator.SetFloat("VelocityY", yVelocityRatio);
+        }
+        if (animator.GetBool("Attacking"))
+        {
+            float toPlayerX, toPlayerY;
+            EnemyUtil.GetXYRatios(Player.PlayerTransform.position - transform.position, out toPlayerX, out toPlayerY);
+            animator.SetFloat("ToPlayerX", toPlayerX);
+            animator.SetFloat("ToPlayerY", toPlayerY);
+        }
+    }
 
     public void Charge(Vector2 target, float colliderSizeMultiplierX, float colliderSizeMultiplierY,
         float boxCastDistance)

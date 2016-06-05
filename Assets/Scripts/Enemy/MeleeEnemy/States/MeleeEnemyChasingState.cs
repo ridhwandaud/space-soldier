@@ -14,6 +14,7 @@ public class MeleeEnemyChasingState : State<MeleeEnemyAI> {
 
     public override void Execute(MeleeEnemyAI enemy)
     {
+        enemy.animator.SetBool("Idle", false);
         float distanceFromPlayer = Vector3.Distance(Player.PlayerTransform.position, enemy.transform.position);
 
         if (distanceFromPlayer < enemy.attackDistance)
