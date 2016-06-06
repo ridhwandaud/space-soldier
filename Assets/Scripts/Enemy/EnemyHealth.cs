@@ -6,11 +6,13 @@ public class EnemyHealth : MonoBehaviour {
 
     private EnemyAI enemyAI;
     private EnemyDeath enemyDeath;
+    private Animator animator;
 
     void Awake()
     {
         enemyAI = GetComponent<EnemyAI>();
         enemyDeath = GetComponent<EnemyDeath>();
+        animator = GetComponent<Animator>();
     }
 
     public int health = 20;
@@ -31,6 +33,14 @@ public class EnemyHealth : MonoBehaviour {
         if (health <= 0)
         {
             enemyDeath.KillEnemy();
+        } else
+        {
+            animator.SetBool("Hit", true);
         }
+    }
+
+    public void HitDone()
+    {
+        animator.SetBool("Hit", false);
     }
 }

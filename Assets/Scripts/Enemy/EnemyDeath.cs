@@ -4,6 +4,14 @@ public class EnemyDeath : MonoBehaviour {
     public int experiencePoints;
 
     private bool destroyed = false;
+    private Animator animator;
+    private EnemyAI enemyAI;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+        enemyAI = GetComponent<EnemyAI>();
+    }
 
     public void KillEnemy()
     {
@@ -11,9 +19,12 @@ public class EnemyDeath : MonoBehaviour {
         // of secondary damage) from doubling the experience points earned.
         if (!destroyed)
         {
+            animator.SetBool("Killed", true);
+            enemyAI.killed = true;
+            gameObject.tag = "Killed";
+
             Player.PlayerExperience.IncrementExperience(experiencePoints);
             GameState.NumEnemiesKilled++;
-            Destroy(gameObject);
             destroyed = true;
             GameState.NumEnemiesRemaining--;
 

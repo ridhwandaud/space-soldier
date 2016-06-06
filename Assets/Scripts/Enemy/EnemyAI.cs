@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour {
     public float chaseCheckCooldown;
     public float speed;
     public bool chasing = false;
+    public bool killed = false;
     public float KnockbackEndTime = 0;
     public bool KnockbackInProgress = false;
 

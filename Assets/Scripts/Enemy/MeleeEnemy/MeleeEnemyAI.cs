@@ -42,7 +42,7 @@ public class MeleeEnemyAI : EnemyAI {
     }
 	
 	void Update () {
-        if (KnockbackInProgress || GameSettings.PauseAllEnemies)
+        if (KnockbackInProgress || GameSettings.PauseAllEnemies || killed)
         {
             return;
         }
@@ -57,7 +57,7 @@ public class MeleeEnemyAI : EnemyAI {
         bool moving = rb2d.velocity.sqrMagnitude != 0;
         animator.SetBool("Moving", moving);
 
-        if (moving)
+        if (moving && !animator.GetBool("Hit"))
         {
             float xVelocityRatio, yVelocityRatio;
             EnemyUtil.GetXYRatios(rb2d.velocity, out xVelocityRatio, out yVelocityRatio);
