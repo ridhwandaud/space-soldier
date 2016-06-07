@@ -19,6 +19,7 @@ public class EnemyDeath : MonoBehaviour {
         // of secondary damage) from doubling the experience points earned.
         if (!destroyed)
         {
+            Debug.Log("enemy killed");
             animator.SetBool("Killed", true);
             enemyAI.killed = true;
             gameObject.tag = "Killed";

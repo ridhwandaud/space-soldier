@@ -33,7 +33,7 @@ public class EnemyHealth : MonoBehaviour {
         if (health <= 0)
         {
             enemyDeath.KillEnemy();
-        } else
+        } else if (animator != null)
         {
             animator.SetBool("Hit", true);
         }
