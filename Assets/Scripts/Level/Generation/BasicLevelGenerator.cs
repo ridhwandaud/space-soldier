@@ -17,6 +17,7 @@ public class BasicLevelGenerator : ILevelGenerator
     GameObject kirbyPrefab;
     GameObject troopaPrefab;
     GameObject plantBossPrefab;
+    GameObject laserBearPrefab;
 
     enum BasicLevelSize { Small = 250, Medium = 350, Large = 450};
     enum BasicLevelDifficulty { Easy, Hard};
@@ -35,6 +36,7 @@ public class BasicLevelGenerator : ILevelGenerator
         kirbyPrefab = Resources.Load("Kirby") as GameObject;
         troopaPrefab = Resources.Load("Troopa") as GameObject;
         plantBossPrefab = Resources.Load("PlantBoss") as GameObject;
+        laserBearPrefab = Resources.Load("LaserBear") as GameObject;
 
         configsBySize[BasicLevelSize.Small] = smallLevelConfig;
         configsBySize[BasicLevelSize.Medium] = mediumLevelConfig;
@@ -113,7 +115,8 @@ public class BasicLevelGenerator : ILevelGenerator
             //new SpawnData(config.basicEnemyMinMax.x, config.basicEnemyMinMax.y, basicEnemyPrefab),
             new SpawnData(2, 2, footSoldierPrefab),
             new SpawnData(3, 3, gordoPrefab),
-            new SpawnData(2, 2, knightPrefab)
+            new SpawnData(2, 2, knightPrefab),
+            new SpawnData(1, 1, laserBearPrefab)
             //new SpawnData(config.gordoTrapMinMax.x, config.gordoTrapMinMax.y, gordoTrapPrefab, false),
             //new SpawnData(config.kirbyMinMax.x, config.kirbyMinMax.y, kirbyPrefab),
             //new SpawnData(config.sniperMinMax.x, config.sniperMinMax.y, sniperPrefab)

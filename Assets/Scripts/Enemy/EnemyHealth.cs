@@ -17,7 +17,7 @@ public class EnemyHealth : MonoBehaviour {
 
     public int health = 20;
 
-    public void InflictDamage(int damagePoints)
+    public void InflictDamage(int damagePoints, Vector2 velocity)
     {
         if (guarded)
         {
@@ -36,6 +36,8 @@ public class EnemyHealth : MonoBehaviour {
         } else if (animator != null)
         {
             animator.SetBool("Hit", true);
+            animator.SetFloat("HitFromDirX", velocity.x > 0 ? 0 : 1);
+            animator.SetFloat("HitFromDirY", velocity.y > 0 ? 1 : 0);
         }
     }
 

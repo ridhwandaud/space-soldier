@@ -43,7 +43,7 @@ public class ChargeBlastProperties : BasicPlayerProjectile
 
         if (isEnemy(other))
         {
-            other.GetComponent<EnemyHealth>().InflictDamage(Damage);
+            other.GetComponent<EnemyHealth>().InflictDamage(Damage, rb2d.velocity);
         }
 
         if (isObstacle(other))
@@ -68,7 +68,7 @@ public class ChargeBlastProperties : BasicPlayerProjectile
         Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(gameObject.transform.position, radius, enemyLayerMask);
         foreach (Collider2D collider in nearbyEnemies)
         {
-            collider.GetComponent<EnemyHealth>().InflictDamage(damage);
+            collider.GetComponent<EnemyHealth>().InflictDamage(damage, rb2d.velocity);
         }
     }
 }

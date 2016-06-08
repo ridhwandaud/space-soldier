@@ -27,7 +27,7 @@ public class EnergyOrbProperties : BasicPlayerProjectile
     {
         Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(gameObject.transform.position, ExplosionRadius, enemyLayerMask);
         foreach(Collider2D collider in nearbyEnemies) {
-            collider.GetComponent<EnemyHealth>().InflictDamage(ExplosionDamage);
+            collider.GetComponent<EnemyHealth>().InflictDamage(ExplosionDamage, rb2d.velocity);
         }
     }
 }

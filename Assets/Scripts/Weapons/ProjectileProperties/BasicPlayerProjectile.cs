@@ -19,7 +19,7 @@ public class BasicPlayerProjectile : MonoBehaviour
     {
         if (isEnemy(other))
         {
-            other.GetComponent<EnemyHealth>().InflictDamage(Damage);
+            other.GetComponent<EnemyHealth>().InflictDamage(Damage, rb2d.velocity);
             Knockback knockback = other.GetComponent<Knockback>();
             if (knockback)
             {
