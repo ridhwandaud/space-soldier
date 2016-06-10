@@ -4,6 +4,7 @@ Shader "Sprites/Silhouette"
 	{
 		[PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
 		_Color ("Tint", Color) = (1,1,1,1)
+		_HitFlag ("HitFlag", Float) = 0
 		[MaterialToggle] PixelSnap ("Pixel snap", Float) = 0
 	}
 
@@ -109,6 +110,7 @@ Shader "Sprites/Silhouette"
 			};
 
 			fixed4 _Color;
+			float _HitFlag;
 
 			v2f vert(appdata_t IN)
 			{
@@ -127,8 +129,9 @@ Shader "Sprites/Silhouette"
 			fixed4 frag(v2f IN) : SV_Target
 			{
 				fixed4 c = tex2D(_MainTex, IN.texcoord);
-				c.rgb *= c.a;
-				return c;
+				fixed4 col = lerp(c, fixed4(1, 1, 1, c.a), _HitFlag);
+				col.rgb *= c.a;
+				return col;
 			}
 		ENDCG
 		}
