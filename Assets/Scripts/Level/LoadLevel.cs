@@ -51,11 +51,11 @@ public class LoadLevel : MonoBehaviour {
         if (TestingCityLevel)
         {
             FloorIndices = new HashSet<int>() { CityGridCreator.DefaultWalkableIndex, CityGridCreator.GridArrayRoadIndex };
-            AStar.world = new CityGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn); 
+            AStar.Init(new CityGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn));
         } else
         {
             FloorIndices = new HashSet<int>() { BasicLevelDecorator.BaseDark, BasicLevelDecorator.BaseLight };
-            AStar.world = new BasicLevelGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn);
+            AStar.Init(new BasicLevelGenerator().GenerateLevel(GameState.LevelIndex, out playerSpawn));
             Tile.SetColliderLayer(GameSettings.WallLayerNumber, BasicLevelDecorator.CliffTileLayer);
             Tile.SetColliderLayer(GameSettings.WaterLayer, BasicLevelDecorator.WaterTileLayer);
         }

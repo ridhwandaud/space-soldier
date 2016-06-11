@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using SpriteTile;
 using Priority_Queue;
 
-// TODO: This class needs heavy optimization - creates way too much garbage.
 public class AStar : MonoBehaviour {
-    public static int[,] world;
+    private static int[,] World;
+    private static Node[] Nodes;
+    private static Node[] Visited;
+    private static HeapPriorityQueue<Node> Frontier;
+    private static List<Int2> Neighbors;
+    private static List<Node> Result;
 
     // Struct would be better. Structs are treated like primitives and are created on the stack.
     public class Node : PriorityQueueNode
@@ -25,8 +29,14 @@ public class AStar : MonoBehaviour {
         }
     }
 
-    void Awake () {
-        //test();
+    public static void Init(int[,] world)
+    {
+        World = world;
+        InitNodes();
+        Frontier = new HeapPriorityQueue<Node>(300);
+        Result = new List<Node>();
+        Neighbors = null;
+        Visited = new Node[World.GetLength(0) * World.GetLength(1)];
     }
 
     static List<Int2> findNeighbors(Int2 point)
@@ -45,19 +55,19 @@ public class AStar : MonoBehaviour {
             {
                 result.Add(new Int2(leftX, aboveY));
             }
-            if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, aboveY))
+            if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, aboveY))
             {
                 result.Add(new Int2(rightX, aboveY));
             }
         }
-        if (belowY < world.GetLength(0) && canWalkHere(point.x, belowY))
+        if (belowY < World.GetLength(0) && canWalkHere(point.x, belowY))
         {
             result.Add(new Int2(point.x, belowY));
             if (leftX >= 0 && canWalkHere(leftX, point.y) && canWalkHere(leftX, belowY))
             {
                 result.Add(new Int2(leftX, belowY));
             }
-            if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, belowY))
+            if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, belowY))
             {
                 result.Add(new Int2(rightX, belowY));
             }
@@ -66,7 +76,7 @@ public class AStar : MonoBehaviour {
         {
             result.Add(new Int2(leftX, point.y));
         }
-        if (rightX < world.GetLength(1) && canWalkHere(rightX, point.y))
+        if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y))
         {
             result.Add(new Int2(rightX, point.y));
         }
@@ -78,7 +88,7 @@ public class AStar : MonoBehaviour {
     {
         // y is row, x is column. think about it.
         // and of course, array is world[row, col]
-        return LoadLevel.FloorIndices.Contains(world[y, x]);
+        return LoadLevel.FloorIndices.Contains(World[y, x]);
     }
 
     static int manhattanDistance(Int2 point, Int2 goal)
@@ -92,84 +102,115 @@ public class AStar : MonoBehaviour {
     }
 
     static int calculatePointIndex(Int2 point) {
-        return point.x + (point.y * world.GetLength(1));
+        return point.x + (point.y * World.GetLength(1));
     }
 
-    // Get rid of all of the news, since they are creating garbage. Reuse the objects.
+    static void InitNodes ()
+    {
+        Nodes = new Node[World.GetLength(0) * World.GetLength(1)];
+
+        for (int i = 0; i < Nodes.Length; i++)
+        {
+            Nodes[i] = new Node(null, Int2.zero, i);
+        }
+    }
+
+    static Node createNode (Node parent, Int2 point, int index)
+    {
+        Node node = Nodes[index];
+        node.parent = parent;
+        node.point = point;
+        node.f = 0;
+        node.g = 0;
+        return node;
+    }
+
+    static void ResetState()
+    {
+        for (int i = 0; i < Visited.Length; i++) {
+            Visited[i] = null;
+        }
+
+        Frontier.Clear();
+        Result.Clear();
+        Result.Clear();
+        Neighbors = null;
+
+    }
+
     public static List<Node> calculatePath(Int2 start, Int2 end)
     {
-        Node startNode = new Node(null, start, calculatePointIndex(start));
-        Node targetNode = new Node(null, end, calculatePointIndex(end));
+        ResetState();
 
-        Node[] visited = new Node[world.GetLength(0) * world.GetLength(1)];
+        Node startNode = createNode(null, start, calculatePointIndex(start));
+        Node targetNode = createNode(null, end, calculatePointIndex(end));
 
-        HeapPriorityQueue<Node> frontier = new HeapPriorityQueue<Node>(300);
-        List<Node> result = new List<Node>();
-        List<Int2> neighbors = null;
-        frontier.Enqueue(startNode, 0); // dummy value for priority since it will be popped immediately.
+        Visited[startNode.index] = startNode;
+
+        Frontier.Enqueue(startNode, 0); // dummy value for priority since it will be popped immediately.
 
         // Continue algorithm until there are no more open nodes.
-        while (frontier.Count > 0)
+        while (Frontier.Count > 0)
         {
-            Node current = frontier.Dequeue();
+            Node current = Frontier.Dequeue();
 
             // If the popped node is the target node, then you are done.
             if (current.index == targetNode.index)
             {
-                result.Clear();
-                result.Add(current);
+                Result.Clear();
+                Result.Add(current);
 
                 Node nodeInShortestPath = current.parent;
                 
                 while (nodeInShortestPath != null)
                 {
-                    result.Add(nodeInShortestPath);
+                    Result.Add(nodeInShortestPath);
                     nodeInShortestPath = nodeInShortestPath.parent;
                 }
 
-                result.Reverse();
+                Result.Reverse();
                 break;
             }
             else
             {
-                neighbors = findNeighbors(current.point);
+                Neighbors = findNeighbors(current.point);
 
-                for (int i = 0; i < neighbors.Count; i++) {
-                    Int2 neighbor = neighbors[i];
+                for (int i = 0; i < Neighbors.Count; i++) {
+                    Int2 neighbor = Neighbors[i];
                     int pointIndex = calculatePointIndex(neighbor);
 
-                    Node neighborNode = visited[pointIndex] != null ?
-                        visited[pointIndex] : new Node(current, neighbor, pointIndex);
+                    Node neighborNode = Visited[pointIndex] != null ?
+                        Visited[pointIndex] : createNode(null, neighbor, pointIndex);
                     int newNeighborCost = current.g + manhattanDistance(neighbor, current.point);
 
-                    if (visited[neighborNode.index] == null || neighborNode.g > newNeighborCost)
+                    if (Visited[neighborNode.index] == null || neighborNode.g > newNeighborCost)
                     {
                         neighborNode.g = newNeighborCost;
                         neighborNode.f = neighborNode.g + manhattanDistance(neighbor, targetNode.point);
                         neighborNode.parent = current;
 
-                        if (!frontier.Contains(neighborNode))
+                        if (!Frontier.Contains(neighborNode))
                         {
-                            frontier.Enqueue(neighborNode, neighborNode.f);
+                            Frontier.Enqueue(neighborNode, neighborNode.f);
                         }
                         else
                         {
-                            frontier.UpdatePriority(neighborNode, neighborNode.f);
+                            Frontier.UpdatePriority(neighborNode, neighborNode.f);
                         }
                         
-                        visited[neighborNode.index] = neighborNode;
+                        Visited[neighborNode.index] = neighborNode;
                     }
                 }
             }
         }
 
         // If frontier is emptied out and the target hasn't been reached, then the path is blocked and no shortest path exists.
-        return result;
+        return Result;
     }
 
     static void test()
     {
-        world = new int[9, 5] {
+        World = new int[9, 5] {
         {0, 0, 0, 0, 0} ,
         {0, 0, 1, 1, 0}, 
         {0, 1, 1, 0, 0}, 
