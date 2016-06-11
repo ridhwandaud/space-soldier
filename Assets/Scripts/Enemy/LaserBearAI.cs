@@ -8,10 +8,14 @@ public class LaserBearAI : EnemyAI {
     private Vector2 colliderSize;
     private Animator animator;
 
+    [SerializeField]
+    private float hitDuration;
+
     private float nextActionTime;
     private float walkEndTime;
     private float lastWalkDir = -1;
     private bool charging = false;
+    private bool hitInProgress = false;
 
     void Awake ()
     {
@@ -23,9 +27,16 @@ public class LaserBearAI : EnemyAI {
         animator = GetComponent<Animator>();
     }
 
+
     void Update () {
-        if (KnockbackInProgress || GameSettings.PauseAllEnemies)
+        if (GameSettings.PauseAllEnemies)
         {
+            return;
+        }
+
+        if (KnockbackInProgress)
+        {
+            HandleHit();
             return;
         }
 
@@ -46,6 +57,9 @@ public class LaserBearAI : EnemyAI {
         else if (!animator.GetBool("Charging"))
         {
             wanderScript.DoWander();
+        } else
+        {
+            animator.SetBool("Walking", true);
         }
 
         if (animator.GetBool("Charging"))
@@ -63,7 +77,22 @@ public class LaserBearAI : EnemyAI {
             animator.SetFloat("Facing", walkDir);
             lastWalkDir = walkDir;
         }
+    }
 
+    void HandleHit()
+    {
+        if (animator.GetBool("Hit") && !hitInProgress)
+        {
+            GetComponent<SpriteRenderer>().material.SetFloat("_HitFlag", 1);
+            hitInProgress = true;
+            Invoke("EndHit", hitDuration);
+        }
+    }
+
+    void EndHit()
+    {
+        GetComponent<SpriteRenderer>().material.SetFloat("_HitFlag", 0);
+        hitInProgress = false;
     }
 
     void Fire()
