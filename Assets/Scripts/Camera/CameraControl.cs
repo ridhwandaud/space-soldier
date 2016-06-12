@@ -10,6 +10,10 @@ public class CameraControl : MonoBehaviour {
     private Texture2D crosshair3X;
     [SerializeField]
     private Texture2D crosshair4X;
+    [SerializeField]
+    private float maxScrollFraction;
+    [SerializeField]
+    private float cameraEdgeThreshold;
 
     public delegate void CameraFunction();
     private Rigidbody2D rb;
@@ -59,6 +63,12 @@ public class CameraControl : MonoBehaviour {
         Vector3 targetPosition = cameraEvent == null || cameraEvent.Completed ? rb.position : cameraEvent.Target;
         float activeDampTime = cameraEvent == null ? dampTime : cameraEvent.DampTime;
         targetPosition.z = DEFAULT_Z;
+
+        if (cameraEvent == null)
+        {
+            HandleMouseLookaround(ref targetPosition);
+        }
+
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, activeDampTime);
 
         if (cameraEvent != null)
@@ -76,6 +86,35 @@ public class CameraControl : MonoBehaviour {
                 StartCoroutine(Do(cameraEvent.FocusHeadWindow, () => cameraEvent.CameraFunction()));
                 cameraEvent.Started = true;
             }
+        }
+    }
+
+    void HandleMouseLookaround(ref Vector3 targetPosition)
+    {
+        float screenHeightUnits = Screen.height / (Camera.main.orthographicSize * 2);
+
+        if (Input.mousePosition.y >= Screen.height * cameraEdgeThreshold)
+        {
+            float multiplier = (Input.mousePosition.y - Screen.height * cameraEdgeThreshold) / (Screen.height - Screen.height * cameraEdgeThreshold);
+            targetPosition.y += multiplier * maxScrollFraction * screenHeightUnits;
+        }
+
+        if (Input.mousePosition.y <= Screen.height * (1 - cameraEdgeThreshold))
+        {
+            float multiplier = (Screen.height * (1 - cameraEdgeThreshold) - Input.mousePosition.y) / (Screen.height * (1 - cameraEdgeThreshold));
+            targetPosition.y -= multiplier * maxScrollFraction * screenHeightUnits;
+        }
+
+        if (Input.mousePosition.x >= Screen.width * cameraEdgeThreshold)
+        {
+            float multiplier = (Input.mousePosition.x - Screen.width * cameraEdgeThreshold) / (Screen.width - Screen.width * cameraEdgeThreshold);
+            targetPosition.x += multiplier * maxScrollFraction * screenHeightUnits;
+        }
+
+        if (Input.mousePosition.x <= Screen.width * (1 - cameraEdgeThreshold))
+        {
+            float multiplier = (Screen.width * (1 - cameraEdgeThreshold) - Input.mousePosition.x) / (Screen.width * (1 - cameraEdgeThreshold));
+            targetPosition.x -= multiplier * maxScrollFraction * screenHeightUnits;
         }
     }
 

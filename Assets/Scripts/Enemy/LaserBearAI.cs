@@ -77,6 +77,8 @@ public class LaserBearAI : EnemyAI {
             animator.SetFloat("Facing", walkDir);
             lastWalkDir = walkDir;
         }
+
+        chasing = animator.GetBool("Charging");
     }
 
     void HandleHit()

@@ -59,6 +59,8 @@ public class BasicLevelDecorator {
         Material wallMaterial = Resources.Load("WallMaterial") as Material;
         Tile.SetTileMaterial(TilesetIndex, TreeTopLeft, wallMaterial);
         Tile.SetTileMaterial(TilesetIndex, TreeTopRight, wallMaterial);
+        Tile.SetTileMaterial(TilesetIndex, TreeBottomLeft, wallMaterial);
+        Tile.SetTileMaterial(TilesetIndex, TreeBottomRight, wallMaterial);
     }
 
     void AnimateWater()
