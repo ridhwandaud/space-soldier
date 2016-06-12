@@ -34,14 +34,14 @@ public class AStar : MonoBehaviour {
         World = world;
         InitNodes();
         Frontier = new HeapPriorityQueue<Node>(300);
-        Result = new List<Node>();
-        Neighbors = null;
+        Result = new List<Node>(300);
+        Neighbors = new List<Int2>(10);
         Visited = new Node[World.GetLength(0) * World.GetLength(1)];
     }
 
-    static List<Int2> findNeighbors(Int2 point)
+    static void findNeighbors(Int2 point)
     {
-        List<Int2> result = new List<Int2>();
+        Neighbors.Clear();
 
         int aboveY = point.y - 1,
             belowY = point.y + 1,
@@ -50,38 +50,36 @@ public class AStar : MonoBehaviour {
 
         if (aboveY >= 0 && canWalkHere(point.x, aboveY))
         {
-            result.Add(new Int2(point.x, aboveY));
+            Neighbors.Add(new Int2(point.x, aboveY));
             if (leftX >= 0 && canWalkHere(leftX, point.y) && canWalkHere(leftX, aboveY))
             {
-                result.Add(new Int2(leftX, aboveY));
+                Neighbors.Add(new Int2(leftX, aboveY));
             }
             if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, aboveY))
             {
-                result.Add(new Int2(rightX, aboveY));
+                Neighbors.Add(new Int2(rightX, aboveY));
             }
         }
         if (belowY < World.GetLength(0) && canWalkHere(point.x, belowY))
         {
-            result.Add(new Int2(point.x, belowY));
+            Neighbors.Add(new Int2(point.x, belowY));
             if (leftX >= 0 && canWalkHere(leftX, point.y) && canWalkHere(leftX, belowY))
             {
-                result.Add(new Int2(leftX, belowY));
+                Neighbors.Add(new Int2(leftX, belowY));
             }
             if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y) && canWalkHere(rightX, belowY))
             {
-                result.Add(new Int2(rightX, belowY));
+                Neighbors.Add(new Int2(rightX, belowY));
             }
         }
         if (leftX >= 0 && canWalkHere(leftX, point.y))
         {
-            result.Add(new Int2(leftX, point.y));
+            Neighbors.Add(new Int2(leftX, point.y));
         }
         if (rightX < World.GetLength(1) && canWalkHere(rightX, point.y))
         {
-            result.Add(new Int2(rightX, point.y));
+            Neighbors.Add(new Int2(rightX, point.y));
         }
-
-        return result;
     }
 
     static bool canWalkHere(int x, int y)
@@ -133,8 +131,7 @@ public class AStar : MonoBehaviour {
 
         Frontier.Clear();
         Result.Clear();
-        Result.Clear();
-        Neighbors = null;
+        Neighbors.Clear();
 
     }
 
@@ -173,7 +170,7 @@ public class AStar : MonoBehaviour {
             }
             else
             {
-                Neighbors = findNeighbors(current.point);
+                findNeighbors(current.point);
 
                 for (int i = 0; i < Neighbors.Count; i++) {
                     Int2 neighbor = Neighbors[i];

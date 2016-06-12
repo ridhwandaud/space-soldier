@@ -7,6 +7,8 @@ public class EnemyUtil {
     private static float nearbyEnemyRadius = .35f;
     private static float centerDistanceThreshold = .3f;
     private static float cornerAvoidanceDotProductThreshold = -.1f;
+    private static Collider2D[] nearbyEnemies;
+    private static List<AStar.Node> aStarList;
     private static Vector2[] directionVectors = new Vector2[] {Vector2.up, Vector2.down, Vector2.left, Vector2.right};
 
     public static bool CanSee (Vector2 enemyPosition, Vector2 targetPosition, bool mustBeOnScreen = true)
@@ -34,14 +36,14 @@ public class EnemyUtil {
         if (Time.time > lastPathfindTime + pathFindingRate)
         {
             lastPathfindTime = Time.time;
-            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
+            aStarList = AStar.calculatePath(AStar.positionToArrayIndices(enemyPosition),
                 AStar.positionToArrayIndices(target));
 
-            if (list.Count > 1)
+            if (aStarList.Count > 1)
             {
-                Int2 targetGridCoordinates = useCornerAvoidance && (enemyPosition - list[0].point.ToVector2()).magnitude > centerDistanceThreshold 
-                    && Vector2.Dot(list[1].point.ToVector2() - enemyPosition, list[0].point.ToVector2() - enemyPosition) > cornerAvoidanceDotProductThreshold
-                    ? list[0].point : list[1].point;
+                Int2 targetGridCoordinates = useCornerAvoidance && (enemyPosition - aStarList[0].point.ToVector2()).magnitude > centerDistanceThreshold
+                    && Vector2.Dot(aStarList[1].point.ToVector2() - enemyPosition, aStarList[0].point.ToVector2() - enemyPosition) >
+                    cornerAvoidanceDotProductThreshold ? aStarList[0].point : aStarList[1].point;
 
                 if(debug)
                 {
@@ -65,7 +67,7 @@ public class EnemyUtil {
         Vector2 pushVector = Vector2.zero;
 
         // Find all nearby enemies
-        Collider2D[] nearbyEnemies = Physics2D.OverlapCircleAll(enemyPosition, nearbyEnemyRadius, LayerMasks.EnemyLayerMask);
+        nearbyEnemies = Physics2D.OverlapCircleAll(enemyPosition, nearbyEnemyRadius, LayerMasks.EnemyLayerMask);
         int contenders = 0;
 
         for (int i = 0; i < nearbyEnemies.Length; i++)
@@ -106,12 +108,12 @@ public class EnemyUtil {
         if (wandering && Random.Range(0, 2) < 1
             && (Player.PlayerTransform.position - (Vector3)pos).sqrMagnitude < squaredGuidedWanderDistance)
         {
-            List<AStar.Node> list = AStar.calculatePath(AStar.positionToArrayIndices(pos),
+            aStarList = AStar.calculatePath(AStar.positionToArrayIndices(pos),
                 AStar.positionToArrayIndices(Player.PlayerTransform.position));
 
-            if (list.Count > 1)
+            if (aStarList.Count > 1)
             {
-                return (AStar.arrayIndicesToPosition(list[1].point) - pos).normalized;
+                return (AStar.arrayIndicesToPosition(aStarList[1].point) - pos).normalized;
             }
         }
 
